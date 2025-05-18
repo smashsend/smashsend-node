@@ -12,6 +12,9 @@ permissions:
   pull-requests: write
   packages: write
 
+env:
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
 jobs:
   release:
     name: Release
@@ -40,13 +43,24 @@ jobs:
 
       - name: Setup npm authentication
         run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc.ci
-          cp .npmrc.ci .npmrc
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          npm config set registry https://registry.npmjs.org/
+          npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
           if [ -n "${{ secrets.NPM_TOKEN }}" ]; then echo "NPM_TOKEN is set"; else echo "NPM_TOKEN is NOT set"; fi
+
+      - name: Debug Environment Variables
+        run: |
+          echo "Checking environment variable presence (not values):"
+          env | grep -i npm | sed 's/=.*$/=REDACTED/'
+          echo "Checking GitHub secret availability:"
+          if [ -n "${{ secrets.NPM_TOKEN }}" ]; then echo "NPM_TOKEN secret is available"; else echo "NPM_TOKEN secret is NOT available"; fi
+          echo "npm config list:"
+          npm config list
+          echo "Current .npmrc file:"
+          cat .npmrc | sed 's/authToken=.*$/authToken=REDACTED/'
 
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release --debug
