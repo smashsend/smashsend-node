@@ -49,7 +49,7 @@ Failed to load "@smashsend/package.json" from "@smashsend/node"
 
 This usually happens because:
 
-1. **Incorrect Import:** Make sure you're importing using the correct name - the SDK class is named `SMASHSEND` (all caps), not `SmashSend`.
+1. **Incorrect Import:** Make sure you're importing using the correct name - the SDK class is named `SmashSend`, not something else.
 
 2. **Edge Runtime:** If you're using Edge runtime, switch to direct API calls as shown in `direct-api-implementation.tsx`.
 
@@ -81,13 +81,13 @@ module.exports = {
 
 4. **Use the server component pattern** for sensitive operations to keep your API key secure
 
-5. For better DX, create a provider or service that handles the SMASHSEND instance:
+5. For better DX, create a provider or service that handles the SmashSend instance:
 
    ```typescript
    // lib/smashsend.ts
-   import { SMASHSEND } from '@smashsend/node';
+   import { SmashSend } from '@smashsend/node';
 
    export const getSmashSendClient = () => {
-     return new SMASHSEND(process.env.SMASHSEND_API_KEY || '');
+     return new SmashSend(process.env.SMASHSEND_API_KEY || '');
    };
    ```

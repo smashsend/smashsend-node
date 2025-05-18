@@ -5,10 +5,10 @@
 
 'use server';
 
-import { SMASHSEND } from '@smashsend/node';
+import { SmashSend } from '@smashsend/node';
 
-// Initialize SMASHSEND client (only created once per server)
-const smashsend = new SMASHSEND(process.env.SMASHSEND_API_KEY || '');
+// Initialize SmashSend client (only created once per server)
+const smashsend = new SmashSend(process.env.SMASHSEND_API_KEY || '');
 
 export async function subscribeToNewsletter(email: string, firstName: string) {
   try {

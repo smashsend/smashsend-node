@@ -97,6 +97,9 @@ export class SMASHSEND {
   }
 }
 
+// Add a named export using PascalCase
+export const SmashSend = SMASHSEND;
+
 // Export types and errors
 export type { SMASHSENDClientOptions } from './interfaces/types';
 export type {
