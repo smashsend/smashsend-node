@@ -248,6 +248,14 @@ export class HttpClient {
           // Calculate more aggressive exponential backoff
           const nextDelay = this.calculateBackoff(retryCount, retryDelay);
 
+          if (this.debugMode) {
+            console.log(
+              `[SMASHSEND] Server error, retrying in ${nextDelay}ms (attempt ${
+                retryCount + 1
+              }/${maxRetries})`
+            );
+          }
+
           await new Promise((resolve) => setTimeout(resolve, nextDelay));
 
           return this.request<T>(path, {
@@ -261,76 +269,60 @@ export class HttpClient {
             timeout,
           });
         }
-      }
 
-      // If not successful, handle the error
-      if (!response.ok) {
-        const errorMessage = responseData?.message || `HTTP error ${response.status}`;
-        const errorCode = responseData?.code || 'api_error';
-
-        throw new APIError(errorMessage, {
-          code: errorCode,
+        throw new APIError(`Server error: ${response.status}`, {
           statusCode: response.status,
+          code: 'server_error',
           requestId: requestId || undefined,
           data: responseData,
         });
       }
 
-      return responseData as T;
-    } catch (error) {
-      clearTimeout(timeoutId);
+      // Handle other errors (4xx)
+      if (!response.ok) {
+        let errorMessage = `API error: ${response.status}`;
+        let errorCode = 'api_error';
 
-      if (this.debugMode && error instanceof Error) {
-        console.error(`[SMASHSEND] Error:`, error.message);
+        if (responseData && typeof responseData === 'object') {
+          errorMessage = responseData.message || responseData.error || errorMessage;
+          errorCode = responseData.code || errorCode;
+        }
+
+        throw new APIError(errorMessage, {
+          statusCode: response.status,
+          code: errorCode,
+          requestId: requestId || undefined,
+          data: responseData,
+        });
       }
 
-      // If it's already a SMASHSEND error, just rethrow it
+      return responseData;
+    } catch (error: any) {
+      clearTimeout(timeoutId);
+
+      // Re-throw SmashSendError instances
       if (error instanceof SmashSendError) {
         throw error;
       }
 
-      // Handle abort/timeout error
-      if (error instanceof Error && error.name === 'AbortError') {
-        throw new TimeoutError('Request timed out', {
-          code: 'request_timeout',
+      // Handle abort errors (timeouts)
+      if (error.name === 'AbortError') {
+        throw new TimeoutError(`Request timed out after ${timeout}ms`, {
+          code: 'timeout',
         });
       }
 
-      // Handle fetch network errors
-      if (error instanceof TypeError) {
-        if (retryCount < maxRetries) {
-          // Calculate more aggressive exponential backoff
-          const nextDelay = this.calculateBackoff(retryCount, retryDelay);
-
-          await new Promise((resolve) => setTimeout(resolve, nextDelay));
-
-          return this.request<T>(path, {
-            method,
-            headers,
-            params,
-            data,
-            maxRetries,
-            retryCount: retryCount + 1,
-            retryDelay,
-            timeout,
-          });
-        }
-
+      // Handle network errors
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
         throw new NetworkError('Network error', {
           code: 'network_error',
           data: error.message,
         });
       }
 
-      // Other unknown errors
-      if (error instanceof Error) {
-        throw new NetworkError(error.message, {
-          code: 'unknown_error',
-        });
-      }
-
-      throw new NetworkError('Unknown error occurred', {
-        code: 'unknown_error',
+      // Handle other errors
+      throw new SmashSendError('Unexpected error', {
+        code: 'unexpected_error',
         data: error,
       });
     }
