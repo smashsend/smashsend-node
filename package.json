@@ -1,0 +1,68 @@
+{
+  "name": "@smashsend/node",
+  "version": "0.1.0",
+  "description": "SMASHSEND Node.js SDK - Official Node.js client for SMASHSEND API",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rm -rf dist",
+    "format": "prettier --write 'src/**/*.{ts,tsx}'",
+    "lint": "eslint 'src/**/*.{ts,tsx}'",
+    "lint:fix": "eslint 'src/**/*.{ts,tsx}' --fix",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "semantic-release": "semantic-release",
+    "publish-beta": "npm run build && npm publish --tag beta",
+    "publish-stable": "npm run build && npm publish"
+  },
+  "keywords": [
+    "smashsend",
+    "email",
+    "api",
+    "sdk",
+    "node",
+    "typescript"
+  ],
+  "author": "SMASHSEND",
+  "license": "MIT",
+  "homepage": "https://smashsend.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smashsend/smashsend-node.git"
+  },
+  "bugs": {
+    "url": "https://github.com/smashsend/smashsend-node/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.29",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "jest": "^29.7.0",
+    "prettier": "^3.2.5",
+    "semantic-release": "^23.0.2",
+    "ts-jest": "^29.1.2"
+  }
+}
