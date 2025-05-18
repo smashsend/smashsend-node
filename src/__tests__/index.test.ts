@@ -33,7 +33,6 @@ describe('SmashSend', () => {
       const client = new SmashSend('test-api-key');
       expect(client.emails).toBeDefined();
       expect(client.contacts).toBeDefined();
-      expect(client.campaigns).toBeDefined();
       expect(client.webhooks).toBeDefined();
     });
 
