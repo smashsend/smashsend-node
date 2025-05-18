@@ -143,8 +143,14 @@ export class HttpClient {
     } = options;
 
     const url = this.createUrl(path, params);
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+    // Create a timeout promise instead of using AbortController for timeout
+    let timeoutId: NodeJS.Timeout | undefined;
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timeoutId = setTimeout(() => {
+        reject(new TimeoutError(`Request timed out after ${timeout}ms`, { code: 'timeout' }));
+      }, timeout);
+    });
 
     try {
       const requestHeaders = {
@@ -155,7 +161,7 @@ export class HttpClient {
       const requestOptions: RequestInit = {
         method,
         headers: requestHeaders,
-        signal: controller.signal,
+        // Remove signal from RequestInit
       };
 
       // Add body for non-GET requests
@@ -170,8 +176,15 @@ export class HttpClient {
         if (data) console.log('[SMASHSEND] Body:', JSON.stringify(data, null, 2));
       }
 
-      const response = await fetch(url, requestOptions);
-      clearTimeout(timeoutId);
+      // Use Promise.race to implement timeout
+      const response = (await Promise.race([
+        fetch(url, requestOptions),
+        timeoutPromise,
+      ])) as Response;
+
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
 
       // Extract request ID from headers
       const requestId = response.headers.get('x-request-id');
@@ -290,18 +303,18 @@ export class HttpClient {
 
       return responseData;
     } catch (error: any) {
-      clearTimeout(timeoutId);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
 
       // Re-throw SmashSendError instances
       if (error instanceof SmashSendError) {
         throw error;
       }
 
-      // Handle abort errors (timeouts)
-      if (error.name === 'AbortError') {
-        throw new TimeoutError(`Request timed out after ${timeout}ms`, {
-          code: 'timeout',
-        });
+      // Handle timeout errors from our Promise.race
+      if (error instanceof TimeoutError) {
+        throw error;
       }
 
       // Handle network errors
