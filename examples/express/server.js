@@ -1,12 +1,12 @@
 /**
- * Example Express.js server integrating SMASHSEND SDK
+ * Example Express.js server integrating SmashSend SDK
  * This example shows how to integrate the SDK into an Express application
  * for sending transactional emails via API endpoints.
  */
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const { SMASHSEND } = require('@smashsend/node');
+const { SmashSend } = require('@smashsend/node');
 
 // Initialize Express app
 const app = express();
@@ -15,9 +15,9 @@ const port = process.env.PORT || 3000;
 // Configure Express to parse JSON bodies
 app.use(bodyParser.json());
 
-// Initialize SMASHSEND client with your API key
+// Initialize SmashSend client with your API key
 // In production, use environment variables for sensitive data
-const smashsend = new SMASHSEND(process.env.SMASHSEND_API_KEY || 'your-api-key');
+const smashsend = new SmashSend(process.env.SMASHSEND_API_KEY || 'your-api-key');
 
 // Enable debug mode during development
 if (process.env.NODE_ENV !== 'production') {
@@ -110,5 +110,5 @@ app.post('/api/subscribe', async (req, res) => {
 
 // Start the server
 app.listen(port, () => {
-  console.log(`SMASHSEND example server listening at http://localhost:${port}`);
+  console.log(`SmashSend example server listening at http://localhost:${port}`);
 });

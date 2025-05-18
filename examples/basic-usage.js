@@ -1,7 +1,7 @@
-const { SMASHSEND } = require('@smashsend/node');
+const { SmashSend } = require('@smashsend/node');
 
 // Create a client instance
-const smashsend = new SMASHSEND('your-api-key');
+const smashsend = new SmashSend('your-api-key');
 
 // Example: Send an email
 async function sendEmail() {
@@ -23,53 +23,43 @@ async function sendEmail() {
 // Example: Create a contact
 async function createContact() {
   try {
-    const contact = await smashsend.contacts.create({
+    const response = await smashsend.contacts.create({
       email: 'john@example.com',
-      firstName: 'John',
-      lastName: 'Doe',
-      custom: {
+      name: 'John Doe',
+      properties: {
         company: 'SMASHSEND',
         role: 'Developer',
       },
       tags: ['developer', 'node-sdk'],
     });
 
-    console.log('Contact created!', contact.id);
+    console.log('Contact created!', response.contact.id);
   } catch (error) {
     console.error('Error creating contact:', error.message);
-  }
-}
-
-// Example: Create a campaign
-async function createCampaign() {
-  try {
-    const campaign = await smashsend.campaigns.create({
-      name: 'My First Campaign',
-      subject: 'Welcome to SMASHSEND',
-      content: '<h1>Welcome!</h1><p>Thanks for joining SMASHSEND.</p>',
-      senderEmail: 'marketing@example.com',
-      senderName: 'Marketing Team',
-      listIds: ['list-id-1', 'list-id-2'],
-    });
-
-    console.log('Campaign created!', campaign.id);
-  } catch (error) {
-    console.error('Error creating campaign:', error.message);
   }
 }
 
 // Example: Set up a webhook
 async function createWebhook() {
   try {
-    const webhook = await smashsend.webhooks.create({
+    const response = await smashsend.webhooks.create({
       url: 'https://example.com/webhooks/smashsend',
       events: ['email.sent', 'email.delivered', 'email.opened'],
       description: 'Track email events',
     });
 
-    console.log('Webhook created!', webhook.id);
+    console.log('Webhook created!', response.webhook.id);
+
+    // Verify a webhook signature
+    const isValid = smashsend.webhooks.verifySignature(
+      '{"event":"email.sent","email":"test@example.com"}',
+      'abc123signature',
+      'webhook-secret'
+    );
+
+    console.log('Signature verification:', isValid ? 'valid' : 'invalid');
   } catch (error) {
-    console.error('Error creating webhook:', error.message);
+    console.error('Error with webhook:', error.message);
   }
 }
 
@@ -77,6 +67,5 @@ async function createWebhook() {
 (async () => {
   await sendEmail();
   await createContact();
-  await createCampaign();
   await createWebhook();
 })();

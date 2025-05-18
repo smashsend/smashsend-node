@@ -1,4 +1,4 @@
-export class SMASHSENDError extends Error {
+export class SmashSendError extends Error {
   public readonly statusCode?: number;
   public readonly code: string;
   public readonly requestId?: string;
@@ -14,7 +14,7 @@ export class SMASHSENDError extends Error {
     }
   ) {
     super(message);
-    this.name = 'SMASHSENDError';
+    this.name = 'SmashSendError';
     this.code = options.code;
     this.statusCode = options.statusCode;
     this.requestId = options.requestId;
@@ -24,12 +24,12 @@ export class SMASHSENDError extends Error {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ((Error as any).captureStackTrace) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (Error as any).captureStackTrace(this, SMASHSENDError);
+      (Error as any).captureStackTrace(this, SmashSendError);
     }
   }
 }
 
-export class APIError extends SMASHSENDError {
+export class APIError extends SmashSendError {
   constructor(
     message: string,
     options: {
@@ -44,7 +44,7 @@ export class APIError extends SMASHSENDError {
   }
 }
 
-export class AuthenticationError extends SMASHSENDError {
+export class AuthenticationError extends SmashSendError {
   constructor(
     message: string,
     options: {
@@ -63,7 +63,7 @@ export class AuthenticationError extends SMASHSENDError {
   }
 }
 
-export class RateLimitError extends SMASHSENDError {
+export class RateLimitError extends SmashSendError {
   constructor(
     message: string,
     options: {
@@ -82,7 +82,7 @@ export class RateLimitError extends SMASHSENDError {
   }
 }
 
-export class NetworkError extends SMASHSENDError {
+export class NetworkError extends SmashSendError {
   constructor(
     message: string,
     options: {
@@ -100,7 +100,7 @@ export class NetworkError extends SMASHSENDError {
   }
 }
 
-export class TimeoutError extends SMASHSENDError {
+export class TimeoutError extends SmashSendError {
   constructor(
     message: string,
     options: {

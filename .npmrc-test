@@ -1,0 +1,3 @@
+//registry.npmjs.org/:_authToken=YOUR_NPM_TOKEN_HERE
+registry=https://registry.npmjs.org/
+always-auth=true 

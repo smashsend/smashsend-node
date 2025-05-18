@@ -13,8 +13,8 @@ export class Contacts {
    * @param options The contact creation options
    * @returns The created contact
    */
-  async create(options: ContactCreateOptions): Promise<Contact> {
-    return this.httpClient.post<Contact>('/contacts', options);
+  async create(options: ContactCreateOptions): Promise<{ contact: Contact }> {
+    return this.httpClient.post<{ contact: Contact }>('/contacts', options);
   }
 
   /**
@@ -22,8 +22,8 @@ export class Contacts {
    * @param id The contact ID
    * @returns The contact details
    */
-  async get(id: string): Promise<Contact> {
-    return this.httpClient.get<Contact>(`/contacts/${id}`);
+  async get(id: string): Promise<{ contact: Contact }> {
+    return this.httpClient.get<{ contact: Contact }>(`/contacts/${id}`);
   }
 
   /**
@@ -32,92 +32,131 @@ export class Contacts {
    * @param options The contact update options
    * @returns The updated contact
    */
-  async update(id: string, options: Partial<ContactCreateOptions>): Promise<Contact> {
-    return this.httpClient.patch<Contact>(`/contacts/${id}`, options);
+  async update(id: string, options: Partial<ContactCreateOptions>): Promise<{ contact: Contact }> {
+    return this.httpClient.put<{ contact: Contact }>(`/contacts/${id}`, options);
   }
 
   /**
    * Delete a contact
    * @param id The contact ID
-   * @returns Success status
+   * @returns Deletion status
    */
-  async delete(id: string): Promise<{ success: boolean }> {
-    return this.httpClient.delete<{ success: boolean }>(`/contacts/${id}`);
+  async delete(id: string): Promise<{ deleted: boolean }> {
+    return this.httpClient.delete<{ deleted: boolean }>(`/contacts/${id}`);
   }
 
   /**
    * List contacts
    * @param params Optional parameters for filtering and pagination
-   * @returns A list of contacts
+   * @returns A list of contacts with pagination info
    */
-  async list(params?: {
-    limit?: number;
-    offset?: number;
-    email?: string;
-    tag?: string;
-    listId?: string;
-  }): Promise<{
-    data: Contact[];
-    total: number;
-    limit: number;
-    offset: number;
-  }> {
-    return this.httpClient.get<{
-      data: Contact[];
+  async list(params?: { limit?: number; offset?: number }): Promise<{
+    contacts: Contact[];
+    pagination: {
       total: number;
       limit: number;
       offset: number;
+    };
+  }> {
+    return this.httpClient.get<{
+      contacts: Contact[];
+      pagination: {
+        total: number;
+        limit: number;
+        offset: number;
+      };
     }>('/contacts', { params });
   }
 
   /**
-   * Add a contact to a list
-   * @param contactId The contact ID
-   * @param listId The list ID
-   * @returns Success status
+   * List all contact properties
+   * @returns A list of contact properties
    */
-  async addToList(contactId: string, listId: string): Promise<{ success: boolean }> {
-    return this.httpClient.post<{ success: boolean }>(
-      `/contacts/${contactId}/lists`,
-      { listId }
-    );
+  async listProperties(): Promise<{
+    properties: Array<{
+      id: string;
+      name: string;
+      label: string;
+      type: string;
+      createdAt: string;
+      description?: string;
+    }>;
+  }> {
+    return this.httpClient.get<{
+      properties: Array<{
+        id: string;
+        name: string;
+        label: string;
+        type: string;
+        createdAt: string;
+        description?: string;
+      }>;
+    }>('/contact-properties');
   }
 
   /**
-   * Remove a contact from a list
-   * @param contactId The contact ID
-   * @param listId The list ID
-   * @returns Success status
+   * Create a new contact property
+   * @param options The property creation options
+   * @returns The created property
    */
-  async removeFromList(contactId: string, listId: string): Promise<{ success: boolean }> {
-    return this.httpClient.delete<{ success: boolean }>(
-      `/contacts/${contactId}/lists/${listId}`
-    );
+  async createProperty(options: {
+    name: string;
+    label: string;
+    type: string;
+    description?: string;
+  }): Promise<{
+    property: {
+      id: string;
+      name: string;
+      label: string;
+      type: string;
+      description?: string;
+      createdAt: string;
+    };
+  }> {
+    return this.httpClient.post<{
+      property: {
+        id: string;
+        name: string;
+        label: string;
+        type: string;
+        description?: string;
+        createdAt: string;
+      };
+    }>('/contact-properties', options);
   }
 
   /**
-   * Add tags to a contact
-   * @param contactId The contact ID
-   * @param tags Array of tags to add
-   * @returns The updated contact
+   * Update a contact property
+   * @param id The property ID
+   * @param options The property update options
+   * @returns The updated property
    */
-  async addTags(contactId: string, tags: string[]): Promise<Contact> {
-    return this.httpClient.post<Contact>(
-      `/contacts/${contactId}/tags`,
-      { tags }
-    );
+  async updateProperty(
+    id: string,
+    options: {
+      label?: string;
+      description?: string;
+    }
+  ): Promise<{
+    property: {
+      id: string;
+      name: string;
+      label: string;
+      type: string;
+      description?: string;
+      createdAt: string;
+    };
+  }> {
+    return this.httpClient.put<{
+      property: {
+        id: string;
+        name: string;
+        label: string;
+        type: string;
+        description?: string;
+        createdAt: string;
+      };
+    }>(`/contact-properties/${id}`, options);
   }
-
-  /**
-   * Remove tags from a contact
-   * @param contactId The contact ID
-   * @param tags Array of tags to remove
-   * @returns The updated contact
-   */
-  async removeTags(contactId: string, tags: string[]): Promise<Contact> {
-    return this.httpClient.delete<Contact>(
-      `/contacts/${contactId}/tags`,
-      { data: { tags } }
-    );
-  }
-} 
+}

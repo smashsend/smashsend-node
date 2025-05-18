@@ -1,11 +1,10 @@
 import { Emails } from './api/emails';
 import { Contacts } from './api/contacts';
-import { Campaigns } from './api/campaigns';
 import { Webhooks } from './api/webhooks';
 import { HttpClient } from './utils/http-client';
-import { SMASHSENDClientOptions } from './interfaces/types';
+import { SmashSendClientOptions } from './interfaces/types';
 import {
-  SMASHSENDError,
+  SmashSendError,
   APIError,
   AuthenticationError,
   NetworkError,
@@ -13,7 +12,7 @@ import {
   TimeoutError,
 } from './errors';
 
-export class SMASHSEND {
+export class SmashSend {
   /**
    * The Emails API resource
    */
@@ -25,11 +24,6 @@ export class SMASHSEND {
   public readonly contacts: Contacts;
 
   /**
-   * The Campaigns API resource
-   */
-  public readonly campaigns: Campaigns;
-
-  /**
    * The Webhooks API resource
    */
   public readonly webhooks: Webhooks;
@@ -37,12 +31,12 @@ export class SMASHSEND {
   private httpClient: HttpClient;
 
   /**
-   * Create a new SMASHSEND client instance
+   * Create a new SmashSend client instance
    *
-   * @param apiKey Your SMASHSEND API key
+   * @param apiKey Your SmashSend API key
    * @param options Configuration options for the client
    */
-  constructor(apiKey: string, options: SMASHSENDClientOptions = {}) {
+  constructor(apiKey: string, options: SmashSendClientOptions = {}) {
     if (!apiKey) {
       throw new AuthenticationError('API key is required', {
         code: 'api_key_required',
@@ -54,22 +48,22 @@ export class SMASHSEND {
       apiKey,
       options.baseUrl || 'https://api.smashsend.com',
       options.maxRetries || 3,
-      options.timeout || 30000
+      options.timeout || 30000,
+      options.apiVersion || 'v1'
     );
 
     // Initialize API resources
     this.emails = new Emails(this.httpClient);
     this.contacts = new Contacts(this.httpClient);
-    this.campaigns = new Campaigns(this.httpClient);
     this.webhooks = new Webhooks(this.httpClient);
   }
 
   /**
    * Set custom headers to be included with every request
    * @param headers Record of header names and values
-   * @returns The SMASHSEND instance for chaining
+   * @returns The SmashSend instance for chaining
    */
-  setHeaders(headers: Record<string, string>): SMASHSEND {
+  setHeaders(headers: Record<string, string>): SmashSend {
     this.httpClient.setHeaders(headers);
     return this;
   }
@@ -78,9 +72,9 @@ export class SMASHSEND {
    * Set a specific custom header
    * @param name Header name
    * @param value Header value
-   * @returns The SMASHSEND instance for chaining
+   * @returns The SmashSend instance for chaining
    */
-  setHeader(name: string, value: string): SMASHSEND {
+  setHeader(name: string, value: string): SmashSend {
     this.httpClient.setHeader(name, value);
     return this;
   }
@@ -89,31 +83,36 @@ export class SMASHSEND {
    * Enable or disable debug mode
    * When enabled, requests and responses will be logged to console
    * @param enabled Whether debug mode should be enabled
-   * @returns The SMASHSEND instance for chaining
+   * @returns The SmashSend instance for chaining
    */
-  setDebugMode(enabled: boolean): SMASHSEND {
+  setDebugMode(enabled: boolean): SmashSend {
     this.httpClient.setDebugMode(enabled);
+    return this;
+  }
+
+  /**
+   * Set the API version to use for requests
+   * @param version API version string (e.g., 'v1', 'v2', etc.)
+   * @returns The SmashSend instance for chaining
+   */
+  setApiVersion(version: string): SmashSend {
+    this.httpClient.setApiVersion(version);
     return this;
   }
 }
 
-// Add a named export using PascalCase
-export const SmashSend = SMASHSEND;
-
 // Export types and errors
-export type { SMASHSENDClientOptions } from './interfaces/types';
+export type { SmashSendClientOptions } from './interfaces/types';
 export type {
   EmailSendOptions,
   EmailSendResponse,
   ContactCreateOptions,
   Contact,
-  CampaignCreateOptions,
-  Campaign,
   WebhookCreateOptions,
   Webhook,
 } from './interfaces/types';
 export {
-  SMASHSENDError,
+  SmashSendError,
   APIError,
   AuthenticationError,
   NetworkError,

@@ -1,12 +1,13 @@
 // Common interfaces
-export interface SMASHSENDClientOptions {
+export interface SmashSendClientOptions {
   baseUrl?: string;
   maxRetries?: number;
   timeout?: number;
   fetch?: any;
+  apiVersion?: string;
 }
 
-export interface SMASHSENDError {
+export interface SmashSendError {
   code: string;
   message: string;
   requestId?: string;
@@ -55,60 +56,18 @@ export interface EmailSendResponse {
 // Contact interfaces
 export interface ContactCreateOptions {
   email: string;
-  firstName?: string;
-  lastName?: string;
-  custom?: Record<string, any>;
+  name?: string;
   tags?: string[];
-  listIds?: string[];
+  properties?: Record<string, any>;
 }
 
 export interface Contact {
   id: string;
   email: string;
-  firstName?: string;
-  lastName?: string;
-  custom?: Record<string, any>;
+  name?: string;
+  createdAt: string;
   tags?: string[];
-  listIds?: string[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-// Campaign interfaces
-export interface CampaignCreateOptions {
-  name: string;
-  subject: string;
-  content: string;
-  senderEmail?: string;
-  senderName?: string;
-  listIds?: string[];
-  segmentIds?: string[];
-  scheduledAt?: string | Date;
-}
-
-export interface Campaign {
-  id: string;
-  name: string;
-  subject: string;
-  content: string;
-  senderEmail: string;
-  senderName?: string;
-  status: 'draft' | 'scheduled' | 'sending' | 'sent' | 'canceled';
-  listIds: string[];
-  segmentIds?: string[];
-  scheduledAt?: string;
-  sentAt?: string;
-  createdAt: string;
-  updatedAt: string;
-  stats?: {
-    sent: number;
-    delivered: number;
-    opened: number;
-    clicked: number;
-    bounced: number;
-    complained: number;
-    unsubscribed: number;
-  };
+  properties?: Record<string, any>;
 }
 
 // Webhook interfaces
@@ -126,7 +85,5 @@ export interface Webhook {
   events: string[];
   description?: string;
   enabled: boolean;
-  secret?: string;
   createdAt: string;
-  updatedAt: string;
 }

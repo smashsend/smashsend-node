@@ -1,7 +1,7 @@
-import { SMASHSEND, SMASHSENDError } from '@smashsend/node';
+import { SmashSend, SmashSendError } from '@smashsend/node';
 
 // Create a client instance
-const smashsend = new SMASHSEND('your-api-key', {
+const smashsend = new SmashSend('your-api-key', {
   maxRetries: 3,
   timeout: 60000,
 });
@@ -21,9 +21,9 @@ async function sendEmail() {
         },
         'recipient2@example.com',
       ],
-      subject: 'Hello from SMASHSEND',
-      text: 'This is a test email from the SMASHSEND Node.js SDK.',
-      html: '<p>This is a test email from the <strong>SMASHSEND Node.js SDK</strong>.</p>',
+      subject: 'Hello from SmashSend',
+      text: 'This is a test email from the SmashSend Node.js SDK.',
+      html: '<p>This is a test email from the <strong>SmashSend Node.js SDK</strong>.</p>',
       attachments: [
         {
           filename: 'attachment.txt',
@@ -38,7 +38,7 @@ async function sendEmail() {
     console.log('Email ID:', email.id);
     console.log('Status:', email.statusCode);
   } catch (error) {
-    if (error instanceof SMASHSENDError) {
+    if (error instanceof SmashSendError) {
       console.error(`Error: ${error.message}`);
       console.error(`Status Code: ${error.statusCode}`);
       console.error(`Error Code: ${error.code}`);
@@ -53,37 +53,43 @@ async function sendEmail() {
 async function manageContacts() {
   try {
     // Create a contact
-    const contact = await smashsend.contacts.create({
+    const response = await smashsend.contacts.create({
       email: 'john.doe@example.com',
-      firstName: 'John',
-      lastName: 'Doe',
-      custom: {
-        company: 'SMASHSEND',
+      name: 'John Doe',
+      properties: {
+        company: 'SmashSend',
         role: 'Developer',
       },
       tags: ['developer', 'node-sdk'],
     });
-    console.log('Contact created:', contact.id);
+    console.log('Contact created:', response.contact.id);
 
     // Update the contact
-    const updatedContact = await smashsend.contacts.update(contact.id, {
-      firstName: 'Jonathan',
-      custom: {
-        ...contact.custom,
+    const updateResponse = await smashsend.contacts.update(response.contact.id, {
+      name: 'Jonathan Doe',
+      properties: {
+        company: 'SmashSend',
+        role: 'Senior Developer',
         department: 'Engineering',
       },
     });
-    console.log('Contact updated:', updatedContact.firstName);
+    console.log('Contact updated:', updateResponse.contact.name);
 
-    // Add contact to a list
-    await smashsend.contacts.addToList(contact.id, 'list-123');
-    console.log('Contact added to list');
+    // List contacts
+    const listResponse = await smashsend.contacts.list({ limit: 10, offset: 0 });
+    console.log(`Found ${listResponse.contacts.length} contacts`);
+    console.log('Total contacts:', listResponse.pagination.total);
 
-    // Add tags to contact
-    await smashsend.contacts.addTags(contact.id, ['vip', 'early-adopter']);
-    console.log('Tags added to contact');
+    // Create a contact property
+    const propertyResponse = await smashsend.contacts.createProperty({
+      name: 'industry',
+      label: 'Industry',
+      type: 'string',
+      description: 'The industry the contact works in',
+    });
+    console.log('Property created:', propertyResponse.property.id);
   } catch (error) {
-    if (error instanceof SMASHSENDError) {
+    if (error instanceof SmashSendError) {
       console.error(`Error: ${error.message}`);
       console.error(`Status Code: ${error.statusCode}`);
       console.error(`Error Code: ${error.code}`);

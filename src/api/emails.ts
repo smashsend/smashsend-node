@@ -67,11 +67,14 @@ export class Emails {
 
   // Helper method to normalize addresses to array format
   private normalizeAddresses(
-    addresses: string | { email: string; name?: string } | Array<string | { email: string; name?: string }>
+    addresses:
+      | string
+      | { email: string; name?: string }
+      | Array<string | { email: string; name?: string }>
   ): Array<string | { email: string; name?: string }> {
     if (typeof addresses === 'string' || (typeof addresses === 'object' && 'email' in addresses)) {
       return [addresses];
     }
     return addresses;
   }
-} 
+}

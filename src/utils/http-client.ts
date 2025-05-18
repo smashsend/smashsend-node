@@ -4,7 +4,7 @@ import {
   NetworkError,
   RateLimitError,
   TimeoutError,
-  SMASHSENDError,
+  SmashSendError,
 } from '../errors';
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -23,6 +23,7 @@ export interface RequestOptions {
 export class HttpClient {
   private apiKey: string;
   private baseUrl: string;
+  private apiVersion: string;
   private defaultMaxRetries: number;
   private defaultTimeout: number;
   private customHeaders: Record<string, string> = {};
@@ -32,12 +33,14 @@ export class HttpClient {
     apiKey: string,
     baseUrl: string = 'https://api.smashsend.com',
     maxRetries: number = 3,
-    timeout: number = 30000
+    timeout: number = 30000,
+    apiVersion: string = 'v1'
   ) {
     this.apiKey = apiKey;
     this.baseUrl = baseUrl;
     this.defaultMaxRetries = maxRetries;
     this.defaultTimeout = timeout;
+    this.apiVersion = apiVersion;
   }
 
   /**
@@ -72,8 +75,23 @@ export class HttpClient {
     return this;
   }
 
+  /**
+   * Set the API version to use for requests
+   * @param version API version string (e.g., 'v1', 'v2', etc.)
+   * @returns The HttpClient instance for chaining
+   */
+  setApiVersion(version: string): HttpClient {
+    this.apiVersion = version;
+    return this;
+  }
+
   private createUrl(path: string, params?: Record<string, any>): string {
-    const url = new URL(path, this.baseUrl);
+    // Add version prefix to the path if it doesn't already have it
+    const versionedPath = path.startsWith('/')
+      ? `/${this.apiVersion}${path}`
+      : `/${this.apiVersion}/${path}`;
+
+    const url = new URL(versionedPath, this.baseUrl);
 
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
@@ -267,7 +285,7 @@ export class HttpClient {
       }
 
       // If it's already a SMASHSEND error, just rethrow it
-      if (error instanceof SMASHSENDError) {
+      if (error instanceof SmashSendError) {
         throw error;
       }
 

@@ -1,5 +1,6 @@
 import { HttpClient } from '../utils/http-client';
 import { Webhook, WebhookCreateOptions } from '../interfaces/types';
+import * as crypto from 'crypto';
 
 export class Webhooks {
   private httpClient: HttpClient;
@@ -13,8 +14,8 @@ export class Webhooks {
    * @param options The webhook creation options
    * @returns The created webhook
    */
-  async create(options: WebhookCreateOptions): Promise<Webhook> {
-    return this.httpClient.post<Webhook>('/webhooks', options);
+  async create(options: WebhookCreateOptions): Promise<{ webhook: Webhook }> {
+    return this.httpClient.post<{ webhook: Webhook }>('/webhooks', options);
   }
 
   /**
@@ -22,8 +23,34 @@ export class Webhooks {
    * @param id The webhook ID
    * @returns The webhook details
    */
-  async get(id: string): Promise<Webhook> {
-    return this.httpClient.get<Webhook>(`/webhooks/${id}`);
+  async get(id: string): Promise<{ webhook: Webhook }> {
+    return this.httpClient.get<{ webhook: Webhook }>(`/webhooks/${id}`);
+  }
+
+  /**
+   * List webhooks
+   * @returns A list of webhooks
+   */
+  async list(): Promise<{
+    webhooks: Array<{
+      id: string;
+      url: string;
+      events: string[];
+      enabled: boolean;
+      description?: string;
+      createdAt: string;
+    }>;
+  }> {
+    return this.httpClient.get<{
+      webhooks: Array<{
+        id: string;
+        url: string;
+        events: string[];
+        enabled: boolean;
+        description?: string;
+        createdAt: string;
+      }>;
+    }>('/webhooks');
   }
 
   /**
@@ -32,8 +59,8 @@ export class Webhooks {
    * @param options The webhook update options
    * @returns The updated webhook
    */
-  async update(id: string, options: Partial<WebhookCreateOptions>): Promise<Webhook> {
-    return this.httpClient.patch<Webhook>(`/webhooks/${id}`, options);
+  async update(id: string, options: Partial<WebhookCreateOptions>): Promise<{ webhook: Webhook }> {
+    return this.httpClient.put<{ webhook: Webhook }>(`/webhooks/${id}`, options);
   }
 
   /**
@@ -41,61 +68,25 @@ export class Webhooks {
    * @param id The webhook ID
    * @returns Success status
    */
-  async delete(id: string): Promise<{ success: boolean }> {
-    return this.httpClient.delete<{ success: boolean }>(`/webhooks/${id}`);
+  async delete(id: string): Promise<{ deleted: boolean }> {
+    return this.httpClient.delete<{ deleted: boolean }>(`/webhooks/${id}`);
   }
 
   /**
-   * List webhooks
-   * @param params Optional parameters for filtering and pagination
-   * @returns A list of webhooks
+   * Verify webhook signature
+   * @param payload The raw webhook payload (request body)
+   * @param signature The signature from the X-SMASHSEND-SIGNATURE header
+   * @param secret The webhook secret
+   * @returns Whether the signature is valid
    */
-  async list(params?: {
-    limit?: number;
-    offset?: number;
-    enabled?: boolean;
-    event?: string;
-  }): Promise<{
-    data: Webhook[];
-    total: number;
-    limit: number;
-    offset: number;
-  }> {
-    return this.httpClient.get<{
-      data: Webhook[];
-      total: number;
-      limit: number;
-      offset: number;
-    }>('/webhooks', { params });
+  verifySignature(payload: string, signature: string, secret: string): boolean {
+    // Node.js crypto implementation
+    try {
+      const hmac = crypto.createHmac('sha256', secret);
+      const digest = hmac.update(payload).digest('hex');
+      return crypto.timingSafeEqual(Buffer.from(digest), Buffer.from(signature));
+    } catch (error) {
+      return false;
+    }
   }
-
-  /**
-   * Enable a webhook
-   * @param id The webhook ID
-   * @returns The updated webhook
-   */
-  async enable(id: string): Promise<Webhook> {
-    return this.httpClient.post<Webhook>(`/webhooks/${id}/enable`, {});
-  }
-
-  /**
-   * Disable a webhook
-   * @param id The webhook ID
-   * @returns The updated webhook
-   */
-  async disable(id: string): Promise<Webhook> {
-    return this.httpClient.post<Webhook>(`/webhooks/${id}/disable`, {});
-  }
-
-  /**
-   * Rotate the secret for a webhook
-   * @param id The webhook ID
-   * @returns The updated webhook with new secret
-   */
-  async rotateSecret(id: string): Promise<Webhook & { secret: string }> {
-    return this.httpClient.post<Webhook & { secret: string }>(
-      `/webhooks/${id}/rotate-secret`,
-      {}
-    );
-  }
-} 
+}

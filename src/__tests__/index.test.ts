@@ -1,4 +1,4 @@
-import { SMASHSEND, AuthenticationError } from '..';
+import { SmashSend, AuthenticationError } from '..';
 
 // Mock fetch
 global.fetch = jest.fn();
@@ -7,7 +7,7 @@ global.AbortController = jest.fn(() => ({
   signal: {},
 })) as any;
 
-describe('SMASHSEND', () => {
+describe('SmashSend', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (fetch as jest.Mock).mockResolvedValue({
@@ -26,11 +26,11 @@ describe('SMASHSEND', () => {
 
   describe('constructor', () => {
     it('should throw an error if API key is not provided', () => {
-      expect(() => new SMASHSEND('')).toThrow(AuthenticationError);
+      expect(() => new SmashSend('')).toThrow(AuthenticationError);
     });
 
     it('should initialize with default options', () => {
-      const client = new SMASHSEND('test-api-key');
+      const client = new SmashSend('test-api-key');
       expect(client.emails).toBeDefined();
       expect(client.contacts).toBeDefined();
       expect(client.campaigns).toBeDefined();
@@ -38,7 +38,7 @@ describe('SMASHSEND', () => {
     });
 
     it('should initialize with custom options', () => {
-      const client = new SMASHSEND('test-api-key', {
+      const client = new SmashSend('test-api-key', {
         baseUrl: 'https://custom-api.smashsend.com',
         maxRetries: 5,
         timeout: 60000,
