@@ -19,9 +19,9 @@ pnpm add @smashsend/node
 ### Initialize the client
 
 ```typescript
-import { SMASHSEND } from '@smashsend/node';
+import { SmashSend } from '@smashsend/node';
 
-const smashsend = new SMASHSEND('your-api-key');
+const smashsend = new SmashSend('your-api-key');
 ```
 
 ### Send an email
@@ -47,17 +47,6 @@ const contact = await smashsend.contacts.create({
     company: 'SMASHSEND',
     role: 'Developer',
   },
-});
-```
-
-### Create a campaign
-
-```typescript
-const campaign = await smashsend.campaigns.create({
-  name: 'My Campaign',
-  subject: 'Welcome to SMASHSEND',
-  content: '<h1>Welcome!</h1><p>Thanks for joining.</p>',
-  listIds: ['list-id-1', 'list-id-2'],
 });
 ```
 
@@ -95,7 +84,7 @@ The SDK automatically retries failed requests with exponential backoff:
 
 ```typescript
 // Configure more aggressive retries
-const smashsend = new SMASHSEND('your-api-key', {
+const smashsend = new SmashSend('your-api-key', {
   maxRetries: 5, // Default is 3
   timeout: 60000, // Default is 30000 (30 seconds)
 });
@@ -106,16 +95,16 @@ const smashsend = new SMASHSEND('your-api-key', {
 The SDK uses a custom error handling system to make it easier to handle errors:
 
 ```typescript
-import { SMASHSEND, SMASHSENDError } from '@smashsend/node';
+import { SmashSend, SmashSendError } from '@smashsend/node';
 
-const smashsend = new SMASHSEND('your-api-key');
+const smashsend = new SmashSend('your-api-key');
 
 try {
   const response = await smashsend.emails.send({
     // email details
   });
 } catch (error) {
-  if (error instanceof SMASHSENDError) {
+  if (error instanceof SmashSendError) {
     console.error(`Error: ${error.message}`);
     console.error(`Status: ${error.statusCode}`);
     console.error(`Request ID: ${error.requestId}`);
