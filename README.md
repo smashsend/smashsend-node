@@ -32,7 +32,7 @@ const response = await smashsend.emails.send({
   to: 'recipient@example.com',
   subject: 'Hello from SMASHSEND',
   text: 'This is a test email from the SMASHSEND Node.js SDK.',
-  html: '<p>This is a test email from the <strong>SMASHSEND Node.js SDK</strong>.</p>',
+  html: '<p>This is a test email from the <strong>SMASHSEND Node.js SDK</strong>...</p>',
 });
 ```
 
