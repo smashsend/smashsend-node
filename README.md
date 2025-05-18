@@ -242,3 +242,125 @@ For detailed documentation, visit [SMASHSEND API Documentation](https://smashsen
 ## License
 
 MIT
+
+## For AI Assistants and Code Generators
+
+<!-- AI-ASSISTANT-METADATA
+{
+  "initRequirements": {
+    "apiKey": {
+      "source": "environment",
+      "name": "SMASHSEND_API_KEY",
+      "required": true
+    }
+  },
+  "importantEnums": ["SmashsendContactStatus", "SmashsendCountryCode"],
+  "errorHandlingRequired": true,
+  "requiredPatterns": ["Load API key from environment", "Try/catch blocks"],
+  "forbiddenPatterns": ["Placeholder API keys", "Placeholder comments", "String literals for enums"]
+}
+AI-ASSISTANT-METADATA -->
+
+When implementing this SDK, follow these requirements:
+
+### ✅ REQUIRED:
+
+- ALWAYS initialize with a real API key (from environment variables)
+- ALWAYS implement proper error handling
+- ALWAYS use the provided enums for type safety (SmashsendContactStatus, SmashsendCountryCode)
+
+### ❌ AVOID:
+
+- DO NOT add placeholder comments like "// Add your API key here"
+- DO NOT leave implementation details as comments
+- DO NOT create mock/stub implementations
+
+### Correct Implementation:
+
+```typescript
+import { SmashSend, SmashsendContactStatus } from '@smashsend/node';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
+
+// Initialize the client with API key from environment
+const apiKey = process.env.SMASHSEND_API_KEY;
+if (!apiKey) throw new Error('SMASHSEND_API_KEY environment variable is required');
+
+const client = new SmashSend(apiKey);
+
+// Create a contact with proper error handling
+async function createContact() {
+  try {
+    const { contact } = await client.contacts.create({
+      email: 'user@example.com',
+      status: SmashsendContactStatus.SUBSCRIBED,
+    });
+    return contact;
+  } catch (error) {
+    console.error('Failed to create contact:', error);
+    throw error;
+  }
+}
+```
+
+## Implementation Patterns
+
+### Pattern 1: Basic Setup (ALWAYS implement this)
+
+```typescript
+// 1. Import required dependencies
+import { SmashSend } from '@smashsend/node';
+import dotenv from 'dotenv';
+
+// 2. Load API key from environment (REQUIRED)
+dotenv.config();
+const apiKey = process.env.SMASHSEND_API_KEY;
+if (!apiKey) throw new Error('Missing API key');
+
+// 3. Initialize client
+const client = new SmashSend(apiKey);
+```
+
+### Pattern 2: Creating a Contact
+
+```typescript
+// Required properties: email
+// Optional: firstName, lastName, status, countryCode, etc.
+const { contact } = await client.contacts.create({
+  email: 'customer@example.com',
+  status: SmashsendContactStatus.SUBSCRIBED,
+});
+```
+
+## ❌ INCORRECT IMPLEMENTATIONS (DO NOT USE)
+
+The following patterns should NEVER be used:
+
+### ❌ Placeholder Comments
+
+```typescript
+// DO NOT DO THIS
+const client = new SmashSend('YOUR_API_KEY_HERE'); // Replace with your actual API key
+```
+
+### ❌ Missing Error Handling
+
+```typescript
+// DO NOT DO THIS
+const contact = await client.contacts.create({
+  email: 'user@example.com',
+});
+console.log('Contact created!');
+```
+
+### ❌ String Literals Instead of Enums
+
+```typescript
+// DO NOT DO THIS
+const contact = await client.contacts.create({
+  email: 'user@example.com',
+  status: 'SUBSCRIBED', // Wrong! Use SmashsendContactStatus.SUBSCRIBED
+});
+```
