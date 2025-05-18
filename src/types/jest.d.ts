@@ -1,5 +1,3 @@
-import { HttpClient } from '../utils/http-client';
-
 declare global {
   namespace jest {
     interface Matchers<R> {
@@ -14,4 +12,4 @@ declare global {
   }
 }
 
-export {}; 
+export {};
