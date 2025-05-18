@@ -14,14 +14,29 @@ yarn add @smashsend/node
 pnpm add @smashsend/node
 ```
 
-## Usage
+## Setup
 
-### Initialize the client
+First, you need to get an API key, which is available in the [SMASHSEND Dashboard](https://smashsend.com/).
 
 ```typescript
 import { SmashSend } from '@smashsend/node';
-
 const smashsend = new SmashSend('your-api-key');
+```
+
+## Usage
+
+### Create or update a contact
+
+```typescript
+const contact = await smashsend.contacts.create({
+  email: 'newcontact@example.com',
+  firstName: 'John',
+  lastName: 'Doe',
+  custom: {
+    company: 'SMASHSEND',
+    role: 'Developer',
+  },
+});
 ```
 
 ### Send an email
@@ -33,20 +48,6 @@ const response = await smashsend.emails.send({
   subject: 'Hello from SMASHSEND',
   text: 'This is a test email from the SMASHSEND Node.js SDK.',
   html: '<p>This is a test email from the <strong>SMASHSEND Node.js SDK</strong>...</p>',
-});
-```
-
-### Create a contact
-
-```typescript
-const contact = await smashsend.contacts.create({
-  email: 'newcontact@example.com',
-  firstName: 'John',
-  lastName: 'Doe',
-  custom: {
-    company: 'SMASHSEND',
-    role: 'Developer',
-  },
 });
 ```
 
@@ -72,10 +73,7 @@ smashsend.setHeader('X-Source', 'website');
 Enable debug mode to log requests and responses:
 
 ```typescript
-// Enable debug mode for detailed logging
 smashsend.setDebugMode(true);
-
-// The SDK will now output detailed logs of all API interactions
 ```
 
 ### Using with Next.js
