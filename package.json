@@ -26,7 +26,15 @@
     "prepublishOnly": "npm test && npm run lint",
     "semantic-release": "semantic-release",
     "publish-beta": "npm run build && npm publish --tag beta",
-    "publish-stable": "npm run build && npm publish"
+    "publish-stable": "npm run build && npm publish",
+    "release": "npm run clean && npm run lint && npm run test && npm run build && npm publish",
+    "release-beta": "npm run clean && npm run lint && npm run test && npm run build && npm publish --tag beta",
+    "release:patch": "npm version patch && npm run release",
+    "release:minor": "npm version minor && npm run release",
+    "release:major": "npm version major && npm run release",
+    "release:beta-patch": "npm version prepatch --preid=beta && npm run release-beta",
+    "release:beta-minor": "npm version preminor --preid=beta && npm run release-beta",
+    "release:beta-major": "npm version premajor --preid=beta && npm run release-beta"
   },
   "keywords": [
     "smashsend",
