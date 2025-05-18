@@ -14,7 +14,15 @@ export class Contacts {
    * @returns The created contact
    */
   async create(options: ContactCreateOptions): Promise<{ contact: Contact }> {
-    return this.httpClient.post<{ contact: Contact }>('/contacts', options);
+    const { customProperties, ...rest } = options;
+
+    return this.httpClient.post<{ contact: Contact }>('/contacts', {
+      // Transform the input format to the backend expected format
+      properties: {
+        ...rest,
+        ...(customProperties || {}),
+      },
+    });
   }
 
   /**
@@ -33,7 +41,17 @@ export class Contacts {
    * @returns The updated contact
    */
   async update(id: string, options: Partial<ContactCreateOptions>): Promise<{ contact: Contact }> {
-    return this.httpClient.put<{ contact: Contact }>(`/contacts/${id}`, options);
+    const { customProperties, ...rest } = options;
+
+    // Transform the input format to the backend expected format
+    const backendFormat: any = {
+      properties: {
+        ...rest,
+        ...(customProperties || {}),
+      },
+    };
+
+    return this.httpClient.put<{ contact: Contact }>(`/contacts/${id}`, backendFormat);
   }
 
   /**

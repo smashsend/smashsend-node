@@ -25,12 +25,12 @@ async function createContact() {
   try {
     const response = await smashsend.contacts.create({
       email: 'john@example.com',
-      name: 'John Doe',
-      properties: {
+      firstName: 'John',
+      lastName: 'Doe',
+      customProperties: {
         company: 'SMASHSEND',
         role: 'Developer',
       },
-      tags: ['developer', 'node-sdk'],
     });
 
     console.log('Contact created!', response.contact.id);

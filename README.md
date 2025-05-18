@@ -19,7 +19,7 @@ pnpm add @smashsend/node
 First, you need to get an API key, which is available in the [SMASHSEND Dashboard](https://smashsend.com/).
 
 ```typescript
-import { SmashSend } from '@smashsend/node';
+import { SmashSend, SmashsendContactStatus, SmashsendCountryCode } from '@smashsend/node';
 const smashsend = new SmashSend('your-api-key');
 ```
 
@@ -28,15 +28,23 @@ const smashsend = new SmashSend('your-api-key');
 ### Create or update a contact
 
 ```typescript
-const contact = await smashsend.contacts.create({
-  email: 'newcontact@example.com',
-  firstName: 'John',
-  lastName: 'Doe',
-  custom: {
-    company: 'SMASHSEND',
-    role: 'Developer',
-  },
+const { contact } = await smashsend.contacts.create({
+  email: 'newcontact@example.com', // required
+  firstName: 'John', // optional.
+  lastName: 'Doe', // optional.
+  phone: '+1234567890', // optional.
+  status: SmashsendContactStatus.SUBSCRIBED, // optional... defaults to SUBSCRIBED
+  countryCode: SmashsendCountryCode.US, // optional.
+  // Add custom properties not defined in the standard schema
+  // You should create them from the smashsend.com dashboard
+  customProperties: {},
 });
+
+// Access contact data
+console.log(contact.id);
+console.log(contact.properties.firstName); // John
+console.log(contact.properties.email); // newcontact@example.com
+console.log(contact.properties.company); // SMASHSEND
 ```
 
 ### Send an email
@@ -88,14 +96,16 @@ import { getSmashSendClient } from '@/lib/smashsend';
 
 export default async function ContactsPage() {
   const smashsend = getSmashSendClient();
-  const contacts = await smashsend.contacts.list();
+  const { contacts } = await smashsend.contacts.list();
 
   return (
     <div>
       <h1>Contacts</h1>
       <ul>
         {contacts.map(contact => (
-          <li key={contact.id}>{contact.email}</li>
+          <li key={contact.id}>
+            {contact.properties.firstName} {contact.properties.lastName} ({contact.properties.email})
+          </li>
         ))}
       </ul>
     </div>
@@ -107,7 +117,7 @@ export default async function ContactsPage() {
 
 ```typescript
 // app/api/contact/route.ts
-import { getSmashSendClient } from '@/lib/smashsend';
+import { getSmashSendClient, SmashsendContactStatus, SmashsendCountryCode } from '@/lib/smashsend';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
@@ -119,6 +129,9 @@ export async function POST(request: Request) {
       email: data.email,
       firstName: data.firstName,
       lastName: data.lastName,
+      status: SmashsendContactStatus.SUBSCRIBED,
+      countryCode: SmashsendCountryCode.US,
+      customProperties: data.customFields,
     });
 
     return NextResponse.json({ success: true, contact });
@@ -134,7 +147,7 @@ export async function POST(request: Request) {
 // app/actions.ts
 'use server';
 
-import { getSmashSendClient } from '@/lib/smashsend';
+import { getSmashSendClient, SmashsendContactStatus, SmashsendCountryCode } from '@/lib/smashsend';
 
 export async function createContact(data: FormData) {
   try {
@@ -143,6 +156,11 @@ export async function createContact(data: FormData) {
       email: data.get('email') as string,
       firstName: data.get('firstName') as string,
       lastName: data.get('lastName') as string,
+      status: SmashsendContactStatus.OPT_IN_PENDING,
+      countryCode: data.get('country')
+        ? SmashsendCountryCode[data.get('country') as string]
+        : undefined,
+      customProperties: {},
     });
 
     return { success: true, contact };
@@ -158,7 +176,7 @@ For easier usage in Next.js applications, create a utility file:
 
 ```typescript
 // lib/smashsend.ts
-import { SmashSend } from '@smashsend/node';
+import { SmashSend, SmashsendContactStatus, SmashsendCountryCode } from '@smashsend/node';
 
 let smashsendClient: SmashSend;
 
@@ -172,6 +190,9 @@ export function getSmashSendClient(apiKey?: string) {
   }
   return smashsendClient;
 }
+
+// Re-export types for convenience
+export { SmashsendContactStatus, SmashsendCountryCode };
 ```
 
 ### Retry Configuration

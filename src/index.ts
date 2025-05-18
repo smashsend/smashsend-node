@@ -110,7 +110,13 @@ export type {
   Contact,
   WebhookCreateOptions,
   Webhook,
+  EmailAddress,
+  EmailAttachment,
 } from './interfaces/types';
+
+// Export enums
+export { SmashsendContactStatus, SmashsendCountryCode } from './interfaces/types';
+
 export {
   SmashSendError,
   APIError,
