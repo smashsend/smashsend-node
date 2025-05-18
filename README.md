@@ -6,8 +6,10 @@ The official Node.js SDK for the SMASHSEND API.
 
 ```bash
 npm install @smashsend/node
+
 # or
 yarn add @smashsend/node
+
 # or
 pnpm add @smashsend/node
 ```
