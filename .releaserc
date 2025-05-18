@@ -10,11 +10,17 @@
       "@semantic-release/npm",
       {
         "npmPublish": true,
-        "pkgRoot": ".",
-        "registry": "https://registry.npmjs.org/"
+        "tarballDir": "dist"
       }
     ],
-    "@semantic-release/github",
+    [
+      "@semantic-release/github",
+      {
+        "assets": [
+          "dist/*.tgz"
+        ]
+      }
+    ],
     [
       "@semantic-release/git",
       {

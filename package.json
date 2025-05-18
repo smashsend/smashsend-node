@@ -47,7 +47,8 @@
     "url": "https://github.com/smashsend/smashsend-node/issues"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
     "node-fetch": "^3.3.2",
