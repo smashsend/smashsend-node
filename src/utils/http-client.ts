@@ -6,6 +6,8 @@ import {
   TimeoutError,
   SmashSendError,
 } from '../errors';
+import { VERSION } from '../constants';
+import fetch from 'cross-fetch';
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -107,21 +109,11 @@ export class HttpClient {
   }
 
   private getHeaders(): Record<string, string> {
-    // Try to get package version for User-Agent - fallback to "unknown" if not found
-    let version = 'unknown';
-    try {
-      // Dynamic require - ESLint will complain but this works at runtime
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const packageJson = require('../../../package.json');
-      version = packageJson.version || 'unknown';
-    } catch (e) {
-      // Silently fail if package.json cannot be read
-    }
-
+    // Use constant version instead of dynamic require
     return {
       Authorization: `Bearer ${this.apiKey}`,
       'Content-Type': 'application/json',
-      'User-Agent': `SMASHSEND Node SDK v${version}`,
+      'User-Agent': `SMASHSEND Node SDK v${VERSION}`,
       Accept: 'application/json',
       ...this.customHeaders,
     };

@@ -78,6 +78,104 @@ smashsend.setDebugMode(true);
 // The SDK will now output detailed logs of all API interactions
 ```
 
+### Using with Next.js
+
+This SDK is fully compatible with Next.js, supporting both client and server components, API routes, and server actions.
+
+#### Server Component Example
+
+```typescript
+// app/contacts/page.tsx
+import { getSmashSendClient } from '@/lib/smashsend';
+
+export default async function ContactsPage() {
+  const smashsend = getSmashSendClient();
+  const contacts = await smashsend.contacts.list();
+
+  return (
+    <div>
+      <h1>Contacts</h1>
+      <ul>
+        {contacts.map(contact => (
+          <li key={contact.id}>{contact.email}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+#### API Route Example
+
+```typescript
+// app/api/contact/route.ts
+import { getSmashSendClient } from '@/lib/smashsend';
+import { NextResponse } from 'next/server';
+
+export async function POST(request: Request) {
+  const data = await request.json();
+
+  try {
+    const smashsend = getSmashSendClient();
+    const contact = await smashsend.contacts.create({
+      email: data.email,
+      firstName: data.firstName,
+      lastName: data.lastName,
+    });
+
+    return NextResponse.json({ success: true, contact });
+  } catch (error) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+  }
+}
+```
+
+#### Server Action Example
+
+```typescript
+// app/actions.ts
+'use server';
+
+import { getSmashSendClient } from '@/lib/smashsend';
+
+export async function createContact(data: FormData) {
+  try {
+    const smashsend = getSmashSendClient();
+    const contact = await smashsend.contacts.create({
+      email: data.get('email') as string,
+      firstName: data.get('firstName') as string,
+      lastName: data.get('lastName') as string,
+    });
+
+    return { success: true, contact };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+```
+
+#### Helper Function
+
+For easier usage in Next.js applications, create a utility file:
+
+```typescript
+// lib/smashsend.ts
+import { SmashSend } from '@smashsend/node';
+
+let smashsendClient: SmashSend;
+
+export function getSmashSendClient(apiKey?: string) {
+  if (!smashsendClient) {
+    const key = apiKey || process.env.SMASHSEND_API_KEY;
+    if (!key) {
+      throw new Error('SMASHSEND_API_KEY is not defined');
+    }
+    smashsendClient = new SmashSend(key);
+  }
+  return smashsendClient;
+}
+```
+
 ### Retry Configuration
 
 The SDK automatically retries failed requests with exponential backoff:
