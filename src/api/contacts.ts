@@ -45,18 +45,13 @@ export class Contacts {
   async update(id: string, options: Partial<ContactCreateOptions>): Promise<Contact> {
     const { customProperties, ...rest } = options;
 
-    // Transform the input format to the backend expected format
-    const backendFormat: any = {
+    const response = await this.httpClient.put<{ contact: Contact }>(`/contacts/${id}`, {
+      // Transform the input format to the backend expected format
       properties: {
         ...rest,
         ...(customProperties || {}),
       },
-    };
-
-    const response = await this.httpClient.put<{ contact: Contact }>(
-      `/contacts/${id}`,
-      backendFormat
-    );
+    });
     return response.contact;
   }
 
@@ -74,20 +69,28 @@ export class Contacts {
    * @param params Optional parameters for filtering and pagination
    * @returns A list of contacts with pagination info
    */
-  async list(params?: { limit?: number; offset?: number }): Promise<{
-    contacts: Contact[];
-    pagination: {
-      total: number;
-      limit: number;
-      offset: number;
+  async list(params?: {
+    limit?: number;
+    cursor?: string;
+    sort?: 'createdAt.desc' | 'createdAt.asc';
+    search?: string;
+    status?: string;
+    filter?: any;
+    includeCount?: boolean;
+  }): Promise<{
+    contacts: {
+      items: Contact[];
+      cursor?: string;
+      hasMore: boolean;
+      totalCount?: number;
     };
   }> {
     return this.httpClient.get<{
-      contacts: Contact[];
-      pagination: {
-        total: number;
-        limit: number;
-        offset: number;
+      contacts: {
+        items: Contact[];
+        cursor?: string;
+        hasMore: boolean;
+        totalCount?: number;
       };
     }>('/contacts', { params });
   }

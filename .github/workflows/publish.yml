@@ -1,0 +1,96 @@
+name: Publish Python Package
+
+on:
+  push:
+    branches:
+      - beta
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+
+      - name: Set version (beta)
+        if: github.ref == 'refs/heads/beta'
+        run: |
+          # Get current version
+          CURRENT_VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+
+          # Add beta suffix if not already present
+          if [[ $CURRENT_VERSION != *"-beta"* ]]; then
+            # Extract components
+            IFS='.' read -r -a VERSION_PARTS <<< "$CURRENT_VERSION"
+            MAJOR=${VERSION_PARTS[0]}
+            MINOR=${VERSION_PARTS[1]}
+            PATCH=${VERSION_PARTS[2]}
+            
+            # Increment patch version and add beta suffix
+            PATCH=$((PATCH + 1))
+            NEW_VERSION="$MAJOR.$MINOR.$PATCH-beta.1"
+          else
+            # Extract beta number and increment
+            BETA_NUM=$(echo $CURRENT_VERSION | grep -oP '(?<=beta\.)\d+')
+            BETA_NUM=$((BETA_NUM + 1))
+            NEW_VERSION=$(echo $CURRENT_VERSION | sed "s/beta\.[0-9]*/beta.$BETA_NUM/")
+          fi
+
+          # Update version in pyproject.toml
+          sed -i "s/^version = \".*\"/version = \"$NEW_VERSION\"/" pyproject.toml
+
+          echo "Version set to $NEW_VERSION"
+
+      - name: Set version (main)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          # Get current version
+          CURRENT_VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+
+          # Remove beta suffix if present and increment patch
+          if [[ $CURRENT_VERSION == *"-beta"* ]]; then
+            # Remove beta suffix
+            STABLE_VERSION=$(echo $CURRENT_VERSION | sed 's/-beta\.[0-9]*//')
+            NEW_VERSION="$STABLE_VERSION"
+          else
+            # Increment patch version
+            IFS='.' read -r -a VERSION_PARTS <<< "$CURRENT_VERSION"
+            MAJOR=${VERSION_PARTS[0]}
+            MINOR=${VERSION_PARTS[1]}
+            PATCH=${VERSION_PARTS[2]}
+            PATCH=$((PATCH + 1))
+            NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+          fi
+
+          # Update version in pyproject.toml
+          sed -i "s/^version = \".*\"/version = \"$NEW_VERSION\"/" pyproject.toml
+
+          echo "Version set to $NEW_VERSION"
+
+      - name: Build and publish
+        env:
+          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        run: |
+          python -m build
+          python -m twine upload dist/*
+
+      - name: Create Git tag
+        run: |
+          VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git tag -a "v$VERSION" -m "Release v$VERSION"
+          git push origin "v$VERSION"

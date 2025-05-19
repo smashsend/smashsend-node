@@ -1,7 +1,7 @@
 {
   "name": "@smashsend/node",
   "version": "0.6.0",
-  "description": "SmashSend Node.js SDK - Official Node.js client for SmashSend API",
+  "description": "SMASHSEND Node.js SDK - Official Node.js client for SMASHSEND API",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -49,7 +49,7 @@
     "node",
     "typescript"
   ],
-  "author": "SmashSend",
+  "author": "SMASHSEND",
   "license": "MIT",
   "homepage": "https://smashsend.com",
   "repository": {
