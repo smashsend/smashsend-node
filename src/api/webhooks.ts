@@ -14,8 +14,9 @@ export class Webhooks {
    * @param options The webhook creation options
    * @returns The created webhook
    */
-  async create(options: WebhookCreateOptions): Promise<{ webhook: Webhook }> {
-    return this.httpClient.post<{ webhook: Webhook }>('/webhooks', options);
+  async create(options: WebhookCreateOptions): Promise<Webhook> {
+    const response = await this.httpClient.post<{ webhook: Webhook }>('/webhooks', options);
+    return response.webhook;
   }
 
   /**
@@ -23,8 +24,9 @@ export class Webhooks {
    * @param id The webhook ID
    * @returns The webhook details
    */
-  async get(id: string): Promise<{ webhook: Webhook }> {
-    return this.httpClient.get<{ webhook: Webhook }>(`/webhooks/${id}`);
+  async get(id: string): Promise<Webhook> {
+    const response = await this.httpClient.get<{ webhook: Webhook }>(`/webhooks/${id}`);
+    return response.webhook;
   }
 
   /**
@@ -59,8 +61,9 @@ export class Webhooks {
    * @param options The webhook update options
    * @returns The updated webhook
    */
-  async update(id: string, options: Partial<WebhookCreateOptions>): Promise<{ webhook: Webhook }> {
-    return this.httpClient.put<{ webhook: Webhook }>(`/webhooks/${id}`, options);
+  async update(id: string, options: Partial<WebhookCreateOptions>): Promise<Webhook> {
+    const response = await this.httpClient.put<{ webhook: Webhook }>(`/webhooks/${id}`, options);
+    return response.webhook;
   }
 
   /**

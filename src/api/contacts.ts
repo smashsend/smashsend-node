@@ -13,16 +13,17 @@ export class Contacts {
    * @param options The contact creation options
    * @returns The created contact
    */
-  async create(options: ContactCreateOptions): Promise<{ contact: Contact }> {
+  async create(options: ContactCreateOptions): Promise<Contact> {
     const { customProperties, ...rest } = options;
 
-    return this.httpClient.post<{ contact: Contact }>('/contacts', {
+    const response = await this.httpClient.post<{ contact: Contact }>('/contacts', {
       // Transform the input format to the backend expected format
       properties: {
         ...rest,
         ...(customProperties || {}),
       },
     });
+    return response.contact;
   }
 
   /**
@@ -30,8 +31,9 @@ export class Contacts {
    * @param id The contact ID
    * @returns The contact details
    */
-  async get(id: string): Promise<{ contact: Contact }> {
-    return this.httpClient.get<{ contact: Contact }>(`/contacts/${id}`);
+  async get(id: string): Promise<Contact> {
+    const response = await this.httpClient.get<{ contact: Contact }>(`/contacts/${id}`);
+    return response.contact;
   }
 
   /**
@@ -40,7 +42,7 @@ export class Contacts {
    * @param options The contact update options
    * @returns The updated contact
    */
-  async update(id: string, options: Partial<ContactCreateOptions>): Promise<{ contact: Contact }> {
+  async update(id: string, options: Partial<ContactCreateOptions>): Promise<Contact> {
     const { customProperties, ...rest } = options;
 
     // Transform the input format to the backend expected format
@@ -51,7 +53,11 @@ export class Contacts {
       },
     };
 
-    return this.httpClient.put<{ contact: Contact }>(`/contacts/${id}`, backendFormat);
+    const response = await this.httpClient.put<{ contact: Contact }>(
+      `/contacts/${id}`,
+      backendFormat
+    );
+    return response.contact;
   }
 
   /**
@@ -123,16 +129,14 @@ export class Contacts {
     type: string;
     description?: string;
   }): Promise<{
-    property: {
-      id: string;
-      name: string;
-      label: string;
-      type: string;
-      description?: string;
-      createdAt: string;
-    };
+    id: string;
+    name: string;
+    label: string;
+    type: string;
+    description?: string;
+    createdAt: string;
   }> {
-    return this.httpClient.post<{
+    const response = await this.httpClient.post<{
       property: {
         id: string;
         name: string;
@@ -142,6 +146,7 @@ export class Contacts {
         createdAt: string;
       };
     }>('/contact-properties', options);
+    return response.property;
   }
 
   /**
@@ -157,16 +162,14 @@ export class Contacts {
       description?: string;
     }
   ): Promise<{
-    property: {
-      id: string;
-      name: string;
-      label: string;
-      type: string;
-      description?: string;
-      createdAt: string;
-    };
+    id: string;
+    name: string;
+    label: string;
+    type: string;
+    description?: string;
+    createdAt: string;
   }> {
-    return this.httpClient.put<{
+    const response = await this.httpClient.put<{
       property: {
         id: string;
         name: string;
@@ -176,5 +179,6 @@ export class Contacts {
         createdAt: string;
       };
     }>(`/contact-properties/${id}`, options);
+    return response.property;
   }
 }

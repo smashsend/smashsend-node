@@ -6,7 +6,7 @@ const smashsend = new SmashSend('your-api-key');
 // Example: Create a contact with standard and custom properties
 async function createContact() {
   try {
-    const response = await smashsend.contacts.create({
+    const contact = await smashsend.contacts.create({
       // Standard properties
       email: 'contact@example.com',
       firstName: 'John',
@@ -26,18 +26,14 @@ async function createContact() {
     });
 
     console.log('Contact created successfully:');
-    console.log(`ID: ${response.contact.id}`);
-    console.log(`Email: ${response.contact.properties.email}`);
-    console.log(
-      `Name: ${response.contact.properties.firstName} ${response.contact.properties.lastName}`
-    );
-    console.log(
-      `Job: ${response.contact.properties.jobTitle} at ${response.contact.properties.company}`
-    );
-    console.log(`Status: ${response.contact.properties.status}`);
-    console.log(`Country: ${response.contact.properties.countryCode}`);
+    console.log(`ID: ${contact.id}`);
+    console.log(`Email: ${contact.properties.email}`);
+    console.log(`Name: ${contact.properties.firstName} ${contact.properties.lastName}`);
+    console.log(`Job: ${contact.properties.jobTitle} at ${contact.properties.company}`);
+    console.log(`Status: ${contact.properties.status}`);
+    console.log(`Country: ${contact.properties.countryCode}`);
 
-    return response.contact;
+    return contact;
   } catch (error) {
     console.error('Error creating contact:', error.message);
     throw error;
@@ -47,13 +43,13 @@ async function createContact() {
 // Example: Get a contact by ID
 async function getContact(contactId) {
   try {
-    const response = await smashsend.contacts.get(contactId);
+    const contact = await smashsend.contacts.get(contactId);
 
     // Safe access to properties using optional chaining
-    const properties = response.contact.properties || {};
+    const properties = contact.properties || {};
 
     console.log('Contact details:');
-    console.log(`ID: ${response.contact.id}`);
+    console.log(`ID: ${contact.id}`);
     console.log(`Email: ${properties.email || 'N/A'}`);
     console.log(`Name: ${properties.firstName || ''} ${properties.lastName || ''}`);
     console.log(`Status: ${properties.status || 'N/A'}`);
@@ -70,7 +66,7 @@ async function getContact(contactId) {
       console.log(`  ${key}: ${value}`);
     });
 
-    return response.contact;
+    return contact;
   } catch (error) {
     console.error('Error fetching contact:', error.message);
     throw error;
@@ -80,7 +76,7 @@ async function getContact(contactId) {
 // Example: Update a contact
 async function updateContact(contactId) {
   try {
-    const response = await smashsend.contacts.update(contactId, {
+    const contact = await smashsend.contacts.update(contactId, {
       // Update standard properties
       status: SmashsendContactStatus.UNSUBSCRIBED,
       countryCode: SmashsendCountryCode.GB,
@@ -94,15 +90,15 @@ async function updateContact(contactId) {
     });
 
     // Safe access to properties
-    const properties = response.contact.properties || {};
+    const properties = contact.properties || {};
 
     console.log('Contact updated successfully:');
-    console.log(`ID: ${response.contact.id}`);
+    console.log(`ID: ${contact.id}`);
     console.log(`Status: ${properties.status || 'N/A'}`);
     console.log(`Country: ${properties.countryCode || 'N/A'}`);
     console.log(`Lead Score: ${properties.leadScore || 'N/A'}`);
 
-    return response.contact;
+    return contact;
   } catch (error) {
     console.error('Error updating contact:', error.message);
     throw error;

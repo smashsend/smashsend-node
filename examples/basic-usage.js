@@ -23,7 +23,7 @@ async function sendEmail() {
 // Example: Create a contact
 async function createContact() {
   try {
-    const response = await smashsend.contacts.create({
+    const contact = await smashsend.contacts.create({
       email: 'john@example.com',
       firstName: 'John',
       lastName: 'Doe',
@@ -33,7 +33,7 @@ async function createContact() {
       },
     });
 
-    console.log('Contact created!', response.contact.id);
+    console.log('Contact created!', contact.id);
   } catch (error) {
     console.error('Error creating contact:', error.message);
   }
@@ -42,13 +42,13 @@ async function createContact() {
 // Example: Set up a webhook
 async function createWebhook() {
   try {
-    const response = await smashsend.webhooks.create({
+    const webhook = await smashsend.webhooks.create({
       url: 'https://example.com/webhooks/smashsend',
       events: ['email.sent', 'email.delivered', 'email.opened'],
       description: 'Track email events',
     });
 
-    console.log('Webhook created!', response.webhook.id);
+    console.log('Webhook created!', webhook.id);
 
     // Verify a webhook signature
     const isValid = smashsend.webhooks.verifySignature(

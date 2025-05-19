@@ -53,7 +53,7 @@ async function sendEmail() {
 async function manageContacts() {
   try {
     // Create a contact
-    const response = await smashsend.contacts.create({
+    const contact = await smashsend.contacts.create({
       email: 'john.doe@example.com',
       name: 'John Doe',
       properties: {
@@ -62,10 +62,10 @@ async function manageContacts() {
       },
       tags: ['developer', 'node-sdk'],
     });
-    console.log('Contact created:', response.contact.id);
+    console.log('Contact created:', contact.id);
 
     // Update the contact
-    const updateResponse = await smashsend.contacts.update(response.contact.id, {
+    const updatedContact = await smashsend.contacts.update(contact.id, {
       name: 'Jonathan Doe',
       properties: {
         company: 'SmashSend',
@@ -73,7 +73,7 @@ async function manageContacts() {
         department: 'Engineering',
       },
     });
-    console.log('Contact updated:', updateResponse.contact.name);
+    console.log('Contact updated:', updatedContact.properties.name);
 
     // List contacts
     const listResponse = await smashsend.contacts.list({ limit: 10, offset: 0 });
@@ -81,13 +81,13 @@ async function manageContacts() {
     console.log('Total contacts:', listResponse.pagination.total);
 
     // Create a contact property
-    const propertyResponse = await smashsend.contacts.createProperty({
+    const property = await smashsend.contacts.createProperty({
       name: 'industry',
       label: 'Industry',
       type: 'string',
       description: 'The industry the contact works in',
     });
-    console.log('Property created:', propertyResponse.property.id);
+    console.log('Property created:', property.id);
   } catch (error) {
     if (error instanceof SmashSendError) {
       console.error(`Error: ${error.message}`);
