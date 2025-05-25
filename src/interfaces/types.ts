@@ -361,11 +361,9 @@ export interface Webhook {
 
 // API Key interfaces
 export interface ApiKeyValidationResponse {
-  valid: boolean;
+  status: string;
   displayName: string;
-  permissions: string[];
-  accountId: string;
-  expiresAt?: string;
+  role: string;
 }
 
 export interface ApiKeyInfo {
@@ -375,4 +373,33 @@ export interface ApiKeyInfo {
   createdAt: string;
   lastUsedAt?: string;
   accountId: string;
+}
+
+export interface ApiKeyCreateOptions {
+  displayName: string;
+  role: string;
+}
+
+export interface ApiKeyUpdateOptions {
+  displayName?: string;
+  role?: string;
+}
+
+export interface ApiKeyListOptions {
+  startAt?: Date;
+  sort?: 'createdAt.desc' | 'createdAt.asc';
+  limit?: number;
+}
+
+export interface ApiKeyListResponse {
+  apiKeys: {
+    items: ApiKeyInfo[];
+    hasMore: boolean;
+    startAt?: Date;
+  };
+}
+
+export interface ApiKeyDeleteResponse {
+  apiKey: ApiKeyInfo;
+  isDeleted: boolean;
 }

@@ -121,6 +121,11 @@ export type {
   EmailAttachment,
   ApiKeyValidationResponse,
   ApiKeyInfo,
+  ApiKeyCreateOptions,
+  ApiKeyUpdateOptions,
+  ApiKeyListOptions,
+  ApiKeyListResponse,
+  ApiKeyDeleteResponse,
 } from './interfaces/types';
 
 // Export enums
