@@ -7,6 +7,10 @@ echo "🚀 Building and publishing @smashsend/node package..."
 echo "🧹 Cleaning previous builds..."
 rm -rf dist
 
+# Remove validator dependencies if they exist
+echo "🔧 Removing validator dependencies..."
+npm uninstall validator @types/validator 2>/dev/null || true
+
 # Install dependencies
 echo "📦 Installing dependencies..."
 npm install
@@ -30,6 +34,12 @@ if [ ! -d "dist" ]; then
 fi
 
 echo "✅ Build completed successfully!"
+
+# Test the validation functions
+echo "🧪 Testing custom validation functions..."
+if [ -f "test-validation.js" ]; then
+    node test-validation.js
+fi
 
 # Show what will be published
 echo "📋 Files that will be published:"
