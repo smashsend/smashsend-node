@@ -1,6 +1,7 @@
 import { Emails } from './api/emails';
 import { Contacts } from './api/contacts';
 import { Webhooks } from './api/webhooks';
+import { ApiKeys } from './api/api-keys';
 import { HttpClient } from './utils/http-client';
 import { SmashSendClientOptions } from './interfaces/types';
 import {
@@ -27,6 +28,11 @@ export class SmashSend {
    * The Webhooks API resource
    */
   public readonly webhooks: Webhooks;
+
+  /**
+   * The API Keys resource
+   */
+  public readonly apiKeys: ApiKeys;
 
   private httpClient: HttpClient;
 
@@ -56,6 +62,7 @@ export class SmashSend {
     this.emails = new Emails(this.httpClient);
     this.contacts = new Contacts(this.httpClient);
     this.webhooks = new Webhooks(this.httpClient);
+    this.apiKeys = new ApiKeys(this.httpClient);
   }
 
   /**
@@ -112,10 +119,15 @@ export type {
   Webhook,
   EmailAddress,
   EmailAttachment,
+  ApiKeyValidationResponse,
+  ApiKeyInfo,
 } from './interfaces/types';
 
 // Export enums
 export { SmashsendContactStatus, SmashsendCountryCode } from './interfaces/types';
+
+// Export validation helpers
+export * from './utils/helpers';
 
 export {
   SmashSendError,

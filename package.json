@@ -1,6 +1,6 @@
 {
   "name": "@smashsend/node",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "SMASHSEND Node.js SDK - Official Node.js client for SMASHSEND API",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -64,7 +64,8 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "cross-fetch": "^4.0.0"
+    "cross-fetch": "^4.0.0",
+    "validator": "^13.12.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.4",
@@ -73,6 +74,7 @@
     "@rollup/plugin-typescript": "^11.1.4",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.11.29",
+    "@types/validator": "^13.12.0",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "eslint": "^8.57.0",

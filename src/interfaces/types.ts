@@ -358,3 +358,21 @@ export interface Webhook {
   enabled: boolean;
   createdAt: string;
 }
+
+// API Key interfaces
+export interface ApiKeyValidationResponse {
+  valid: boolean;
+  displayName: string;
+  permissions: string[];
+  accountId: string;
+  expiresAt?: string;
+}
+
+export interface ApiKeyInfo {
+  id: string;
+  name: string;
+  permissions: string[];
+  createdAt: string;
+  lastUsedAt?: string;
+  accountId: string;
+}
