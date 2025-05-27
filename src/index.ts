@@ -131,9 +131,6 @@ export type {
 // Export enums
 export { SmashsendContactStatus, SmashsendCountryCode } from './interfaces/types';
 
-// Export validation helpers
-export * from './utils/helpers';
-
 export {
   SmashSendError,
   APIError,
