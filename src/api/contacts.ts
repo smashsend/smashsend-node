@@ -27,6 +27,18 @@ export class Contacts {
   }
 
   /**
+   * Search for a contact by email
+   * @param email The contact email address
+   * @returns The contact details or null if not found
+   */
+  async search(email: string): Promise<Contact | null> {
+    const response = await this.httpClient.get<{ contact: Contact | null }>('/contacts/search', {
+      params: { email },
+    });
+    return response.contact;
+  }
+
+  /**
    * Get a contact by ID
    * @param id The contact ID
    * @returns The contact details
