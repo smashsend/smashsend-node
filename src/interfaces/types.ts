@@ -304,6 +304,19 @@ export enum SmashsendContactStatus {
   BANNED = 'BANNED', // e.g: bad email, spam or abuse
 }
 
+// Custom property type enum
+export enum SmashsendPropertyType {
+  BOOLEAN = 'BOOLEAN',
+  STRING = 'STRING',
+  TEXT = 'TEXT',
+  NUMBER = 'NUMBER',
+  INTEGER = 'INTEGER',
+  DATE = 'DATE',
+  EMAIL = 'EMAIL',
+  URL = 'URL',
+  PHONE = 'PHONE',
+}
+
 // Contact interfaces
 export interface ContactCreateOptions {
   email: string;
@@ -339,6 +352,41 @@ export interface Contact {
     // Allow custom properties
     [key: string]: any;
   };
+}
+
+// Custom property interfaces
+export interface CustomProperty {
+  id: string;
+  apiSlug: string;
+  displayName: string;
+  type: SmashsendPropertyType;
+  description?: string;
+  createdAt: string;
+  updatedAt?: string;
+  workspaceId?: string;
+  isInternal?: boolean;
+  typeConfig?: {
+    options?: any[];
+    multiple?: boolean;
+  };
+  options?: any[];
+}
+
+export interface CustomPropertyCreateOptions {
+  apiSlug: string;
+  displayName: string;
+  type: SmashsendPropertyType;
+  description?: string;
+}
+
+export interface CustomPropertyUpdateOptions {
+  displayName?: string;
+  description?: string;
+}
+
+export interface CustomPropertyListResponse {
+  items: CustomProperty[];
+  hasMore: boolean;
 }
 
 // Webhook interfaces

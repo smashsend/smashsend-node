@@ -1,4 +1,3 @@
-import { Emails } from './api/emails';
 import { Contacts } from './api/contacts';
 import { Webhooks } from './api/webhooks';
 import { ApiKeys } from './api/api-keys';
@@ -17,7 +16,7 @@ export class SmashSend {
   /**
    * The Emails API resource
    */
-  public readonly emails: Emails;
+  // public readonly emails: Emails;
 
   /**
    * The Contacts API resource
@@ -59,7 +58,7 @@ export class SmashSend {
     );
 
     // Initialize API resources
-    this.emails = new Emails(this.httpClient);
+    // this.emails = new Emails(this.httpClient);
     this.contacts = new Contacts(this.httpClient);
     this.webhooks = new Webhooks(this.httpClient);
     this.apiKeys = new ApiKeys(this.httpClient);
@@ -126,10 +125,18 @@ export type {
   ApiKeyListOptions,
   ApiKeyListResponse,
   ApiKeyDeleteResponse,
+  CustomProperty,
+  CustomPropertyCreateOptions,
+  CustomPropertyUpdateOptions,
+  CustomPropertyListResponse,
 } from './interfaces/types';
 
 // Export enums
-export { SmashsendContactStatus, SmashsendCountryCode } from './interfaces/types';
+export {
+  SmashsendContactStatus,
+  SmashsendCountryCode,
+  SmashsendPropertyType,
+} from './interfaces/types';
 
 export {
   SmashSendError,

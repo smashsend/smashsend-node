@@ -1,5 +1,12 @@
 import { HttpClient } from '../utils/http-client';
-import { Contact, ContactCreateOptions } from '../interfaces/types';
+import {
+  Contact,
+  ContactCreateOptions,
+  CustomPropertyListResponse,
+  CustomProperty,
+  CustomPropertyCreateOptions,
+  CustomPropertyUpdateOptions,
+} from '../interfaces/types';
 
 export class Contacts {
   private httpClient: HttpClient;
@@ -108,29 +115,15 @@ export class Contacts {
   }
 
   /**
-   * List all contact properties
-   * @returns A list of contact properties
+   * List all contact properties (custom properties only)
+   * @returns A list of custom contact properties
    */
-  async listProperties(): Promise<{
-    properties: Array<{
-      id: string;
-      name: string;
-      label: string;
-      type: string;
-      createdAt: string;
-      description?: string;
-    }>;
-  }> {
-    return this.httpClient.get<{
-      properties: Array<{
-        id: string;
-        name: string;
-        label: string;
-        type: string;
-        createdAt: string;
-        description?: string;
-      }>;
-    }>('/contact-properties');
+  async listProperties(): Promise<CustomPropertyListResponse> {
+    const response = await this.httpClient.get<{ properties: CustomPropertyListResponse }>(
+      '/contacts/properties',
+      { params: { type: 'CUSTOM', limit: 50 } }
+    );
+    return response.properties;
   }
 
   /**
@@ -138,28 +131,9 @@ export class Contacts {
    * @param options The property creation options
    * @returns The created property
    */
-  async createProperty(options: {
-    name: string;
-    label: string;
-    type: string;
-    description?: string;
-  }): Promise<{
-    id: string;
-    name: string;
-    label: string;
-    type: string;
-    description?: string;
-    createdAt: string;
-  }> {
+  async createProperty(options: CustomPropertyCreateOptions): Promise<CustomProperty> {
     const response = await this.httpClient.post<{
-      property: {
-        id: string;
-        name: string;
-        label: string;
-        type: string;
-        description?: string;
-        createdAt: string;
-      };
+      property: CustomProperty;
     }>('/contact-properties', options);
     return response.property;
   }
@@ -170,29 +144,9 @@ export class Contacts {
    * @param options The property update options
    * @returns The updated property
    */
-  async updateProperty(
-    id: string,
-    options: {
-      label?: string;
-      description?: string;
-    }
-  ): Promise<{
-    id: string;
-    name: string;
-    label: string;
-    type: string;
-    description?: string;
-    createdAt: string;
-  }> {
+  async updateProperty(id: string, options: CustomPropertyUpdateOptions): Promise<CustomProperty> {
     const response = await this.httpClient.put<{
-      property: {
-        id: string;
-        name: string;
-        label: string;
-        type: string;
-        description?: string;
-        createdAt: string;
-      };
+      property: CustomProperty;
     }>(`/contact-properties/${id}`, options);
     return response.property;
   }
