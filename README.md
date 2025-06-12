@@ -1,50 +1,110 @@
 # SMASHSEND Node.js SDK
 
-The official Node.js SDK for the SMASHSEND API.
+<p align="center">
+  <img src="https://smashsend.com/brand/smashsend_logo.svg" alt="SMASHSEND" width="300" />
+</p>
+
+<p align="center">
+  <b>Official TypeScript / Node.js SDK for <a href="https://smashsend.com">SMASHSEND</a></b><br/>
+  Easily integrate email marketing, transactional emails, automations, and contact management into your app.
+</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/@smashsend/node">
+    <img src="https://img.shields.io/npm/v/@smashsend/node.svg?style=flat-square" alt="NPM Version" />
+  </a>
+<!--   <a href="https://github.com/smashsend/smashsend-node/actions/workflows/ci.yml">
+    <img src="https://github.com/smashsend/smashsend-node/actions/workflows/ci.yml/badge.svg" alt="CI Status" />
+  </a> -->
+  <a href="https://github.com/smashsend/smashsend-node/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/smashsend/smashsend-node.svg?style=flat-square" alt="License" />
+  </a>
+</p>
+
+---
+
+## Table of Contents
+
+1. [What is SMASHSEND?](#what-is-smashsend)
+2. [Installation](#installation)
+3. [Setup](#setup)
+4. [Usage](#usage)
+   - [Create or update a contact](#create-or-update-a-contact)
+   - [Send an email](#send-an-email)
+5. [Advanced Configuration](#advanced-configuration)
+   - [Custom Headers](#custom-headers)
+   - [Debug Mode](#debug-mode)
+   - [Retry Configuration](#retry-configuration)
+6. [Using with Next.js](#using-with-nextjs)
+7. [Error Handling](#error-handling)
+8. [TypeScript Support](#typescript-support)
+9. [Automated Publishing Workflow](#automated-publishing-workflow)
+10. [Documentation](#documentation)
+11. [Contributing](#contributing)
+12. [License](#license)
+
+---
+
+## What is SMASHSEND?
+
+**SMASHSEND** is a bold, modern email platform built for **business owners, creators, and startups** — not just marketers.
+
+- ⚡️ Drag-and-drop email builder  
+- 🪄 AI-powered personalization (“Magic Boxes”)  
+- 🤖 Automations & event triggers  
+- 🚀 High-deliverability transactional email API  
+- 🗂️ Lightweight CRM & contact management  
+- 📈 Deep analytics & link tracking  
+
+→ [Explore more](https://smashsend.com)
+
+---
 
 ## Installation
 
 ```bash
-npm install @smashsend/node
-
-# or
-yarn add @smashsend/node
-
-# or
-pnpm add @smashsend/node
+npm install @smashsend/node       # or yarn add @smashsend/node / pnpm add @smashsend/node
 ```
+
+---
 
 ## Setup
 
-First, you need to get an API key, which is available in the [SMASHSEND Dashboard](https://smashsend.com/).
+Get an API key from the **[SMASHSEND Dashboard](https://smashsend.com)**:
 
 ```typescript
-import { SmashSend, SmashsendContactStatus, SmashsendCountryCode } from '@smashsend/node';
-const smashsend = new SmashSend('your-api-key');
+import { SmashSend } from '@smashsend/node';
+
+const smashsend = new SmashSend(process.env.SMASHSEND_API_KEY!);
 ```
+
+---
 
 ## Usage
 
 ### Create or update a contact
 
 ```typescript
+import {
+  SmashSend,
+  SmashsendContactStatus,
+  SmashsendCountryCode,
+} from '@smashsend/node';
+
+const smashsend = new SmashSend(process.env.SMASHSEND_API_KEY!);
+
 const { contact } = await smashsend.contacts.create({
-  email: 'newcontact@example.com', // required
-  firstName: 'John', // optional.
-  lastName: 'Doe', // optional.
-  phone: '+1234567890', // optional.
-  status: SmashsendContactStatus.SUBSCRIBED, // optional... defaults to SUBSCRIBED
-  countryCode: SmashsendCountryCode.US, // optional.
-  // Add custom properties not defined in the standard schema
-  // You should create them from the smashsend.com dashboard
-  customProperties: {},
+  email: 'newcontact@example.com',              // required
+  firstName: 'John',
+  lastName: 'Doe',
+  phone: '+1234567890',
+  status: SmashsendContactStatus.SUBSCRIBED,    // defaults to SUBSCRIBED
+  countryCode: SmashsendCountryCode.US,
+  customProperties: {},                         // define in dashboard first
 });
 
-// Access contact data
-console.log(contact.id);
-console.log(contact.properties.firstName); // John
-console.log(contact.properties.email); // newcontact@example.com
-console.log(contact.properties.company); // SMASHSEND
+console.log(contact.id);                        // contact UUID
+console.log(contact.properties.email);          // newcontact@example.com
 ```
 
 ### Send an email
@@ -54,43 +114,68 @@ const response = await smashsend.emails.send({
   from: 'you@example.com',
   to: 'recipient@example.com',
   subject: 'Hello from SMASHSEND',
-  text: 'This is a test email from the SMASHSEND Node.js SDK.',
-  html: '<p>This is a test email from the <strong>SMASHSEND Node.js SDK</strong>...</p>',
+  text:  'This is a test email from the SMASHSEND Node.js SDK.',
+  html:  '<p>This is a test email from the <strong>SMASHSEND Node.js SDK</strong>...</p>',
 });
 ```
+
+---
 
 ## Advanced Configuration
 
 ### Custom Headers
 
-You can add custom headers to all API requests:
-
 ```typescript
 // Add multiple headers
 smashsend.setHeaders({
   'X-Custom-Header': 'value',
-  'X-Tracking-ID': 'campaign-123',
+  'X-Tracking-ID':  'campaign-123',
 });
 
-// Or add individual headers
+// Or add an individual header
 smashsend.setHeader('X-Source', 'website');
 ```
 
 ### Debug Mode
 
-Enable debug mode to log requests and responses:
-
 ```typescript
-smashsend.setDebugMode(true);
+smashsend.setDebugMode(true);   // logs all requests & responses
 ```
 
-### Using with Next.js
-
-This SDK is fully compatible with Next.js, supporting both client and server components, API routes, and server actions.
-
-#### Server Component Example
+### Retry Configuration
 
 ```typescript
+const smashsend = new SmashSend(process.env.SMASHSEND_API_KEY!, {
+  maxRetries: 5,   // default 3
+  timeout:    60000,
+});
+```
+
+---
+
+## Using with Next.js
+
+This SDK works in **Next.js 14+**: server components, edge functions, API routes, and server actions.
+
+### Helper
+
+```typescript
+// lib/smashsend.ts
+import { SmashSend } from '@smashsend/node';
+
+let client: SmashSend;
+
+export function getSmashSendClient(apiKey?: string) {
+  if (!client) {
+    client = new SmashSend(apiKey ?? process.env.SMASHSEND_API_KEY!);
+  }
+  return client;
+}
+```
+
+### Server Component
+
+```tsx
 // app/contacts/page.tsx
 import { getSmashSendClient } from '@/lib/smashsend';
 
@@ -99,268 +184,108 @@ export default async function ContactsPage() {
   const { contacts } = await smashsend.contacts.list();
 
   return (
-    <div>
-      <h1>Contacts</h1>
-      <ul>
-        {contacts.map(contact => (
-          <li key={contact.id}>
-            {contact.properties.firstName} {contact.properties.lastName} ({contact.properties.email})
-          </li>
-        ))}
-      </ul>
-    </div>
+    <ul>
+      {contacts.map(c => (
+        <li key={c.id}>
+          {c.properties.firstName} ({c.properties.email})
+        </li>
+      ))}
+    </ul>
   );
 }
 ```
 
-#### API Route Example
+### API Route
 
 ```typescript
 // app/api/contact/route.ts
-import { getSmashSendClient, SmashsendContactStatus, SmashsendCountryCode } from '@/lib/smashsend';
+import {
+  getSmashSendClient,
+  SmashsendContactStatus,
+  SmashsendCountryCode,
+} from '@/lib/smashsend';
 import { NextResponse } from 'next/server';
 
-export async function POST(request: Request) {
-  const data = await request.json();
-
+export async function POST(req: Request) {
+  const data = await req.json();
   try {
     const smashsend = getSmashSendClient();
-    const contact = await smashsend.contacts.create({
+    const { contact } = await smashsend.contacts.create({
       email: data.email,
-      firstName: data.firstName,
-      lastName: data.lastName,
       status: SmashsendContactStatus.SUBSCRIBED,
       countryCode: SmashsendCountryCode.US,
       customProperties: data.customFields,
     });
-
     return NextResponse.json({ success: true, contact });
-  } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+  } catch (err: any) {
+    return NextResponse.json({ success: false, error: err.message }, { status: 400 });
   }
 }
 ```
 
-#### Server Action Example
-
-```typescript
-// app/actions.ts
-'use server';
-
-import { getSmashSendClient, SmashsendContactStatus, SmashsendCountryCode } from '@/lib/smashsend';
-
-export async function createContact(data: FormData) {
-  try {
-    const smashsend = getSmashSendClient();
-    const contact = await smashsend.contacts.create({
-      email: data.get('email') as string,
-      firstName: data.get('firstName') as string,
-      lastName: data.get('lastName') as string,
-      status: SmashsendContactStatus.OPT_IN_PENDING,
-      countryCode: data.get('country')
-        ? SmashsendCountryCode[data.get('country') as string]
-        : undefined,
-      customProperties: {},
-    });
-
-    return { success: true, contact };
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-}
-```
-
-#### Helper Function
-
-For easier usage in Next.js applications, create a utility file:
-
-```typescript
-// lib/smashsend.ts
-import { SmashSend, SmashsendContactStatus, SmashsendCountryCode } from '@smashsend/node';
-
-let smashsendClient: SmashSend;
-
-export function getSmashSendClient(apiKey?: string) {
-  if (!smashsendClient) {
-    const key = apiKey || process.env.SMASHSEND_API_KEY;
-    if (!key) {
-      throw new Error('SMASHSEND_API_KEY is not defined');
-    }
-    smashsendClient = new SmashSend(key);
-  }
-  return smashsendClient;
-}
-
-// Re-export types for convenience
-export { SmashsendContactStatus, SmashsendCountryCode };
-```
-
-### Retry Configuration
-
-The SDK automatically retries failed requests with exponential backoff:
-
-```typescript
-// Configure more aggressive retries
-const smashsend = new SmashSend('your-api-key', {
-  maxRetries: 5, // Default is 3
-  timeout: 60000, // Default is 30000 (30 seconds)
-});
-```
+---
 
 ## Error Handling
-
-The SDK uses a custom error handling system to make it easier to handle errors:
 
 ```typescript
 import { SmashSend, SmashSendError } from '@smashsend/node';
 
-const smashsend = new SmashSend('your-api-key');
-
 try {
-  const response = await smashsend.emails.send({
-    // email details
-  });
-} catch (error) {
-  if (error instanceof SmashSendError) {
-    console.error(`Error: ${error.message}`);
-    console.error(`Status: ${error.statusCode}`);
-    console.error(`Request ID: ${error.requestId}`);
+  await smashsend.emails.send({ /* … */ });
+} catch (err) {
+  if (err instanceof SmashSendError) {
+    console.error(err.statusCode, err.requestId, err.message);
   } else {
-    console.error('Unexpected error:', error);
+    console.error('Unexpected error', err);
   }
 }
 ```
+
+---
 
 ## TypeScript Support
 
-This SDK is built with TypeScript and provides type definitions for all API resources.
+- Built **in TypeScript**  
+- Complete type definitions for **all resources & enums**  
+- Works with `strictNullChecks`, `moduleResolution=node`, etc.
+
+---
+
+## Automated Publishing Workflow
+
+GitHub Actions publishes to **npm** automatically.
+
+| Branch | Release type                    |
+|--------|---------------------------------|
+| `beta` | Prereleases `x.y.z-beta.n`      |
+| `main` | Stable releases `x.y.z`         |
+
+Version bumps & Git tags (`v1.2.3` / `v1.2.3-beta.4`) are handled for you.
+
+### Required secret
+
+```text
+NPM_TOKEN  →  Settings ▸ Secrets ▸ Actions
+```
+
+---
 
 ## Documentation
 
-For detailed documentation, visit [SMASHSEND API Documentation](https://smashsend.com/docs/api).
+Full API reference → **<https://smashsend.com/docs/api>**
+
+---
+
+## Contributing
+
+We ❤️ PRs!  
+
+1. **Fork** → `git checkout -b feat/awesome`  
+2. Add tests & docs  
+3. **PR** against `beta` or `main`
+
+---
 
 ## License
 
-MIT
-
-## For AI Assistants and Code Generators
-
-<!-- AI-ASSISTANT-METADATA
-{
-  "initRequirements": {
-    "apiKey": {
-      "source": "environment",
-      "name": "SMASHSEND_API_KEY",
-      "required": true
-    }
-  },
-  "importantEnums": ["SmashsendContactStatus", "SmashsendCountryCode"],
-  "errorHandlingRequired": true,
-  "requiredPatterns": ["Load API key from environment", "Try/catch blocks"],
-  "forbiddenPatterns": ["Placeholder API keys", "Placeholder comments", "String literals for enums"]
-}
-AI-ASSISTANT-METADATA -->
-
-When implementing this SDK, follow these requirements:
-
-### ✅ REQUIRED:
-
-- ALWAYS initialize with a real API key (from environment variables)
-- ALWAYS implement proper error handling
-- ALWAYS use the provided enums for type safety (SmashsendContactStatus, SmashsendCountryCode)
-
-### ❌ AVOID:
-
-- DO NOT add placeholder comments like "// Add your API key here"
-- DO NOT leave implementation details as comments
-- DO NOT create mock/stub implementations
-
-### Correct Implementation:
-
-```typescript
-import { SmashSend, SmashsendContactStatus } from '@smashsend/node';
-import dotenv from 'dotenv';
-
-// Load environment variables
-dotenv.config();
-
-// Initialize the client with API key from environment
-const apiKey = process.env.SMASHSEND_API_KEY;
-if (!apiKey) throw new Error('SMASHSEND_API_KEY environment variable is required');
-
-const client = new SmashSend(apiKey);
-
-// Create a contact with proper error handling
-async function createContact() {
-  try {
-    const { contact } = await client.contacts.create({
-      email: 'user@example.com',
-      status: SmashsendContactStatus.SUBSCRIBED,
-    });
-    return contact;
-  } catch (error) {
-    console.error('Failed to create contact:', error);
-    throw error;
-  }
-}
-```
-
-## Implementation Patterns
-
-### Pattern 1: Basic Setup (ALWAYS implement this)
-
-```typescript
-// 1. Import required dependencies
-import { SmashSend } from '@smashsend/node';
-import dotenv from 'dotenv';
-
-// 2. Load API key from environment (REQUIRED)
-dotenv.config();
-const apiKey = process.env.SMASHSEND_API_KEY;
-if (!apiKey) throw new Error('Missing API key');
-
-// 3. Initialize client
-const client = new SmashSend(apiKey);
-```
-
-### Pattern 2: Creating a Contact
-
-```typescript
-// Required properties: email
-// Optional: firstName, lastName, status, countryCode, etc.
-const { contact } = await client.contacts.create({
-  email: 'customer@example.com',
-  status: SmashsendContactStatus.SUBSCRIBED,
-});
-```
-
-## ❌ INCORRECT IMPLEMENTATIONS (DO NOT USE)
-
-The following patterns should NEVER be used:
-
-### ❌ Placeholder Comments
-
-```typescript
-// DO NOT DO THIS
-const client = new SmashSend('YOUR_API_KEY_HERE'); // Replace with your actual API key
-```
-
-### ❌ Missing Error Handling
-
-```typescript
-// DO NOT DO THIS
-const contact = await client.contacts.create({
-  email: 'user@example.com',
-});
-console.log('Contact created!');
-```
-
-### ❌ String Literals Instead of Enums
-
-```typescript
-// DO NOT DO THIS
-const contact = await client.contacts.create({
-  email: 'user@example.com',
-  status: 'SUBSCRIBED', // Wrong! Use SmashsendContactStatus.SUBSCRIBED
-});
-```
+[MIT](LICENSE)
