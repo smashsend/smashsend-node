@@ -1,5 +1,3 @@
-# SMASHSEND Node.js SDK
-
 <p align="center">
   <img src="https://smashsend.com/brand/smashsend_logo.svg" alt="SMASHSEND" width="300" />
 </p>
@@ -21,8 +19,7 @@
   </a>
 </p>
 
----
-
+# SMASHSEND Node.js SDK
 ## Table of Contents
 
 1. [What is SMASHSEND?](#what-is-smashsend)
