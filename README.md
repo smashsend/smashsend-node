@@ -20,6 +20,7 @@
 </p>
 
 # SMASHSEND Node.js SDK
+
 ## Table of Contents
 
 1. [What is SMASHSEND?](#what-is-smashsend)
@@ -46,12 +47,12 @@
 
 **SMASHSEND** is a bold, modern email platform built for **business owners, creators, and startups** — not just marketers.
 
-- ⚡️ Drag-and-drop email builder  
-- 🪄 AI-powered personalization (“Magic Boxes”)  
-- 🤖 Automations & event triggers  
-- 🚀 High-deliverability transactional email API  
-- 🗂️ Lightweight CRM & contact management  
-- 📈 Deep analytics & link tracking  
+- ⚡️ Drag-and-drop email builder
+- 🪄 AI-powered personalization (“Magic Boxes”)
+- 🤖 Automations & event triggers
+- 🚀 High-deliverability transactional email API
+- 🗂️ Lightweight CRM & contact management
+- 📈 Deep analytics & link tracking
 
 → [Explore more](https://smashsend.com)
 
@@ -82,26 +83,22 @@ const smashsend = new SmashSend(process.env.SMASHSEND_API_KEY!);
 ### Create or update a contact
 
 ```typescript
-import {
-  SmashSend,
-  SmashsendContactStatus,
-  SmashsendCountryCode,
-} from '@smashsend/node';
+import { SmashSend, SmashsendContactStatus, SmashsendCountryCode } from '@smashsend/node';
 
 const smashsend = new SmashSend(process.env.SMASHSEND_API_KEY!);
 
-const { contact } = await smashsend.contacts.create({
-  email: 'newcontact@example.com',              // required
+const contact = await smashsend.contacts.create({
+  email: 'newcontact@example.com', // required
   firstName: 'John',
   lastName: 'Doe',
   phone: '+1234567890',
-  status: SmashsendContactStatus.SUBSCRIBED,    // defaults to SUBSCRIBED
+  status: SmashsendContactStatus.SUBSCRIBED, // defaults to SUBSCRIBED
   countryCode: SmashsendCountryCode.US,
-  customProperties: {},                         // define in dashboard first
+  customProperties: {}, // define in dashboard first
 });
 
-console.log(contact.id);                        // contact UUID
-console.log(contact.properties.email);          // newcontact@example.com
+console.log(contact.id); // contact UUID
+console.log(contact.properties.email); // newcontact@example.com
 ```
 
 ### Send an email
@@ -111,8 +108,8 @@ const response = await smashsend.emails.send({
   from: 'you@example.com',
   to: 'recipient@example.com',
   subject: 'Hello from SMASHSEND',
-  text:  'This is a test email from the SMASHSEND Node.js SDK.',
-  html:  '<p>This is a test email from the <strong>SMASHSEND Node.js SDK</strong>...</p>',
+  text: 'This is a test email from the SMASHSEND Node.js SDK.',
+  html: '<p>This is a test email from the <strong>SMASHSEND Node.js SDK</strong>...</p>',
 });
 ```
 
@@ -126,7 +123,7 @@ const response = await smashsend.emails.send({
 // Add multiple headers
 smashsend.setHeaders({
   'X-Custom-Header': 'value',
-  'X-Tracking-ID':  'campaign-123',
+  'X-Tracking-ID': 'campaign-123',
 });
 
 // Or add an individual header
@@ -136,15 +133,15 @@ smashsend.setHeader('X-Source', 'website');
 ### Debug Mode
 
 ```typescript
-smashsend.setDebugMode(true);   // logs all requests & responses
+smashsend.setDebugMode(true); // logs all requests & responses
 ```
 
 ### Retry Configuration
 
 ```typescript
 const smashsend = new SmashSend(process.env.SMASHSEND_API_KEY!, {
-  maxRetries: 5,   // default 3
-  timeout:    60000,
+  maxRetries: 5, // default 3
+  timeout: 60000,
 });
 ```
 
@@ -182,7 +179,7 @@ export default async function ContactsPage() {
 
   return (
     <ul>
-      {contacts.map(c => (
+      {contacts.map((c) => (
         <li key={c.id}>
           {c.properties.firstName} ({c.properties.email})
         </li>
@@ -196,18 +193,14 @@ export default async function ContactsPage() {
 
 ```typescript
 // app/api/contact/route.ts
-import {
-  getSmashSendClient,
-  SmashsendContactStatus,
-  SmashsendCountryCode,
-} from '@/lib/smashsend';
+import { getSmashSendClient, SmashsendContactStatus, SmashsendCountryCode } from '@/lib/smashsend';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   const data = await req.json();
   try {
     const smashsend = getSmashSendClient();
-    const { contact } = await smashsend.contacts.create({
+    const contact = await smashsend.contacts.create({
       email: data.email,
       status: SmashsendContactStatus.SUBSCRIBED,
       countryCode: SmashsendCountryCode.US,
@@ -228,7 +221,9 @@ export async function POST(req: Request) {
 import { SmashSend, SmashSendError } from '@smashsend/node';
 
 try {
-  await smashsend.emails.send({ /* … */ });
+  await smashsend.emails.send({
+    /* … */
+  });
 } catch (err) {
   if (err instanceof SmashSendError) {
     console.error(err.statusCode, err.requestId, err.message);
@@ -242,8 +237,8 @@ try {
 
 ## TypeScript Support
 
-- Built **in TypeScript**  
-- Complete type definitions for **all resources & enums**  
+- Built **in TypeScript**
+- Complete type definitions for **all resources & enums**
 - Works with `strictNullChecks`, `moduleResolution=node`, etc.
 
 ---
@@ -252,10 +247,10 @@ try {
 
 GitHub Actions publishes to **npm** automatically.
 
-| Branch | Release type                    |
-|--------|---------------------------------|
-| `beta` | Prereleases `x.y.z-beta.n`      |
-| `main` | Stable releases `x.y.z`         |
+| Branch | Release type               |
+| ------ | -------------------------- |
+| `beta` | Prereleases `x.y.z-beta.n` |
+| `main` | Stable releases `x.y.z`    |
 
 Version bumps & Git tags (`v1.2.3` / `v1.2.3-beta.4`) are handled for you.
 
@@ -275,10 +270,10 @@ Full API reference → **<https://smashsend.com/docs/api>**
 
 ## Contributing
 
-We ❤️ PRs!  
+We ❤️ PRs!
 
-1. **Fork** → `git checkout -b feat/awesome`  
-2. Add tests & docs  
+1. **Fork** → `git checkout -b feat/awesome`
+2. Add tests & docs
 3. **PR** against `beta` or `main`
 
 ---
