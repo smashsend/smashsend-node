@@ -1,4 +1,5 @@
 import { Contacts } from './api/contacts';
+import { Emails } from './api/emails';
 import { Webhooks } from './api/webhooks';
 import { ApiKeys } from './api/api-keys';
 import { HttpClient } from './utils/http-client';
@@ -16,7 +17,7 @@ export class SmashSend {
   /**
    * The Emails API resource
    */
-  // public readonly emails: Emails;
+  public readonly emails: Emails;
 
   /**
    * The Contacts API resource
@@ -58,7 +59,7 @@ export class SmashSend {
     );
 
     // Initialize API resources
-    // this.emails = new Emails(this.httpClient);
+    this.emails = new Emails(this.httpClient);
     this.contacts = new Contacts(this.httpClient);
     this.webhooks = new Webhooks(this.httpClient);
     this.apiKeys = new ApiKeys(this.httpClient);
