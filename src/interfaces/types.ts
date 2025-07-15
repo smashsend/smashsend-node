@@ -32,7 +32,11 @@ export interface EmailAddress {
  * - `react`: A React element that will be rendered to HTML
  */
 export type RawEmailSendOptions = RawEmailSendOptionsBase &
-  ({ html: string; react?: never } | { html?: never; react: ReactElement | string });
+  (
+    | { html: string; react?: undefined }
+    | { react: ReactElement | string; html?: undefined }
+    | { html: string; react: ReactElement | string }
+  );
 
 /**
  * Base options for raw email sending (shared fields).
