@@ -64,7 +64,8 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "cross-fetch": "^4.0.0"
+    "cross-fetch": "^4.0.0",
+    "@react-email/render": "^0.13.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.4",
@@ -81,6 +82,7 @@
     "prettier": "^3.2.5",
     "rollup": "^3.29.4",
     "ts-jest": "^29.1.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "@types/react": "^18.2.39"
   }
 }

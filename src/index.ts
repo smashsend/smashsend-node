@@ -111,8 +111,12 @@ export class SmashSend {
 // Export types and errors
 export type { SmashSendClientOptions } from './interfaces/types';
 export type {
-  EmailSendOptions,
-  EmailSendResponse,
+  RawEmailSendOptions,
+  TemplatedEmailSendOptions,
+  TransactionalEmailSendOptions,
+  RawEmailSendResponse,
+  TemplatedEmailSendResponse,
+  TransactionalEmailSendResponse,
   ContactCreateOptions,
   Contact,
   WebhookCreateOptions,
