@@ -10,6 +10,7 @@ import {
 
 export class Emails {
   private httpClient: HttpClient;
+
   // Cache for the async renderer so we only import @react-email/render once
   private renderAsync?: (component: ReactElement) => Promise<string>;
 
