@@ -81,6 +81,70 @@ describe('Emails', () => {
       });
       expect(result).toEqual(mockResponse);
     });
+
+    it('should accept empty string HTML content', async () => {
+      // Mock the HTTP client response
+      const mockResponse = { id: 'email123', statusCode: 200 };
+      mockHttpClient.post.mockResolvedValueOnce(mockResponse);
+
+      // Call the method with empty HTML
+      const result = await emails.send({
+        from: 'test@example.com',
+        to: 'recipient@example.com',
+        subject: 'Empty HTML Test',
+        html: '',
+      });
+
+      // Assertions
+      expect(mockHttpClient.post).toHaveBeenCalledWith('/emails', {
+        from: 'test@example.com',
+        to: 'recipient@example.com',
+        subject: 'Empty HTML Test',
+        html: '',
+        sendAt: undefined,
+      });
+      expect(result).toEqual(mockResponse);
+    });
+
+    it('should throw error when neither html nor react is provided', async () => {
+      // Test with missing html/react
+      await expect(
+        emails.send({
+          from: 'test@example.com',
+          to: 'recipient@example.com',
+          subject: 'Test',
+        } as any)
+      ).rejects.toThrow('Either "html" or "react" must be provided when calling emails.send');
+    });
+
+    it('should accept React element that renders to empty string', async () => {
+      // Mock the HTTP client response
+      const mockResponse = { id: 'email123', statusCode: 200 };
+      mockHttpClient.post.mockResolvedValueOnce(mockResponse);
+
+      // Mock @react-email/render to return empty string
+      jest.doMock('@react-email/render', () => ({
+        renderAsync: jest.fn().mockResolvedValue(''),
+      }));
+
+      // Call the method with React element
+      const result = await emails.send({
+        from: 'test@example.com',
+        to: 'recipient@example.com',
+        subject: 'Empty React Test',
+        react: { type: 'div', props: {}, key: null },
+      });
+
+      // Assertions
+      expect(mockHttpClient.post).toHaveBeenCalledWith('/emails', {
+        from: 'test@example.com',
+        to: 'recipient@example.com',
+        subject: 'Empty React Test',
+        html: '',
+        sendAt: undefined,
+      });
+      expect(result).toEqual(mockResponse);
+    });
   });
 
   describe('get', () => {

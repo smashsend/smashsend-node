@@ -56,21 +56,22 @@ export class Emails {
             );
     }
 
-    if (!htmlBody) {
+    // Check if neither html nor react was provided (not just falsy)
+    if (htmlBody === null || htmlBody === undefined) {
       throw new Error('Either "html" or "react" must be provided when calling emails.send');
     }
 
-    // Prepare payload without the `react` field
-    const payload = { ...options, html: htmlBody } as Omit<RawEmailSendOptions, 'react'> & {
-      html: string;
+    // Properly construct payload by destructuring and excluding react
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { react: _react, sendAt, ...restOptions } = options;
+
+    const payload = {
+      ...restOptions,
+      html: htmlBody,
+      sendAt: sendAt instanceof Date ? sendAt.toISOString() : sendAt,
     };
 
-    delete (payload as any).react;
-
-    return this.httpClient.post<RawEmailSendResponse>('/emails', {
-      ...payload,
-      sendAt: options.sendAt instanceof Date ? options.sendAt.toISOString() : options.sendAt,
-    });
+    return this.httpClient.post<RawEmailSendResponse>('/emails', payload);
   }
 
   /**
