@@ -35,12 +35,23 @@ export class Emails {
     // If a React element or JSX provided, render it to HTML first
     let htmlBody = options.html;
 
-    if (options.react) {
+    if (options.react !== undefined) {
       // Lazy-load @react-email/render the first time it's needed
       if (!this.renderAsync) {
         try {
           const mod = await import('@react-email/render');
-          this.renderAsync = (mod as any).renderAsync ?? (mod as any).render;
+          if (typeof (mod as any).renderAsync === 'function') {
+            // Use the async renderer directly
+            this.renderAsync = (component: ReactElement) => (mod as any).renderAsync(component);
+          } else if (typeof (mod as any).render === 'function') {
+            // Wrap synchronous render in a Promise to keep the type consistent
+            const syncRender = (mod as any).render;
+            this.renderAsync = (component: ReactElement) => Promise.resolve(syncRender(component));
+          } else {
+            throw new Error(
+              '`@react-email/render` does not export `renderAsync` or `render`. Please upgrade to the latest version.'
+            );
+          }
         } catch (err) {
           throw new Error(
             'Failed to render React email. Please install `@react-email/render` as a dependency.'
@@ -51,9 +62,7 @@ export class Emails {
       htmlBody =
         typeof options.react === 'string'
           ? options.react
-          : await (this.renderAsync as (c: ReactElement) => Promise<string>)(
-              options.react as ReactElement
-            );
+          : await this.renderAsync(options.react as ReactElement);
     }
 
     // Check if neither html nor react was provided (not just falsy)
