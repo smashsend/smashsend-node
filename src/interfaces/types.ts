@@ -25,10 +25,19 @@ export interface EmailAddress {
 // Transactional emails ────────────────────────────────────────────
 
 /**
- * Options for sending a raw HTML/TEXT email without using a stored template.
- * This maps 1-to-1 with the backend "Raw Email" schema.
+ * Send a raw email (without a pre-defined template).
+ *
+ * You must provide either `html` or `react`:
+ * - `html`: Pre-rendered HTML content
+ * - `react`: A React element that will be rendered to HTML
  */
-export interface RawEmailSendOptions {
+export type RawEmailSendOptions = RawEmailSendOptionsBase &
+  ({ html: string; react?: never } | { html?: never; react: ReactElement | string });
+
+/**
+ * Base options for raw email sending (shared fields).
+ */
+interface RawEmailSendOptionsBase {
   /** Sender address – can be `john@acme.com` or `John Doe <john@acme.com>` */
   from: string;
   /** Optional sender name. If provided, it will be combined with `from` on the backend. */
@@ -41,26 +50,6 @@ export interface RawEmailSendOptions {
   previewText?: string;
   /** Optional reply-to address. */
   replyTo?: string;
-  /** HTML body of the email. */
-  html: string;
-  /**
-   * Alternatively, you can pass a React element (or pre-rendered JSX) and we’ll
-   * automatically convert it to HTML using `@react-email/render`.
-   * This field is mutually exclusive with `html` – if both are provided `react`
-   * will take precedence.
-   *
-   * Example:
-   * ```tsx
-   * import EmailTemplate from "./emails/Welcome";
-   * await smashsend.emails.send({
-   *   from: "me@acme.com",
-   *   to: "user@example.com",
-   *   subject: "Welcome!",
-   *   react: <EmailTemplate firstName="John" product="MyApp" />,
-   * });
-   * ```
-   */
-  react?: ReactElement | string;
   /** Optional plain-text body. If omitted Smashsend will auto-generate from HTML. */
   text?: string;
   /** Optional map of contact properties to upsert before sending. */

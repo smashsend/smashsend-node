@@ -15,8 +15,8 @@ import Welcome from './WelcomeEmail';
     from: 'Me <me@acme.com>',
     to: 'recipient@example.com',
     subject: 'Hello React email',
-    react: Welcome({ firstName: 'John', product: 'MyApp' }) as any,
-  } as any);
+    react: Welcome({ firstName: 'John', product: 'MyApp' }),
+  });
 
   console.log('Email response:', res);
 })();

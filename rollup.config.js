@@ -9,6 +9,7 @@ module.exports = {
     file: 'dist/index.mjs',
     format: 'esm',
     sourcemap: true,
+    inlineDynamicImports: true,
   },
   plugins: [
     nodeResolve({

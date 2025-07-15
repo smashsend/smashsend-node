@@ -34,15 +34,18 @@ describe('Emails', () => {
         from: 'test@example.com',
         to: 'recipient@example.com',
         subject: 'Test Email',
+        html: '<p>Hello World</p>',
         text: 'Hello World',
       });
 
       // Assertions
       expect(mockHttpClient.post).toHaveBeenCalledWith('/emails', {
         from: 'test@example.com',
-        to: ['recipient@example.com'],
+        to: 'recipient@example.com',
         subject: 'Test Email',
+        html: '<p>Hello World</p>',
         text: 'Hello World',
+        sendAt: undefined,
       });
       expect(result).toEqual(mockResponse);
     });
@@ -63,20 +66,16 @@ describe('Emails', () => {
 
       // Call the method with complex email addresses
       const result = await emails.send({
-        from: { email: 'sender@example.com', name: 'Sender Name' },
-        to: [{ email: 'recipient@example.com', name: 'Recipient Name' }, 'another@example.com'],
-        cc: { email: 'cc@example.com', name: 'CC Name' },
-        bcc: ['bcc1@example.com', 'bcc2@example.com'],
+        from: 'Sender Name <sender@example.com>',
+        to: 'recipient@example.com',
         subject: 'Test Email',
         html: '<p>Hello World</p>',
       });
 
       // Assertions
       expect(mockHttpClient.post).toHaveBeenCalledWith('/emails', {
-        from: { email: 'sender@example.com', name: 'Sender Name' },
-        to: [{ email: 'recipient@example.com', name: 'Recipient Name' }, 'another@example.com'],
-        cc: [{ email: 'cc@example.com', name: 'CC Name' }],
-        bcc: ['bcc1@example.com', 'bcc2@example.com'],
+        from: 'Sender Name <sender@example.com>',
+        to: 'recipient@example.com',
         subject: 'Test Email',
         html: '<p>Hello World</p>',
       });
