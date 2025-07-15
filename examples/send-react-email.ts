@@ -1,4 +1,4 @@
-import { SmashSend } from '../dist';
+import { SmashSend } from '@smashsend/node';
 import Welcome from './WelcomeEmail';
 
 (async () => {
