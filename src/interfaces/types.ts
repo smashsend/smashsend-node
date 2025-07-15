@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 // Common interfaces
 export interface SmashSendClientOptions {
   baseUrl?: string;
@@ -21,37 +22,142 @@ export interface EmailAddress {
   name?: string;
 }
 
-export interface EmailSendOptions {
-  from: string | EmailAddress;
-  to: string | EmailAddress | Array<string | EmailAddress>;
-  cc?: string | EmailAddress | Array<string | EmailAddress>;
-  bcc?: string | EmailAddress | Array<string | EmailAddress>;
-  replyTo?: string | EmailAddress;
+// Transactional emails ────────────────────────────────────────────
+
+/**
+ * Send a raw email (without a pre-defined template).
+ *
+ * You must provide either `html` or `react`:
+ * - `html`: Pre-rendered HTML content
+ * - `react`: A React element that will be rendered to HTML
+ */
+export type RawEmailSendOptions = RawEmailSendOptionsBase &
+  (
+    | { html: string; react?: undefined }
+    | { react: ReactElement | string; html?: undefined }
+    | { html: string; react: ReactElement | string }
+  );
+
+/**
+ * Base options for raw email sending (shared fields).
+ */
+interface RawEmailSendOptionsBase {
+  /** Sender address – can be `john@acme.com` or `John Doe <john@acme.com>` */
+  from: string;
+  /** Optional sender name. If provided, it will be combined with `from` on the backend. */
+  fromName?: string;
+  /** Recipient address. Only a single email address is allowed. */
+  to: string;
+  /** Email subject line. */
   subject: string;
+  /** Optional preview / pre-header text shown by email clients. */
+  previewText?: string;
+  /** Optional reply-to address. */
+  replyTo?: string;
+  /** Optional plain-text body. If omitted Smashsend will auto-generate from HTML. */
   text?: string;
-  html?: string;
-  attachments?: EmailAttachment[];
-  tags?: string[];
-  templateId?: string;
-  templateData?: Record<string, any>;
-  headers?: Record<string, string>;
-  metadata?: Record<string, any>;
+  /** Optional map of contact properties to upsert before sending. */
+  contactProperties?: Record<string, any>;
+  /** Tracking configuration. */
+  settings?: {
+    trackClicks?: boolean;
+    trackOpens?: boolean;
+  };
+  /** Group analytics for these emails by a custom identifier. */
+  groupBy?: string;
+  /** Date when the email should be sent (ISO 8601 string or Date instance). */
+  sendAt?: string | Date;
+  /** Idempotency key to de-duplicate requests. */
+  idempotencyKey?: string;
 }
 
+/**
+ * Options for sending a stored *Transactional Template*.
+ * This maps 1-to-1 with the backend "Templated Email" schema.
+ */
+export interface TemplatedEmailSendOptions {
+  /** Template identifier configured in the Smashsend UI. */
+  template: string;
+  /** Recipient address. Only a single email address is allowed. */
+  to: string;
+  /** Key-value pairs used to render the template. */
+  variables?: Record<string, any>;
+  /** Tracking configuration. */
+  settings?: {
+    trackClicks?: boolean;
+    trackOpens?: boolean;
+  };
+  /** Date when the email should be sent (ISO 8601 string or Date instance). */
+  sendAt?: string | Date;
+  /** Idempotency key to de-duplicate requests. */
+  idempotencyKey?: string;
+}
+
+export type TransactionalEmailSendOptions = RawEmailSendOptions | TemplatedEmailSendOptions;
+
+// ─────────────────────────────────────────────────────────────────
+
+// EmailAttachment is currently unused – keeping for forward-compatibility
 export interface EmailAttachment {
   filename: string;
   content: string | Uint8Array;
   contentType?: string;
 }
 
-export interface EmailSendResponse {
-  id: string;
-  from: string;
-  to: string[];
-  created: string;
-  statusCode: number;
-  message: string;
+// Backend delivery status values
+export enum TransactionalEmailStatus {
+  SCHEDULED = 'SCHEDULED',
+  SENT = 'SENT',
+  FAILED = 'FAILED',
+  CANCELLED = 'CANCELLED',
+  DELIVERED = 'DELIVERED',
 }
+
+export interface RawEmailSendResponse {
+  /** Unique message identifier. */
+  messageId: string;
+  /** Delivery status. */
+  status: TransactionalEmailStatus;
+  /** Recipient address. */
+  to: string;
+  /** Sender address. */
+  from: string;
+  /** Subject line. */
+  subject: string;
+  /** Discriminator – always `raw`. */
+  type: 'raw';
+  /** Warning returned by backend when the email is accepted with caveats. */
+  warning?: string;
+  /** Custom analytics group identifier if provided. */
+  groupBy?: string;
+}
+
+export interface TemplatedEmailSendResponse {
+  /** Unique message identifier. */
+  messageId: string;
+  /** Delivery status. */
+  status: TransactionalEmailStatus;
+  /** Recipient address. */
+  to: string;
+  /** Template identifier sent in the request. */
+  template: string;
+  /** Discriminator – always `templated`. */
+  type: 'templated';
+  /** Warning returned by backend when the email is accepted with caveats. */
+  warning?: string;
+}
+
+export type TransactionalEmailSendResponse = RawEmailSendResponse | TemplatedEmailSendResponse;
+
+/**
+ * @deprecated Use `RawEmailSendOptions` or `TemplatedEmailSendOptions` instead.
+ */
+export type EmailSendOptions = TransactionalEmailSendOptions;
+
+/**
+ * @deprecated Use `TransactionalEmailSendResponse` instead.
+ */
+export type EmailSendResponse = TransactionalEmailSendResponse;
 
 // Country code enum (ISO 3166-1 alpha-2)
 export enum SmashsendCountryCode {

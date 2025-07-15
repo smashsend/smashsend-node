@@ -1,106 +1,94 @@
-import { SmashSend, SmashSendError } from '@smashsend/node';
+import { SmashSend } from '@smashsend/node';
+import type { ReactElement } from 'react';
 
-// Create a client instance
-const smashsend = new SmashSend('your-api-key', {
-  maxRetries: 3,
-  timeout: 60000,
-});
+async function sendEmails() {
+  const smashsend = new SmashSend('your-api-key');
 
-// Example: Send an email
-async function sendEmail() {
-  try {
-    const email = await smashsend.emails.send({
-      from: {
-        email: 'sender@example.com',
-        name: 'Sender Name',
-      },
-      to: [
-        {
-          email: 'recipient1@example.com',
-          name: 'Recipient 1',
-        },
-        'recipient2@example.com',
-      ],
-      subject: 'Hello from SmashSend',
-      text: 'This is a test email from the SmashSend Node.js SDK.',
-      html: '<p>This is a test email from the <strong>SmashSend Node.js SDK</strong>.</p>',
-      attachments: [
-        {
-          filename: 'attachment.txt',
-          content: 'SGVsbG8gV29ybGQh', // Base64 encoded content
-          contentType: 'text/plain',
-        },
-      ],
-      tags: ['example', 'test'],
-    });
+  // Example 1: Send HTML email
+  await smashsend.emails.send({
+    from: 'sender@example.com',
+    to: 'recipient@example.com',
+    subject: 'Hello from TypeScript',
+    html: '<h1>Hello World</h1>',
+  });
 
-    console.log('Email sent successfully!');
-    console.log('Email ID:', email.id);
-    console.log('Status:', email.statusCode);
-  } catch (error) {
-    if (error instanceof SmashSendError) {
-      console.error(`Error: ${error.message}`);
-      console.error(`Status Code: ${error.statusCode}`);
-      console.error(`Error Code: ${error.code}`);
-      console.error(`Request ID: ${error.requestId}`);
-    } else {
-      console.error('Unexpected error:', error);
-    }
-  }
+  // Example 2: Send React email (no 'as any' needed!)
+  const reactElement: ReactElement = {
+    type: 'div',
+    props: { children: 'Hello from React' },
+    key: null,
+  };
+
+  await smashsend.emails.send({
+    from: 'sender@example.com',
+    to: 'recipient@example.com',
+    subject: 'React Email',
+    react: reactElement,
+  });
+
+  // Example 3: Send with fromName
+  await smashsend.emails.send({
+    from: 'sender@example.com',
+    fromName: 'Sender Name',
+    to: 'recipient@example.com',
+    subject: 'With fromName',
+    html: '<p>This email has a fromName</p>',
+  });
+
+  // Example 4: Send templated email
+  await smashsend.emails.sendWithTemplate({
+    template: 'welcome-email',
+    to: 'recipient@example.com',
+    variables: {
+      firstName: 'John',
+      companyName: 'Acme Corp',
+    },
+  });
+
+  // Example 5: Full email with all options
+  await smashsend.emails.send({
+    from: 'noreply@example.com',
+    to: 'user@example.com',
+    subject: 'Complete Example',
+    html: '<h1>Hello</h1><p>This is a complete example.</p>',
+    text: 'Hello\n\nThis is a complete example.',
+    replyTo: 'support@example.com',
+    settings: {
+      trackClicks: true,
+      trackOpens: true,
+    },
+    groupBy: 'campaign-123',
+    contactProperties: {
+      firstName: 'John',
+      lastName: 'Doe',
+    },
+  });
 }
 
-// Example: Manage contacts with error handling
+// Handle contacts
 async function manageContacts() {
-  try {
-    // Create a contact
-    const contact = await smashsend.contacts.create({
-      email: 'john.doe@example.com',
-      name: 'John Doe',
-      properties: {
-        company: 'SmashSend',
-        role: 'Developer',
-      },
-      tags: ['developer', 'node-sdk'],
-    });
-    console.log('Contact created:', contact.id);
+  const smashsend = new SmashSend('your-api-key');
 
-    // Update the contact
-    const updatedContact = await smashsend.contacts.update(contact.id, {
-      name: 'Jonathan Doe',
-      properties: {
-        company: 'SmashSend',
-        role: 'Senior Developer',
-        department: 'Engineering',
-      },
-    });
-    console.log('Contact updated:', updatedContact.properties.name);
+  // Create contact
+  const contact = await smashsend.contacts.create({
+    email: 'john@example.com',
+    firstName: 'John',
+    lastName: 'Doe',
+  });
 
-    // List contacts
-    const listResponse = await smashsend.contacts.list({ limit: 10, offset: 0 });
-    console.log(`Found ${listResponse.contacts.length} contacts`);
-    console.log('Total contacts:', listResponse.pagination.total);
+  // Update contact
+  await smashsend.contacts.update('john@example.com', {
+    firstName: 'Jonathan',
+  });
 
-    // Create a contact property
-    const property = await smashsend.contacts.createProperty({
-      name: 'industry',
-      label: 'Industry',
-      type: 'string',
-      description: 'The industry the contact works in',
-    });
-    console.log('Property created:', property.id);
-  } catch (error) {
-    if (error instanceof SmashSendError) {
-      console.error(`Error: ${error.message}`);
-      console.error(`Status Code: ${error.statusCode}`);
-      console.error(`Error Code: ${error.code}`);
-    } else {
-      console.error('Unexpected error:', error);
-    }
-  }
+  // Get contact
+  const retrieved = await smashsend.contacts.get('john@example.com');
+
+  // List contacts
+  const contacts = await smashsend.contacts.list({
+    limit: 50,
+  });
+
+  // Delete contact
+  await smashsend.contacts.delete('john@example.com');
 }
-
-// Run examples
-(async () => {
-  await sendEmail();
-  await manageContacts();
-})();

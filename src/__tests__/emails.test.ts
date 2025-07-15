@@ -34,15 +34,18 @@ describe('Emails', () => {
         from: 'test@example.com',
         to: 'recipient@example.com',
         subject: 'Test Email',
+        html: '<p>Hello World</p>',
         text: 'Hello World',
       });
 
       // Assertions
       expect(mockHttpClient.post).toHaveBeenCalledWith('/emails', {
         from: 'test@example.com',
-        to: ['recipient@example.com'],
+        to: 'recipient@example.com',
         subject: 'Test Email',
+        html: '<p>Hello World</p>',
         text: 'Hello World',
+        sendAt: undefined,
       });
       expect(result).toEqual(mockResponse);
     });
@@ -63,22 +66,82 @@ describe('Emails', () => {
 
       // Call the method with complex email addresses
       const result = await emails.send({
-        from: { email: 'sender@example.com', name: 'Sender Name' },
-        to: [{ email: 'recipient@example.com', name: 'Recipient Name' }, 'another@example.com'],
-        cc: { email: 'cc@example.com', name: 'CC Name' },
-        bcc: ['bcc1@example.com', 'bcc2@example.com'],
+        from: 'Sender Name <sender@example.com>',
+        to: 'recipient@example.com',
         subject: 'Test Email',
         html: '<p>Hello World</p>',
       });
 
       // Assertions
       expect(mockHttpClient.post).toHaveBeenCalledWith('/emails', {
-        from: { email: 'sender@example.com', name: 'Sender Name' },
-        to: [{ email: 'recipient@example.com', name: 'Recipient Name' }, 'another@example.com'],
-        cc: [{ email: 'cc@example.com', name: 'CC Name' }],
-        bcc: ['bcc1@example.com', 'bcc2@example.com'],
+        from: 'Sender Name <sender@example.com>',
+        to: 'recipient@example.com',
         subject: 'Test Email',
         html: '<p>Hello World</p>',
+      });
+      expect(result).toEqual(mockResponse);
+    });
+
+    it('should accept empty string HTML content', async () => {
+      // Mock the HTTP client response
+      const mockResponse = { id: 'email123', statusCode: 200 };
+      mockHttpClient.post.mockResolvedValueOnce(mockResponse);
+
+      // Call the method with empty HTML
+      const result = await emails.send({
+        from: 'test@example.com',
+        to: 'recipient@example.com',
+        subject: 'Empty HTML Test',
+        html: '',
+      });
+
+      // Assertions
+      expect(mockHttpClient.post).toHaveBeenCalledWith('/emails', {
+        from: 'test@example.com',
+        to: 'recipient@example.com',
+        subject: 'Empty HTML Test',
+        html: '',
+        sendAt: undefined,
+      });
+      expect(result).toEqual(mockResponse);
+    });
+
+    it('should throw error when neither html nor react is provided', async () => {
+      // Test with missing html/react
+      await expect(
+        emails.send({
+          from: 'test@example.com',
+          to: 'recipient@example.com',
+          subject: 'Test',
+        } as any)
+      ).rejects.toThrow('Either "html" or "react" must be provided when calling emails.send');
+    });
+
+    it('should accept React element that renders to empty string', async () => {
+      // Mock the HTTP client response
+      const mockResponse = { id: 'email123', statusCode: 200 };
+      mockHttpClient.post.mockResolvedValueOnce(mockResponse);
+
+      // Mock @react-email/render to return empty string
+      jest.doMock('@react-email/render', () => ({
+        renderAsync: jest.fn().mockResolvedValue(''),
+      }));
+
+      // Call the method with React element
+      const result = await emails.send({
+        from: 'test@example.com',
+        to: 'recipient@example.com',
+        subject: 'Empty React Test',
+        react: { type: 'div', props: {}, key: null },
+      });
+
+      // Assertions
+      expect(mockHttpClient.post).toHaveBeenCalledWith('/emails', {
+        from: 'test@example.com',
+        to: 'recipient@example.com',
+        subject: 'Empty React Test',
+        html: '',
+        sendAt: undefined,
       });
       expect(result).toEqual(mockResponse);
     });
