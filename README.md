@@ -77,13 +77,9 @@ console.log(contact.id); // contact UUID
 console.log(contact.properties.email); // newcontact@example.com
 ```
 
-## Send transactional emails
-
-SMASHSEND offers three powerful ways to send transactional emails:
-
 ## Send email (basic example)
 
-The simplest way to send an email is with raw HTML:
+The simplest way to send a transactional email is with raw HTML:
 
 ```typescript
 const response = await smashsend.emails.send({
