@@ -249,14 +249,22 @@ const smashsend = new SmashSend(process.env.SMASHSEND_API_KEY!, {
 });
 ```
 
-## Using with Next.js
+## Using with Next.js (Server-Side Only!)
 
-This SDK works in **Next.js 14+**: server components, edge functions, API routes, and server actions.
+> ⚠️ **SECURITY NOTE**: This SDK contains your secret API key and must **NEVER** be used in client-side code. Only use it in:
+>
+> - Server Components
+> - API Routes
+> - Server Actions
+> - Middleware
+>
+> **Never import this SDK in client components or expose your API key to the browser!**
 
-**Helper**
+**Helper (Server-Side Only)**
 
 ```typescript
 // lib/smashsend.ts
+// ⚠️ This file should only be imported in server-side code!
 import { SmashSend } from '@smashsend/node';
 
 let client: SmashSend;
@@ -269,10 +277,11 @@ export function getSmashSendClient(apiKey?: string) {
 }
 ```
 
-**Server Component**
+**Server Component Example**
 
 ```tsx
 // app/contacts/page.tsx
+// ✅ This is a Server Component - API key is safe here
 import { getSmashSendClient } from '@/lib/smashsend';
 
 export default async function ContactsPage() {
@@ -291,10 +300,11 @@ export default async function ContactsPage() {
 }
 ```
 
-**API Route**
+**API Route Example**
 
 ```typescript
 // app/api/contact/route.ts
+// ✅ API routes run on the server - API key is safe here
 import { getSmashSendClient, SmashsendContactStatus, SmashsendCountryCode } from '@/lib/smashsend';
 import { NextResponse } from 'next/server';
 
@@ -312,6 +322,42 @@ export async function POST(req: Request) {
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message }, { status: 400 });
   }
+}
+```
+
+**❌ What NOT to do**
+
+```tsx
+// components/BadExample.tsx
+'use client' // ❌ Client component
+
+import { SmashSend } from '@smashsend/node';
+
+export function BadExample() {
+  // ❌ NEVER DO THIS! This exposes your API key to the browser!
+  const smashsend = new SmashSend('your-api-key');
+
+  // ❌ This will leak your API key in the browser's network tab
+  const handleClick = async () => {
+    await smashsend.emails.send({ ... });
+  };
+}
+```
+
+**✅ Correct approach for client-side interactions**
+
+```tsx
+// components/GoodExample.tsx
+'use client';
+
+export function GoodExample() {
+  const handleSubmit = async (email: string) => {
+    // ✅ Call your API route instead
+    await fetch('/api/contact', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  };
 }
 ```
 
