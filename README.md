@@ -21,31 +21,6 @@
 
 # SMASHSEND Node.js SDK
 
-## Table of Contents
-
-1. [What is SMASHSEND?](#what-is-smashsend)
-2. [Installation](#installation)
-3. [Setup](#setup)
-4. [Usage](#usage)
-   - [Create or update a contact](#create-or-update-a-contact)
-   - [Send transactional emails](#send-transactional-emails)
-     - [Method 1: Send raw HTML](#method-1-send-raw-html)
-     - [Method 2: Send with template (recommended)](#method-2-send-with-template-recommended)
-     - [Method 3: Send with React](#method-3-send-with-react)
-5. [Advanced Configuration](#advanced-configuration)
-   - [Custom Headers](#custom-headers)
-   - [Debug Mode](#debug-mode)
-   - [Retry Configuration](#retry-configuration)
-6. [Using with Next.js](#using-with-nextjs)
-7. [Error Handling](#error-handling)
-8. [TypeScript Support](#typescript-support)
-9. [Automated Publishing Workflow](#automated-publishing-workflow)
-10. [Documentation](#documentation)
-11. [Contributing](#contributing)
-12. [License](#license)
-
----
-
 ## What is SMASHSEND?
 
 **SMASHSEND** is a bold, modern email platform built for **business owners, creators, and startups** — not just marketers.
@@ -59,19 +34,13 @@
 
 → [Explore more](https://smashsend.com)
 
----
-
 ## Installation
 
 ```bash
 npm install @smashsend/node       # or yarn add @smashsend/node / pnpm add @smashsend/node
 ```
 
----
-
-## Setup
-
-### Getting an API Key
+## Getting an API Key
 
 1. Log in to your [SMASHSEND Dashboard](https://smashsend.com/dashboard)
 2. Navigate to **Settings** → **API Keys**
@@ -87,11 +56,7 @@ const smashsend = new SmashSend(process.env.SMASHSEND_API_KEY!);
 
 > **Security tip:** Never commit API keys to version control. Use environment variables or a secrets manager.
 
----
-
-## Usage
-
-### Create or update a contact
+## Create or update a contact
 
 ```typescript
 import { SmashSend, SmashsendContactStatus, SmashsendCountryCode } from '@smashsend/node';
@@ -112,11 +77,11 @@ console.log(contact.id); // contact UUID
 console.log(contact.properties.email); // newcontact@example.com
 ```
 
-### Send transactional emails
+## Send transactional emails
 
 SMASHSEND offers three powerful ways to send transactional emails:
 
-#### Method 1: Send raw HTML
+## Send email (basic example)
 
 The simplest way to send an email is with raw HTML:
 
@@ -141,7 +106,7 @@ const response = await smashsend.emails.send({
 
 > **📊 Analytics tip:** Use the `groupBy` parameter to group similar emails together in your analytics dashboard. This helps you track performance across all "order shipped" emails, regardless of individual recipients.
 
-#### Method 2: Send with template (recommended)
+## Send email with template _(recommended)_
 
 For better maintainability and design flexibility, use templates — the **recommended approach** for transactional emails.
 
@@ -184,7 +149,7 @@ console.log(response.messageId); // Unique ID for tracking
 console.log(response.status); // SCHEDULED, SENT, etc.
 ```
 
-#### Method 3: Send with React
+## Send email with React
 
 For developers using React, you can write emails as React components:
 
@@ -258,11 +223,9 @@ const response = await smashsend.emails.send({
 });
 ```
 
----
-
 ## Advanced Configuration
 
-### Custom Headers
+**Custom Headers**
 
 ```typescript
 // Add multiple headers
@@ -275,13 +238,13 @@ smashsend.setHeaders({
 smashsend.setHeader('X-Source', 'website');
 ```
 
-### Debug Mode
+**Debug Mode**
 
 ```typescript
 smashsend.setDebugMode(true); // logs all requests & responses
 ```
 
-### Retry Configuration
+**Retry Configuration**
 
 ```typescript
 const smashsend = new SmashSend(process.env.SMASHSEND_API_KEY!, {
@@ -290,13 +253,11 @@ const smashsend = new SmashSend(process.env.SMASHSEND_API_KEY!, {
 });
 ```
 
----
-
 ## Using with Next.js
 
 This SDK works in **Next.js 14+**: server components, edge functions, API routes, and server actions.
 
-### Helper
+**Helper**
 
 ```typescript
 // lib/smashsend.ts
@@ -312,7 +273,7 @@ export function getSmashSendClient(apiKey?: string) {
 }
 ```
 
-### Server Component
+**Server Component**
 
 ```tsx
 // app/contacts/page.tsx
@@ -334,7 +295,7 @@ export default async function ContactsPage() {
 }
 ```
 
-### API Route
+**API Route**
 
 ```typescript
 // app/api/contact/route.ts
@@ -358,8 +319,6 @@ export async function POST(req: Request) {
 }
 ```
 
----
-
 ## Error Handling
 
 ```typescript
@@ -378,15 +337,11 @@ try {
 }
 ```
 
----
-
 ## TypeScript Support
 
 - Built **in TypeScript**
 - Complete type definitions for **all resources & enums**
 - Works with `strictNullChecks`, `moduleResolution=node`, etc.
-
----
 
 ## Automated Publishing Workflow
 
@@ -399,19 +354,15 @@ GitHub Actions publishes to **npm** automatically.
 
 Version bumps & Git tags (`v1.2.3` / `v1.2.3-beta.4`) are handled for you.
 
-### Required secret
+**Required secret**
 
 ```text
 NPM_TOKEN  →  Settings ▸ Secrets ▸ Actions
 ```
 
----
-
 ## Documentation
 
 Full API reference → **<https://smashsend.com/docs/api>**
-
----
 
 ## Contributing
 
@@ -420,8 +371,6 @@ We ❤️ PRs!
 1. **Fork** → `git checkout -b feat/awesome`
 2. Add tests & docs
 3. **PR** against `beta` or `main`
-
----
 
 ## License
 
