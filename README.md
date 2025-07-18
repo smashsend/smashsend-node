@@ -28,7 +28,10 @@
 3. [Setup](#setup)
 4. [Usage](#usage)
    - [Create or update a contact](#create-or-update-a-contact)
-   - [Send an email](#send-an-email)
+   - [Send transactional emails](#send-transactional-emails)
+     - [Method 1: Send raw HTML](#method-1-send-raw-html)
+     - [Method 2: Send with template (recommended)](#method-2-send-with-template-recommended)
+     - [Method 3: Send with React](#method-3-send-with-react)
 5. [Advanced Configuration](#advanced-configuration)
    - [Custom Headers](#custom-headers)
    - [Debug Mode](#debug-mode)
@@ -48,7 +51,7 @@
 **SMASHSEND** is a bold, modern email platform built for **business owners, creators, and startups** — not just marketers.
 
 - ⚡️ Drag-and-drop email builder
-- 🪄 AI-powered personalization (“Magic Boxes”)
+- 🪄 AI-powered personalization ("Magic Boxes")
 - 🤖 Automations & event triggers
 - 🚀 High-deliverability transactional email API
 - 🗂️ Lightweight CRM & contact management
@@ -68,13 +71,21 @@ npm install @smashsend/node       # or yarn add @smashsend/node / pnpm add @smas
 
 ## Setup
 
-Get an API key from the **[SMASHSEND Dashboard](https://smashsend.com)**:
+### Getting an API Key
+
+1. Log in to your [SMASHSEND Dashboard](https://smashsend.com/dashboard)
+2. Navigate to **Settings** → **API Keys**
+3. Click **Create API Key**
+4. Give your key a descriptive name (e.g., "Production Server", "Development")
+5. Copy the key immediately — it won't be shown again!
 
 ```typescript
 import { SmashSend } from '@smashsend/node';
 
 const smashsend = new SmashSend(process.env.SMASHSEND_API_KEY!);
 ```
+
+> **Security tip:** Never commit API keys to version control. Use environment variables or a secrets manager.
 
 ---
 
@@ -101,15 +112,149 @@ console.log(contact.id); // contact UUID
 console.log(contact.properties.email); // newcontact@example.com
 ```
 
-### Send an email
+### Send transactional emails
+
+SMASHSEND offers three powerful ways to send transactional emails:
+
+#### Method 1: Send raw HTML
+
+The simplest way to send an email is with raw HTML:
 
 ```typescript
 const response = await smashsend.emails.send({
-  from: 'you@example.com',
+  from: 'notifications@yourdomain.com',
   to: 'recipient@example.com',
-  subject: 'Hello from SMASHSEND',
-  text: 'This is a test email from the SMASHSEND Node.js SDK.',
-  html: '<p>This is a test email from the <strong>SMASHSEND Node.js SDK</strong>...</p>',
+  subject: 'Your order has shipped!',
+  html: `
+    <h1>Great news!</h1>
+    <p>Your order #12345 has shipped and is on its way.</p>
+    <a href="https://track.example.com/12345">Track your package</a>
+  `,
+  text: 'Your order #12345 has shipped. Track at: https://track.example.com/12345',
+  groupBy: 'order-shipped', // Group analytics by email type
+  settings: {
+    trackClicks: true,
+    trackOpens: true,
+  },
+});
+```
+
+> **📊 Analytics tip:** Use the `groupBy` parameter to group similar emails together in your analytics dashboard. This helps you track performance across all "order shipped" emails, regardless of individual recipients.
+
+#### Method 2: Send with template (recommended)
+
+For better maintainability and design flexibility, use templates — the **recommended approach** for transactional emails.
+
+**Why use templates?**
+
+- 🎨 Design beautiful emails in the SMASHSEND visual editor
+- 🔄 Update email content without deploying code
+- 📊 Built-in analytics and tracking
+- 🧪 A/B test different versions
+- 👥 Non-technical team members can modify content
+- 🌐 Automatic responsive design
+
+**Creating a template:**
+
+1. Go to Emails => **Transactional** in your dashboard
+2. Click **Create Transactional**
+3. Design your email using the drag-and-drop editor
+4. Add variables (both template variables and contact variables)
+5. Save with a memorable template ID (e.g., `welcome-email`, `order-confirmation`)
+
+**Sending with a template:**
+
+```typescript
+const response = await smashsend.emails.sendWithTemplate({
+  to: 'user@example.com',
+  template: 'welcome-email', // Template ID from dashboard
+  variables: {
+    firstName: 'Sarah',
+    companyName: 'Acme Corp',
+    signupDate: new Date().toLocaleDateString(),
+    // Any variables used in your template
+  },
+  settings: {
+    trackClicks: true,
+    trackOpens: true,
+  },
+});
+
+console.log(response.messageId); // Unique ID for tracking
+console.log(response.status); // SCHEDULED, SENT, etc.
+```
+
+#### Method 3: Send with React
+
+For developers using React, you can write emails as React components:
+
+**First, install the React email renderer:**
+
+```bash
+npm install @react-email/render
+```
+
+**Create your email component:**
+
+```tsx
+// emails/OrderConfirmation.tsx
+import * as React from 'react';
+
+interface OrderConfirmationProps {
+  customerName: string;
+  orderNumber: string;
+  items: Array<{ name: string; price: number }>;
+}
+
+export default function OrderConfirmation({
+  customerName,
+  orderNumber,
+  items,
+}: OrderConfirmationProps) {
+  const total = items.reduce((sum, item) => sum + item.price, 0);
+
+  return (
+    <div style={{ fontFamily: 'Arial, sans-serif', maxWidth: '600px', margin: '0 auto' }}>
+      <h1 style={{ color: '#333' }}>Thanks for your order, {customerName}!</h1>
+      <p>Order #{orderNumber} has been confirmed.</p>
+
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <tbody>
+          {items.map((item, i) => (
+            <tr key={i}>
+              <td style={{ padding: '10px 0' }}>{item.name}</td>
+              <td style={{ textAlign: 'right' }}>${item.price.toFixed(2)}</td>
+            </tr>
+          ))}
+          <tr style={{ borderTop: '2px solid #333', fontWeight: 'bold' }}>
+            <td style={{ padding: '10px 0' }}>Total</td>
+            <td style={{ textAlign: 'right' }}>${total.toFixed(2)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+}
+```
+
+**Send the React email:**
+
+```typescript
+import OrderConfirmation from './emails/OrderConfirmation';
+
+const response = await smashsend.emails.send({
+  from: 'orders@yourdomain.com',
+  to: 'customer@example.com',
+  subject: 'Order Confirmation',
+  react: OrderConfirmation({
+    customerName: 'John',
+    orderNumber: '12345',
+    items: [
+      { name: 'T-Shirt', price: 29.99 },
+      { name: 'Shipping', price: 5.0 },
+    ],
+  }),
+  groupBy: 'order-confirmation',
 });
 ```
 
