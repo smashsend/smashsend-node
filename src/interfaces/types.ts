@@ -482,6 +482,8 @@ export interface Contact {
     lastName?: string;
     phone?: string;
     status?: SmashsendContactStatus;
+
+    // Allow custom properties
     [key: string]: any;
   };
 }
