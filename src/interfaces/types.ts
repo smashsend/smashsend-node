@@ -471,7 +471,7 @@ export interface Contact {
   id: string;
   createdAt: string;
   updatedAt?: string;
-  workspaceId: string; // Made required to match backend
+  workspaceId: string;
   properties: {
     avatarUrl?: string;
     birthday?: string;
@@ -490,26 +490,24 @@ export interface Contact {
 
 // Custom property interfaces
 export interface CustomProperty {
-  id: string;
   apiSlug: string;
-  displayName: string;
-  type: SmashsendPropertyType;
-  description?: string; // Made optional to match backend
   createdAt: string;
-  updatedAt?: string;
-  workspaceId: string; // Made required to match backend
-  isInternal: boolean; // Made required to match backend
+  description?: string;
+  displayName: string;
+  id: string;
+  isInternal: boolean;
+  type: SmashsendPropertyType;
   typeConfig: {
-    // Changed from optional to required, removed duplicate fields
     options?: Array<{
+      color: string;
+      displayName: string;
       id: string;
       value: string;
-      displayName: string;
-      color: string;
     }>;
     multiple?: boolean;
   };
-  // Removed the duplicate 'options' field
+  updatedAt?: string;
+  workspaceId: string;
 }
 
 export interface CustomPropertyCreateOptions {
@@ -582,14 +580,14 @@ export interface ApiKeyValidationResponse {
 }
 
 export interface ApiKeyInfo {
-  id: string;
-  displayName: string; // Changed from 'name' to match backend
-  role: SmashsendApiKeyRole; // Changed from 'permissions: string[]' to match backend
   createdAt: string;
-  status: SmashsendApiKeyStatus; // Added to match backend
-  secretKey?: string; // Added - only present on creation
-  updatedAt?: string; // Added to match backend
-  workspaceId: string; // Changed from 'accountId' to match backend
+  displayName: string;
+  id: string;
+  role: SmashsendApiKeyRole;
+  secretKey?: string;
+  status: SmashsendApiKeyStatus;
+  updatedAt?: string;
+  workspaceId: string;
 }
 
 export interface ApiKeyCreateOptions {
