@@ -379,6 +379,41 @@ try {
 }
 ```
 
+## Contact Properties
+
+SMASHSEND supports custom contact properties with the following types:
+
+```typescript
+import { SmashsendPropertyType } from '@smashsend/node';
+
+// Available property types:
+SmashsendPropertyType.SELECT; // Single choice dropdown
+SmashsendPropertyType.MULTI_SELECT; // Multiple choice selection
+SmashsendPropertyType.STRING; // Text (max 255 characters)
+SmashsendPropertyType.NUMBER; // Decimal numbers
+SmashsendPropertyType.DATE; // Date values
+SmashsendPropertyType.BOOLEAN; // True/False values
+```
+
+**Creating a custom property:**
+
+```typescript
+const property = await smashsend.contacts.createProperty({
+  displayName: 'Industry',
+  type: SmashsendPropertyType.SELECT,
+  description: 'The industry sector',
+  typeConfig: {
+    multiple: false,
+    options: ['Technology', 'Healthcare', 'Finance', 'Other'],
+  },
+});
+```
+
+**Important:** There are no separate EMAIL, URL, PHONE, TEXT, or INTEGER types. Use:
+
+- `STRING` for email addresses, URLs, phone numbers, and any text
+- `NUMBER` for both integers and decimals
+
 ## TypeScript Support
 
 - Built **in TypeScript**

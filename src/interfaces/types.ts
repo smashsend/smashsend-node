@@ -303,6 +303,7 @@ export enum SmashsendCountryCode {
   MD = 'MD', // Moldova
   MC = 'MC', // Monaco
   MN = 'MN', // Mongolia
+  ME = 'ME', // Montenegro
   MS = 'MS', // Montserrat
   MA = 'MA', // Morocco
   MZ = 'MZ', // Mozambique
@@ -412,15 +413,12 @@ export enum SmashsendContactStatus {
 
 // Custom property type enum
 export enum SmashsendPropertyType {
-  BOOLEAN = 'BOOLEAN',
+  SELECT = 'SELECT',
+  MULTI_SELECT = 'MULTI_SELECT',
   STRING = 'STRING',
-  TEXT = 'TEXT',
   NUMBER = 'NUMBER',
-  INTEGER = 'INTEGER',
   DATE = 'DATE',
-  EMAIL = 'EMAIL',
-  URL = 'URL',
-  PHONE = 'PHONE',
+  BOOLEAN = 'BOOLEAN',
 }
 
 // Contact interfaces
