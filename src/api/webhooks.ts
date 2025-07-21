@@ -1,5 +1,5 @@
 import { HttpClient } from '../utils/http-client';
-import { Webhook, WebhookCreateOptions } from '../interfaces/types';
+import { Webhook, WebhookCreateOptions, WebhookUpdateOptions } from '../interfaces/types';
 import * as crypto from 'crypto';
 
 export class Webhooks {
@@ -61,8 +61,8 @@ export class Webhooks {
    * @param options The webhook update options
    * @returns The updated webhook
    */
-  async update(id: string, options: Partial<WebhookCreateOptions>): Promise<Webhook> {
-    const response = await this.httpClient.put<{ webhook: Webhook }>(`/webhooks/${id}`, options);
+  async update(id: string, options: WebhookUpdateOptions): Promise<Webhook> {
+    const response = await this.httpClient.post<{ webhook: Webhook }>(`/webhooks/${id}`, options);
     return response.webhook;
   }
 

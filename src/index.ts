@@ -134,6 +134,7 @@ export type {
   CustomPropertyCreateOptions,
   CustomPropertyUpdateOptions,
   CustomPropertyListResponse,
+  WebhookUpdateOptions,
 } from './interfaces/types';
 
 // Export enums
@@ -141,6 +142,13 @@ export {
   SmashsendContactStatus,
   SmashsendCountryCode,
   SmashsendPropertyType,
+  SmashsendApiKeyRole,
+  SmashsendApiKeyStatus,
+  SmashsendContactSource,
+  SmashsendContactPropertyFilterType,
+  SmashsendWebhookStatus,
+  SmashsendWebhookEvent,
+  TransactionalEmailStatus,
 } from './interfaces/types';
 
 export {

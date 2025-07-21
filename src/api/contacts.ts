@@ -22,7 +22,6 @@ export class Contacts {
    */
   async create(options: ContactCreateOptions): Promise<Contact> {
     const { customProperties, ...rest } = options;
-
     const response = await this.httpClient.post<{ contact: Contact }>('/contacts', {
       // Transform the input format to the backend expected format
       properties: {
@@ -63,7 +62,6 @@ export class Contacts {
    */
   async update(id: string, options: Partial<ContactCreateOptions>): Promise<Contact> {
     const { customProperties, ...rest } = options;
-
     const response = await this.httpClient.put<{ contact: Contact }>(`/contacts/${id}`, {
       // Transform the input format to the backend expected format
       properties: {

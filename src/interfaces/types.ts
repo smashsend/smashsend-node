@@ -159,6 +159,17 @@ export type EmailSendOptions = TransactionalEmailSendOptions;
  */
 export type EmailSendResponse = TransactionalEmailSendResponse;
 
+// API Key enums
+export enum SmashsendApiKeyRole {
+  EDITOR = 'EDITOR', // can view and edit any information in your workspace
+  VIEWER = 'VIEWER', // can only view information in your workspace but cant do any CHANGES
+}
+
+export enum SmashsendApiKeyStatus {
+  ACTIVE = 'ACTIVE',
+  ARCHIVED = 'ARCHIVED',
+}
+
 // Country code enum (ISO 3166-1 alpha-2)
 export enum SmashsendCountryCode {
   AF = 'AF', // Afghanistan
@@ -411,17 +422,18 @@ export enum SmashsendContactStatus {
   BANNED = 'BANNED', // e.g: bad email, spam or abuse
 }
 
-// Custom property type enum
-export enum SmashsendPropertyType {
-  SELECT = 'SELECT',
-  MULTI_SELECT = 'MULTI_SELECT',
-  STRING = 'STRING',
-  NUMBER = 'NUMBER',
-  DATE = 'DATE',
-  BOOLEAN = 'BOOLEAN',
+export enum SmashsendContactSource {
+  DASHBOARD = 'DASHBOARD',
+  PUBLIC_API = 'PUBLIC_API',
+  CSV_IMPORT = 'CSV_IMPORT',
+  MAILCHIMP = 'MAILCHIMP',
+  SENDGRID = 'SENDGRID',
+  TRANSACTIONAL_EMAIL = 'TRANSACTIONAL_EMAIL',
+  ZAPIER = 'ZAPIER',
+  STRIPE = 'STRIPE',
 }
 
-// Contact interfaces
+// Contact creation payload (flat + optional customProperties)
 export interface ContactCreateOptions {
   email: string;
   firstName?: string;
@@ -433,15 +445,32 @@ export interface ContactCreateOptions {
   language?: string;
   phone?: string;
   status?: SmashsendContactStatus;
+  // Extra custom properties keyed by apiSlug
   customProperties?: Record<string, any>;
 }
 
-// Backend Contact type - matches exactly what the backend returns
+// Custom property type enum
+export enum SmashsendPropertyType {
+  SELECT = 'SELECT',
+  MULTI_SELECT = 'MULTI_SELECT',
+  STRING = 'STRING',
+  NUMBER = 'NUMBER',
+  DATE = 'DATE',
+  BOOLEAN = 'BOOLEAN',
+}
+
+export enum SmashsendContactPropertyFilterType {
+  ALL = 'ALL',
+  CUSTOM = 'CUSTOM',
+  INTERNAL = 'INTERNAL',
+}
+
+// Contact interfaces
 export interface Contact {
   id: string;
   createdAt: string;
   updatedAt?: string;
-  workspaceId?: string;
+  workspaceId: string;
   properties: {
     avatarUrl?: string;
     birthday?: string;
@@ -453,6 +482,7 @@ export interface Contact {
     lastName?: string;
     phone?: string;
     status?: SmashsendContactStatus;
+
     // Allow custom properties
     [key: string]: any;
   };
@@ -460,24 +490,27 @@ export interface Contact {
 
 // Custom property interfaces
 export interface CustomProperty {
-  id: string;
   apiSlug: string;
-  displayName: string;
-  type: SmashsendPropertyType;
-  description?: string;
   createdAt: string;
-  updatedAt?: string;
-  workspaceId?: string;
-  isInternal?: boolean;
-  typeConfig?: {
-    options?: any[];
+  description?: string;
+  displayName: string;
+  id: string;
+  isInternal: boolean;
+  type: SmashsendPropertyType;
+  typeConfig: {
+    options?: Array<{
+      color: string;
+      displayName: string;
+      id: string;
+      value: string;
+    }>;
     multiple?: boolean;
   };
-  options?: any[];
+  updatedAt?: string;
+  workspaceId: string;
 }
 
 export interface CustomPropertyCreateOptions {
-  apiSlug: string;
   displayName: string;
   type: SmashsendPropertyType;
   description?: string;
@@ -496,19 +529,54 @@ export interface CustomPropertyListResponse {
 // Webhook interfaces
 export interface WebhookCreateOptions {
   url: string;
-  events: string[];
-  description?: string;
-  enabled?: boolean;
-  secret?: string;
+  events: SmashsendWebhookEvent[];
+  token?: string; // Changed from 'secret' to match backend
+}
+
+export interface WebhookUpdateOptions {
+  url?: string;
+  token?: string;
+  events?: SmashsendWebhookEvent[];
+  status?: SmashsendWebhookStatus;
 }
 
 export interface Webhook {
   id: string;
   url: string;
-  events: string[];
-  description?: string;
-  enabled: boolean;
+  events: SmashsendWebhookEvent[];
+  displayName: string; // Added to match backend
+  status: SmashsendWebhookStatus; // Changed from 'enabled: boolean' to match backend
+  token: string; // Changed from 'secret' to match backend
   createdAt: string;
+  updatedAt?: string; // Added to match backend
+  workspaceId: string; // Added to match backend
+}
+
+// Webhook enums
+export enum SmashsendWebhookStatus {
+  ACTIVE = 'ACTIVE',
+  PAUSED = 'PAUSED',
+  BANNED = 'BANNED', // phishing, spam, etc.
+}
+
+export enum SmashsendWebhookEvent {
+  // Contacts
+  CONTACT_CREATED = 'CONTACT_CREATED',
+  CONTACT_DELETED = 'CONTACT_DELETED',
+  CONTACT_PROPERTY_UPDATED = 'CONTACT_PROPERTY_UPDATED',
+  CONTACT_RESUBSCRIBED = 'CONTACT_RESUBSCRIBED',
+  CONTACT_TAG_ADDED = 'CONTACT_TAG_ADDED',
+  CONTACT_TAG_REMOVED = 'CONTACT_TAG_REMOVED',
+  CONTACT_UNSUBSCRIBED = 'CONTACT_UNSUBSCRIBED',
+  CONTACT_UPDATED = 'CONTACT_UPDATED',
+
+  // Workspace
+  WORKSPACE_BANNED = 'WORKSPACE_BANNED',
+  WORKSPACE_SENDING_EMAILS_PAUSED = 'WORKSPACE_SENDING_EMAILS_PAUSED',
+  WORKSPACE_TEAM_MEMBER_JOINED = 'WORKSPACE_TEAM_MEMBER_JOINED',
+
+  // Testing events
+  TESTING_CONNECTION = 'TESTING_CONNECTION',
 }
 
 // API Key interfaces
@@ -519,22 +587,24 @@ export interface ApiKeyValidationResponse {
 }
 
 export interface ApiKeyInfo {
-  id: string;
-  name: string;
-  permissions: string[];
   createdAt: string;
-  lastUsedAt?: string;
-  accountId: string;
+  displayName: string;
+  id: string;
+  role: SmashsendApiKeyRole;
+  secretKey?: string;
+  status: SmashsendApiKeyStatus;
+  updatedAt?: string;
+  workspaceId: string;
 }
 
 export interface ApiKeyCreateOptions {
   displayName: string;
-  role: string;
+  role: SmashsendApiKeyRole;
 }
 
 export interface ApiKeyUpdateOptions {
   displayName?: string;
-  role?: string;
+  role?: SmashsendApiKeyRole;
 }
 
 export interface ApiKeyListOptions {
