@@ -433,21 +433,20 @@ export enum SmashsendContactSource {
   STRIPE = 'STRIPE',
 }
 
+// Contact creation payload (flat + optional customProperties)
 export interface ContactCreateOptions {
-  properties: {
-    email: string;
-    firstName?: string;
-    lastName?: string;
-    avatarUrl?: string;
-    birthday?: Date;
-    city?: string;
-    countryCode?: SmashsendCountryCode;
-    language?: string;
-    phone?: string;
-    status?: SmashsendContactStatus;
-    // Custom properties can be included here
-    [key: string]: any;
-  };
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  avatarUrl?: string;
+  birthday?: Date;
+  city?: string;
+  countryCode?: SmashsendCountryCode;
+  language?: string;
+  phone?: string;
+  status?: SmashsendContactStatus;
+  // Extra custom properties keyed by apiSlug
+  customProperties?: Record<string, any>;
 }
 
 // Custom property type enum
@@ -483,7 +482,6 @@ export interface Contact {
     lastName?: string;
     phone?: string;
     status?: SmashsendContactStatus;
-    // Custom properties are stored in the same object
     [key: string]: any;
   };
 }
