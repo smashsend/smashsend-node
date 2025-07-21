@@ -141,6 +141,13 @@ export {
   SmashsendContactStatus,
   SmashsendCountryCode,
   SmashsendPropertyType,
+  SmashsendApiKeyRole,
+  SmashsendApiKeyStatus,
+  SmashsendContactSource,
+  SmashsendContactPropertyFilterType,
+  SmashsendWebhookStatus,
+  SmashsendWebhookEvent,
+  TransactionalEmailStatus,
 } from './interfaces/types';
 
 export {

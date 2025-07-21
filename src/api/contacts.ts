@@ -21,15 +21,7 @@ export class Contacts {
    * @returns The created contact
    */
   async create(options: ContactCreateOptions): Promise<Contact> {
-    const { customProperties, ...rest } = options;
-
-    const response = await this.httpClient.post<{ contact: Contact }>('/contacts', {
-      // Transform the input format to the backend expected format
-      properties: {
-        ...rest,
-        ...(customProperties || {}),
-      },
-    });
+    const response = await this.httpClient.post<{ contact: Contact }>('/contacts', options);
     return response.contact;
   }
 
@@ -62,15 +54,7 @@ export class Contacts {
    * @returns The updated contact
    */
   async update(id: string, options: Partial<ContactCreateOptions>): Promise<Contact> {
-    const { customProperties, ...rest } = options;
-
-    const response = await this.httpClient.put<{ contact: Contact }>(`/contacts/${id}`, {
-      // Transform the input format to the backend expected format
-      properties: {
-        ...rest,
-        ...(customProperties || {}),
-      },
-    });
+    const response = await this.httpClient.put<{ contact: Contact }>(`/contacts/${id}`, options);
     return response.contact;
   }
 
