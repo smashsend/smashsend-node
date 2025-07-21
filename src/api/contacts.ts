@@ -2,6 +2,7 @@ import { HttpClient } from '../utils/http-client';
 import {
   Contact,
   ContactCreateOptions,
+  ContactCreateResponse,
   CustomPropertyListResponse,
   CustomProperty,
   CustomPropertyCreateOptions,
@@ -18,19 +19,19 @@ export class Contacts {
   /**
    * Create a new contact
    * @param options The contact creation options
-   * @returns The created contact
+   * @returns The contact create response with contact and operation type
    */
-  async create(options: ContactCreateOptions): Promise<Contact> {
+  async create(options: ContactCreateOptions): Promise<ContactCreateResponse> {
     const { customProperties, ...rest } = options;
 
-    const response = await this.httpClient.post<{ contact: Contact }>('/contacts', {
+    const response = await this.httpClient.post<ContactCreateResponse>('/contacts', {
       // Transform the input format to the backend expected format
       properties: {
         ...rest,
         ...(customProperties || {}),
       },
     });
-    return response.contact;
+    return response;
   }
 
   /**

@@ -421,6 +421,12 @@ export enum SmashsendPropertyType {
   BOOLEAN = 'BOOLEAN',
 }
 
+// Contact operation type enum
+export enum SmashsendContactOperationType {
+  CREATED = 'CREATED',
+  UPDATED = 'UPDATED',
+}
+
 // Contact interfaces
 export interface ContactCreateOptions {
   email: string;
@@ -456,6 +462,12 @@ export interface Contact {
     // Allow custom properties
     [key: string]: any;
   };
+}
+
+// Contact create response with operation metadata
+export interface ContactCreateResponse {
+  contact: Contact;
+  operationType: SmashsendContactOperationType;
 }
 
 // Custom property interfaces

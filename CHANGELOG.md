@@ -2,52 +2,72 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
 ## [1.0.0] - 2025-01-21
 
-### BREAKING CHANGES
+### 🚨 BREAKING CHANGES
 
-- Removed the following property types that don't exist in the backend:
-  - `SmashsendPropertyType.TEXT` - use `STRING` instead
-  - `SmashsendPropertyType.INTEGER` - use `NUMBER` instead
-  - `SmashsendPropertyType.EMAIL` - use `STRING` instead
-  - `SmashsendPropertyType.URL` - use `STRING` instead
-  - `SmashsendPropertyType.PHONE` - use `STRING` instead
+- **contacts.create()** now returns an object with `{ contact, operationType }` instead of just the contact
+  - This allows you to know whether a contact was created or updated
+  - `operationType` will be either `"CREATED"` or `"UPDATED"`
+  - See [examples/breaking-change-v1.0.0.ts](examples/breaking-change-v1.0.0.ts) for migration guide
+
+### Changed
+
+- The `contacts.create()` method response format has changed:
+
+  ```typescript
+  // Before (old)
+  const contact = await client.contacts.create(options);
+  console.log(contact.id);
+
+  // After (v1.0.0)
+  const { contact, operationType } = await client.contacts.create(options);
+  console.log(contact.id);
+  console.log(operationType); // "CREATED" or "UPDATED"
+  ```
 
 ### Added
 
-- `SmashsendPropertyType.SELECT` - for single choice dropdown fields
-- `SmashsendPropertyType.MULTI_SELECT` - for multiple choice selection fields
-- Montenegro (ME) country code to `SmashsendCountryCode` enum
-- Comprehensive TypeScript example for contact properties (`examples/contact-properties.ts`)
-- Contact Properties section in README with proper documentation
+- New type `ContactCreateResponse` with contact and operation metadata
+- New enum `SmashsendContactOperationType` with values `CREATED` and `UPDATED`
 
 ### Fixed
 
-- Property types now correctly match the backend implementation
-- Only 6 property types are supported: SELECT, MULTI_SELECT, STRING, NUMBER, DATE, BOOLEAN
+- Property type naming now uses underscores for multi-word types:
+  ```typescript
+  // Custom property types are now consistent
+  type: SmashsendPropertyType.MULTI_SELECT;
+  ```
 
-### Migration Guide
+## [0.3.1] - 2024-12-04
 
-If you were using any of the removed property types, update your code as follows:
+### Fixed
 
-```typescript
-// Before
-type: SmashsendPropertyType.TEXT → type: SmashsendPropertyType.STRING
-type: SmashsendPropertyType.INTEGER → type: SmashsendPropertyType.NUMBER
-type: SmashsendPropertyType.EMAIL → type: SmashsendPropertyType.STRING
-type: SmashsendPropertyType.URL → type: SmashsendPropertyType.STRING
-type: SmashsendPropertyType.PHONE → type: SmashsendPropertyType.STRING
-```
+- Typo in SmashsendCountryCode (Vietnam): VE -> VN
 
-For dropdown/select fields, use the new types:
+## [0.3.0] - 2024-12-04
 
-```typescript
-// Single choice dropdown
-type: SmashsendPropertyType.SELECT;
+### Added
 
-// Multiple choice selection
-type: SmashsendPropertyType.MULTI_SELECT;
-```
+- Support for custom contact properties
+- New methods for managing custom properties:
+  - `contacts.listProperties()` - List all custom contact properties
+  - `contacts.createProperty()` - Create a new custom property
+  - `contacts.updateProperty()` - Update an existing custom property
+- Custom properties can be included when creating or updating contacts
+
+## [0.2.1] - 2024-11-29
+
+### Fixed
+
+- Export SmashsendCountryCode
+
+## [0.2.0] - 2024-11-29
+
+### Added
+
+- Added all missing countries to SmashsendCountryCode enum
+
+## [0.1.0] - 2024-11-28
+
+Initial release

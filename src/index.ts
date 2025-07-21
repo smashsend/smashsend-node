@@ -118,6 +118,7 @@ export type {
   TemplatedEmailSendResponse,
   TransactionalEmailSendResponse,
   ContactCreateOptions,
+  ContactCreateResponse,
   Contact,
   WebhookCreateOptions,
   Webhook,
@@ -141,6 +142,7 @@ export {
   SmashsendContactStatus,
   SmashsendCountryCode,
   SmashsendPropertyType,
+  SmashsendContactOperationType,
 } from './interfaces/types';
 
 export {

@@ -40,6 +40,21 @@
 npm install @smashsend/node       # or yarn add @smashsend/node / pnpm add @smashsend/node
 ```
 
+## 🚨 Breaking Changes in v1.0.0
+
+The `contacts.create()` method now returns an object with both the contact and operation type:
+
+```typescript
+// ❌ OLD (before v1.0.0)
+const contact = await client.contacts.create(options);
+
+// ✅ NEW (v1.0.0+)
+const { contact, operationType } = await client.contacts.create(options);
+// operationType will be "CREATED" or "UPDATED"
+```
+
+See [examples/breaking-change-v1.0.0.ts](examples/breaking-change-v1.0.0.ts) for a complete migration guide.
+
 ## Getting an API Key
 
 1. Log in to your [SMASHSEND Dashboard](https://smashsend.com/dashboard)
@@ -63,7 +78,7 @@ import { SmashSend, SmashsendContactStatus, SmashsendCountryCode } from '@smashs
 
 const smashsend = new SmashSend(process.env.SMASHSEND_API_KEY!);
 
-const contact = await smashsend.contacts.create({
+const { contact, operationType } = await smashsend.contacts.create({
   email: 'newcontact@example.com', // required
   firstName: 'John',
   lastName: 'Doe',
@@ -75,6 +90,7 @@ const contact = await smashsend.contacts.create({
 
 console.log(contact.id); // contact UUID
 console.log(contact.properties.email); // newcontact@example.com
+console.log(operationType); // "CREATED" or "UPDATED"
 ```
 
 ## Send email (basic example)
@@ -312,13 +328,13 @@ export async function POST(req: Request) {
   const data = await req.json();
   try {
     const smashsend = getSmashSendClient();
-    const contact = await smashsend.contacts.create({
+    const { contact, operationType } = await smashsend.contacts.create({
       email: data.email,
       status: SmashsendContactStatus.SUBSCRIBED,
       countryCode: SmashsendCountryCode.US,
       customProperties: data.customFields,
     });
-    return NextResponse.json({ success: true, contact });
+    return NextResponse.json({ success: true, contact, operationType });
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message }, { status: 400 });
   }
