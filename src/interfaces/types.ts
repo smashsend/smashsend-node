@@ -477,7 +477,6 @@ export interface CustomProperty {
 }
 
 export interface CustomPropertyCreateOptions {
-  apiSlug: string;
   displayName: string;
   type: SmashsendPropertyType;
   description?: string;
