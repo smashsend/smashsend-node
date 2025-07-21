@@ -134,6 +134,7 @@ export type {
   CustomPropertyCreateOptions,
   CustomPropertyUpdateOptions,
   CustomPropertyListResponse,
+  WebhookUpdateOptions,
 } from './interfaces/types';
 
 // Export enums

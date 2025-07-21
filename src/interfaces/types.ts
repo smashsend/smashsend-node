@@ -531,6 +531,13 @@ export interface WebhookCreateOptions {
   token?: string; // Changed from 'secret' to match backend
 }
 
+export interface WebhookUpdateOptions {
+  url?: string;
+  token?: string;
+  events?: SmashsendWebhookEvent[];
+  status?: SmashsendWebhookStatus;
+}
+
 export interface Webhook {
   id: string;
   url: string;
