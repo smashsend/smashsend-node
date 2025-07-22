@@ -5,7 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2025-01-21
+## [1.0.2] - 2025-01-21
+
+### Added
+
+- Added `typeConfig` parameter to `CustomPropertyCreateOptions` interface to support property configuration during creation
+  - `multiple`: boolean - Enable multiple values for SELECT/MULTI_SELECT types
+  - `options`: string[] - Define predefined options for SELECT/MULTI_SELECT types
+  - `isRequired`: boolean - Mark property as required
+  - `isDeletable`: boolean - Control whether property can be deleted
+
+### Fixed
+
+- Fixed issue where `typeConfig` was not being passed when creating contact properties
+
+## [1.0.1] - 2025-01-21
+
+_Note: Version 1.0.1 was the actual initial release. Version 1.0.0 was not published._
 
 ### BREAKING CHANGES
 

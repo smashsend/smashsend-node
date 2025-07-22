@@ -514,6 +514,12 @@ export interface CustomPropertyCreateOptions {
   displayName: string;
   type: SmashsendPropertyType;
   description?: string;
+  typeConfig?: {
+    multiple?: boolean;
+    options?: string[];
+    isRequired?: boolean;
+    isDeletable?: boolean;
+  };
 }
 
 export interface CustomPropertyUpdateOptions {
