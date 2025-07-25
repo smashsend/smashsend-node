@@ -69,10 +69,10 @@ export class Webhooks {
   /**
    * Delete a webhook
    * @param id The webhook ID
-   * @returns Success status
+   * @returns The deleted webhook and deletion status
    */
-  async delete(id: string): Promise<{ deleted: boolean }> {
-    return this.httpClient.delete<{ deleted: boolean }>(`/webhooks/${id}`);
+  async delete(id: string): Promise<{ webhook: Webhook; isDeleted: boolean }> {
+    return this.httpClient.delete<{ webhook: Webhook; isDeleted: boolean }>(`/webhooks/${id}`);
   }
 
   /**
