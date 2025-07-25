@@ -61,8 +61,8 @@ describe('Emails', () => {
         message: 'Email sent successfully',
       };
 
-      // Setup the mock
-      mockHttpClient.post.mockResolvedValueOnce(mockResponse);
+      // Setup the mock (wrap in { email: ... } structure)
+      mockHttpClient.post.mockResolvedValueOnce({ email: mockResponse });
 
       // Call the method with complex email addresses
       const result = await emails.send({
@@ -85,7 +85,7 @@ describe('Emails', () => {
     it('should accept empty string HTML content', async () => {
       // Mock the HTTP client response
       const mockResponse = { id: 'email123', statusCode: 200 };
-      mockHttpClient.post.mockResolvedValueOnce(mockResponse);
+      mockHttpClient.post.mockResolvedValueOnce({ email: mockResponse });
 
       // Call the method with empty HTML
       const result = await emails.send({
@@ -120,7 +120,7 @@ describe('Emails', () => {
     it('should accept React element that renders to empty string', async () => {
       // Mock the HTTP client response
       const mockResponse = { id: 'email123', statusCode: 200 };
-      mockHttpClient.post.mockResolvedValueOnce(mockResponse);
+      mockHttpClient.post.mockResolvedValueOnce({ email: mockResponse });
 
       // Mock @react-email/render to return empty string
       jest.doMock('@react-email/render', () => ({
@@ -159,8 +159,8 @@ describe('Emails', () => {
         message: 'Email sent successfully',
       };
 
-      // Setup the mock
-      mockHttpClient.get.mockResolvedValueOnce(mockResponse);
+      // Setup the mock (wrap in { email: ... } structure)
+      mockHttpClient.get.mockResolvedValueOnce({ email: mockResponse });
 
       // Call the method
       const result = await emails.get('email-id');
@@ -198,8 +198,8 @@ describe('Emails', () => {
         offset: 0,
       };
 
-      // Setup the mock
-      mockHttpClient.get.mockResolvedValueOnce(mockResponse);
+      // Setup the mock (wrap in { emails: ... } structure)
+      mockHttpClient.get.mockResolvedValueOnce({ emails: mockResponse });
 
       // Call the method
       const result = await emails.list({
