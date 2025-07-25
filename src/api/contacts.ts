@@ -75,10 +75,10 @@ export class Contacts {
   /**
    * Delete a contact
    * @param id The contact ID
-   * @returns Deletion status
+   * @returns The deleted contact and deletion status
    */
-  async delete(id: string): Promise<{ deleted: boolean }> {
-    return this.httpClient.delete<{ deleted: boolean }>(`/contacts/${id}`);
+  async delete(id: string): Promise<{ contact: Contact; isDeleted: boolean }> {
+    return this.httpClient.delete<{ contact: Contact; isDeleted: boolean }>(`/contacts/${id}`);
   }
 
   /**
