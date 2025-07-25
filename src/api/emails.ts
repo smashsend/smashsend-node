@@ -132,14 +132,12 @@ export class Emails {
     status?: string;
     tags?: string[];
   }): Promise<{
-    emails: {
-      data: TransactionalEmailSendResponse[];
-      total: number;
-      limit: number;
-      offset: number;
-    };
+    data: TransactionalEmailSendResponse[];
+    total: number;
+    limit: number;
+    offset: number;
   }> {
-    return this.httpClient.get<{
+    const response = await this.httpClient.get<{
       emails: {
         data: TransactionalEmailSendResponse[];
         total: number;
@@ -147,5 +145,6 @@ export class Emails {
         offset: number;
       };
     }>('/emails', { params });
+    return response.emails;
   }
 }
