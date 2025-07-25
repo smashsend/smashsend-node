@@ -80,7 +80,11 @@ export class Emails {
       sendAt: sendAt instanceof Date ? sendAt.toISOString() : sendAt,
     };
 
-    return this.httpClient.post<RawEmailSendResponse>('/emails', payload);
+    const response = await this.httpClient.post<{ email: RawEmailSendResponse }>(
+      '/emails',
+      payload
+    );
+    return response.email;
   }
 
   /**
@@ -96,10 +100,11 @@ export class Emails {
    * ```
    */
   async sendWithTemplate(options: TemplatedEmailSendOptions): Promise<TemplatedEmailSendResponse> {
-    return this.httpClient.post<TemplatedEmailSendResponse>('/emails', {
+    const response = await this.httpClient.post<{ email: TemplatedEmailSendResponse }>('/emails', {
       ...options,
       sendAt: options.sendAt instanceof Date ? options.sendAt.toISOString() : options.sendAt,
     });
+    return response.email;
   }
 
   /**
@@ -108,13 +113,16 @@ export class Emails {
    * @returns The email details
    */
   async get(id: string): Promise<TransactionalEmailSendResponse> {
-    return this.httpClient.get<TransactionalEmailSendResponse>(`/emails/${id}`);
+    const response = await this.httpClient.get<{ email: TransactionalEmailSendResponse }>(
+      `/emails/${id}`
+    );
+    return response.email;
   }
 
   /**
    * List sent emails
    * @param params Optional parameters for filtering and pagination
-   * @returns A list of emails
+   * @returns A response object containing emails list with pagination metadata
    */
   async list(params?: {
     limit?: number;
@@ -124,16 +132,20 @@ export class Emails {
     status?: string;
     tags?: string[];
   }): Promise<{
-    data: TransactionalEmailSendResponse[];
-    total: number;
-    limit: number;
-    offset: number;
-  }> {
-    return this.httpClient.get<{
+    emails: {
       data: TransactionalEmailSendResponse[];
       total: number;
       limit: number;
       offset: number;
+    };
+  }> {
+    return this.httpClient.get<{
+      emails: {
+        data: TransactionalEmailSendResponse[];
+        total: number;
+        limit: number;
+        offset: number;
+      };
     }>('/emails', { params });
   }
 }

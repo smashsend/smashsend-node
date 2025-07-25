@@ -35,8 +35,8 @@ export class ApiKeys {
    * @returns Promise<ApiKeyInfo>
    */
   async getCurrent(): Promise<ApiKeyInfo> {
-    const response = await this.httpClient.get<ApiKeyInfo>('/api-keys/current');
-    return response;
+    const response = await this.httpClient.get<{ apiKey: ApiKeyInfo }>('/api-keys/current');
+    return response.apiKey;
   }
 
   /**
@@ -68,13 +68,14 @@ export class ApiKeys {
    * Create a new API key for a workspace
    * @param workspaceId - The workspace ID
    * @param options - API key creation options
-   * @returns Promise<{ apiKey: ApiKeyInfo }>
+   * @returns Promise<ApiKeyInfo>
    */
-  async create(workspaceId: string, options: ApiKeyCreateOptions): Promise<{ apiKey: ApiKeyInfo }> {
-    return await this.httpClient.post<{ apiKey: ApiKeyInfo }>(
+  async create(workspaceId: string, options: ApiKeyCreateOptions): Promise<ApiKeyInfo> {
+    const response = await this.httpClient.post<{ apiKey: ApiKeyInfo }>(
       `/workspaces/${workspaceId}/api-keys`,
       options
     );
+    return response.apiKey;
   }
 
   /**
@@ -82,17 +83,18 @@ export class ApiKeys {
    * @param workspaceId - The workspace ID
    * @param apiKeyId - The API key ID to update
    * @param options - Update options
-   * @returns Promise<{ apiKey: ApiKeyInfo }>
+   * @returns Promise<ApiKeyInfo>
    */
   async update(
     workspaceId: string,
     apiKeyId: string,
     options: ApiKeyUpdateOptions
-  ): Promise<{ apiKey: ApiKeyInfo }> {
-    return await this.httpClient.post<{ apiKey: ApiKeyInfo }>(
+  ): Promise<ApiKeyInfo> {
+    const response = await this.httpClient.post<{ apiKey: ApiKeyInfo }>(
       `/workspaces/${workspaceId}/api-keys/${apiKeyId}`,
       options
     );
+    return response.apiKey;
   }
 
   /**
