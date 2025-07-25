@@ -27,7 +27,7 @@ describe('Emails', () => {
       };
 
       // Setup the mock
-      mockHttpClient.post.mockResolvedValueOnce(mockResponse);
+      mockHttpClient.post.mockResolvedValueOnce({ email: mockResponse });
 
       // Call the method
       const result = await emails.send({
