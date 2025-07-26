@@ -2,6 +2,7 @@ import { Contacts } from './api/contacts';
 import { Emails } from './api/emails';
 import { Webhooks } from './api/webhooks';
 import { ApiKeys } from './api/api-keys';
+import { Domains } from './api/domains';
 import { HttpClient } from './utils/http-client';
 import { SmashSendClientOptions } from './interfaces/types';
 import {
@@ -34,6 +35,11 @@ export class SmashSend {
    */
   public readonly apiKeys: ApiKeys;
 
+  /**
+   * The Domains API resource
+   */
+  public readonly domains: Domains;
+
   private httpClient: HttpClient;
 
   /**
@@ -63,6 +69,7 @@ export class SmashSend {
     this.contacts = new Contacts(this.httpClient);
     this.webhooks = new Webhooks(this.httpClient);
     this.apiKeys = new ApiKeys(this.httpClient);
+    this.domains = new Domains(this.httpClient);
   }
 
   /**
@@ -136,6 +143,9 @@ export type {
   CustomPropertyListResponse,
   WebhookUpdateOptions,
 } from './interfaces/types';
+
+// Export domain types
+export type { VerifiedEmailIdentities } from './api/domains';
 
 // Export enums
 export {
