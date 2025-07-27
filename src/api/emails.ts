@@ -121,34 +121,34 @@ export class Emails {
     return response.email;
   }
 
-  /**
-   * List sent emails
-   * @param params Optional parameters for filtering and pagination
-   * @returns A response object containing emails list with pagination metadata
-   */
-  async list(params?: {
-    limit?: number;
-    offset?: number;
-    from?: string;
-    to?: string;
-    status?: string;
-    tags?: string[];
-  }): Promise<{
-    data: TransactionalEmailSendResponse[];
-    total: number;
-    limit: number;
-    offset: number;
-  }> {
-    const response = await this.httpClient.get<{
-      emails: {
-        data: TransactionalEmailSendResponse[];
-        total: number;
-        limit: number;
-        offset: number;
-      };
-    }>('/emails', { params });
-    return response.emails;
-  }
+  // /**
+  //  * List sent emails
+  //  * @param params Optional parameters for filtering and pagination
+  //  * @returns A response object containing emails list with pagination metadata
+  //  */
+  // async list(params?: {
+  //   limit?: number;
+  //   offset?: number;
+  //   from?: string;
+  //   to?: string;
+  //   status?: string;
+  //   tags?: string[];
+  // }): Promise<{
+  //   data: TransactionalEmailSendResponse[];
+  //   total: number;
+  //   limit: number;
+  //   offset: number;
+  // }> {
+  //   const response = await this.httpClient.get<{
+  //     emails: {
+  //       data: TransactionalEmailSendResponse[];
+  //       total: number;
+  //       limit: number;
+  //       offset: number;
+  //     };
+  //   }>('/emails', { params });
+  //   return response.emails;
+  // }
 
   /**
    * List transactional email templates
