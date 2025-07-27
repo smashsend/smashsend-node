@@ -202,18 +202,14 @@ describe('Emails', () => {
       mockHttpClient.get.mockResolvedValueOnce({ emails: mockResponse });
 
       // Call the method
-      const result = await emails.list({
+      const result = await emails.listTransactional({
         limit: 10,
-        offset: 0,
-        from: 'test@example.com',
       });
 
       // Assertions
-      expect(mockHttpClient.get).toHaveBeenCalledWith('/emails', {
+      expect(mockHttpClient.get).toHaveBeenCalledWith('/transactional', {
         params: {
           limit: 10,
-          offset: 0,
-          from: 'test@example.com',
         },
       });
       expect(result).toEqual(mockResponse);
