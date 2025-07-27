@@ -631,3 +631,70 @@ export interface ApiKeyDeleteResponse {
   apiKey: ApiKeyInfo;
   isDeleted: boolean;
 }
+
+// Transactional Email Templates ────────────────────────────────────────────
+
+/**
+ * Status of a transactional email template
+ */
+export type TransactionalTemplateStatus = 'DRAFT' | 'ACTIVE' | 'ARCHIVED' | 'PAUSED';
+
+/**
+ * Transactional email template information
+ */
+export interface TransactionalTemplate {
+  /** Template ID */
+  id: string;
+  /** Template name (used as identifier in API calls) */
+  name: string;
+  /** Display name/title of the template */
+  title?: string;
+  /** Email subject line */
+  subject: string;
+  /** Template status */
+  status: TransactionalTemplateStatus;
+  /** Creation timestamp */
+  createdAt: string;
+  /** Last update timestamp */
+  updatedAt?: string;
+  /** Template variables */
+  variables?: Record<string, { id: string; defaultValue: string }>;
+  /** HTML body content */
+  bodyHtml?: string;
+  /** Text body content */
+  bodyText?: string;
+  /** From email address */
+  fromEmail?: string;
+  /** From name */
+  fromName?: string;
+  /** Reply-to information */
+  replyTo?: Array<{ email: string; name?: string }>;
+  /** Preview text */
+  previewText?: string;
+}
+
+/**
+ * Parameters for listing transactional email templates
+ */
+export interface ListTransactionalTemplatesOptions {
+  /** Maximum number of templates to return (1-100, default: 15) */
+  limit?: number;
+  /** Cursor for pagination */
+  cursor?: string;
+  /** Sort order */
+  sort?: 'createdAt.desc' | 'createdAt.asc';
+  /** Filter by template status */
+  status?: TransactionalTemplateStatus;
+}
+
+/**
+ * Response from listing transactional email templates
+ */
+export interface ListTransactionalTemplatesResponse {
+  /** Pagination cursor for next page */
+  cursor: string | null;
+  /** Whether there are more templates available */
+  hasMore: boolean;
+  /** Array of template objects */
+  items: TransactionalTemplate[];
+}

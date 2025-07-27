@@ -6,6 +6,8 @@ import {
   RawEmailSendResponse,
   TemplatedEmailSendResponse,
   TransactionalEmailSendResponse,
+  ListTransactionalTemplatesOptions,
+  ListTransactionalTemplatesResponse,
 } from '../interfaces/types';
 
 export class Emails {
@@ -146,5 +148,29 @@ export class Emails {
       };
     }>('/emails', { params });
     return response.emails;
+  }
+
+  /**
+   * List transactional email templates
+   *
+   * @example
+   * ```ts
+   * // List all active templates
+   * await smashsend.emails.listTemplates({ status: 'ACTIVE' });
+   *
+   * // List with pagination
+   * await smashsend.emails.listTemplates({
+   *   limit: 50,
+   *   cursor: 'next_page_cursor'
+   * });
+   * ```
+   */
+  async listTemplates(
+    params?: ListTransactionalTemplatesOptions
+  ): Promise<ListTransactionalTemplatesResponse> {
+    const response = await this.httpClient.get<{
+      transactional: ListTransactionalTemplatesResponse;
+    }>('/transactional', { params });
+    return response.transactional;
   }
 }

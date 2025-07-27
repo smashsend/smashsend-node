@@ -145,7 +145,7 @@ export type {
 } from './interfaces/types';
 
 // Export domain types
-export type { VerifiedEmailIdentities } from './api/domains';
+export type { VerifiedEmailIdentities, EmailIdentity, DomainIdentity, EmailIdentityStatus } from './api/domains';
 
 // Export enums
 export {
