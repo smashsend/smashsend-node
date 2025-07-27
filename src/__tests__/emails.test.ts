@@ -171,45 +171,48 @@ describe('Emails', () => {
     });
   });
 
-  describe('list', () => {
+  describe('listTransactional', () => {
     it('should call get with correct parameters', async () => {
       // Setup mock response
       const mockResponse = {
-        data: [
+        cursor: null,
+        hasMore: false,
+        items: [
           {
-            id: 'email-id-1',
-            from: 'test@example.com',
-            to: ['recipient1@example.com'],
-            created: '2023-01-01T00:00:00Z',
-            statusCode: 200,
-            message: 'Email sent successfully',
+            id: 'trans-id-1',
+            name: 'welcome-email',
+            title: 'Welcome Email',
+            subject: 'Welcome to our platform!',
+            status: 'ACTIVE',
+            createdAt: '2023-01-01T00:00:00Z',
+            updatedAt: '2023-01-01T00:00:00Z',
           },
           {
-            id: 'email-id-2',
-            from: 'test@example.com',
-            to: ['recipient2@example.com'],
-            created: '2023-01-02T00:00:00Z',
-            statusCode: 200,
-            message: 'Email sent successfully',
+            id: 'trans-id-2',
+            name: 'thank-you-email',
+            title: 'Thank You Email',
+            subject: 'Thank you for your purchase!',
+            status: 'ACTIVE',
+            createdAt: '2023-01-02T00:00:00Z',
+            updatedAt: '2023-01-02T00:00:00Z',
           },
         ],
-        total: 2,
-        limit: 10,
-        offset: 0,
       };
 
-      // Setup the mock (wrap in { emails: ... } structure)
-      mockHttpClient.get.mockResolvedValueOnce({ emails: mockResponse });
+      // Setup the mock (wrap in { transactional: ... } structure)
+      mockHttpClient.get.mockResolvedValueOnce({ transactional: mockResponse });
 
       // Call the method
       const result = await emails.listTransactional({
         limit: 10,
+        status: 'ACTIVE',
       });
 
       // Assertions
       expect(mockHttpClient.get).toHaveBeenCalledWith('/transactional', {
         params: {
           limit: 10,
+          status: 'ACTIVE',
         },
       });
       expect(result).toEqual(mockResponse);
