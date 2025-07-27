@@ -635,24 +635,24 @@ export interface ApiKeyDeleteResponse {
 // Transactional Email Templates ────────────────────────────────────────────
 
 /**
- * Status of a transactional email template
+ * Status of a transactional email
  */
-export type TransactionalTemplateStatus = 'DRAFT' | 'ACTIVE' | 'ARCHIVED' | 'PAUSED';
+export type TransactionalStatus = 'DRAFT' | 'ACTIVE' | 'ARCHIVED' | 'PAUSED';
 
 /**
- * Transactional email template information
+ * Transactional email information
  */
-export interface TransactionalTemplate {
-  /** Template ID */
+export interface Transactional {
+  /** Transactional ID */
   id: string;
-  /** Template name (used as identifier in API calls) */
+  /** Transactional name (used as identifier in API calls) */
   name: string;
-  /** Display name/title of the template */
+  /** Display name/title of the transactional */
   title?: string;
   /** Email subject line */
   subject: string;
-  /** Template status */
-  status: TransactionalTemplateStatus;
+  /** Transactional status */
+  status: TransactionalStatus;
   /** Creation timestamp */
   createdAt: string;
   /** Last update timestamp */
@@ -674,27 +674,27 @@ export interface TransactionalTemplate {
 }
 
 /**
- * Parameters for listing transactional email templates
+ * Parameters for listing transactional emails
  */
-export interface ListTransactionalTemplatesOptions {
-  /** Maximum number of templates to return (1-100, default: 15) */
+export interface ListTransactionalOptions {
+  /** Maximum number of transactionals to return (1-100, default: 15) */
   limit?: number;
   /** Cursor for pagination */
   cursor?: string;
   /** Sort order */
   sort?: 'createdAt.desc' | 'createdAt.asc';
-  /** Filter by template status */
-  status?: TransactionalTemplateStatus;
+  /** Filter by transactional status */
+  status?: TransactionalStatus;
 }
 
 /**
- * Response from listing transactional email templates
+ * Response from listing transactional emails
  */
-export interface ListTransactionalTemplatesResponse {
+export interface ListTransactionalResponse {
   /** Pagination cursor for next page */
   cursor: string | null;
-  /** Whether there are more templates available */
+  /** Whether there are more transactionals available */
   hasMore: boolean;
-  /** Array of template objects */
-  items: TransactionalTemplate[];
+  /** Array of transactional objects */
+  items: Transactional[];
 }

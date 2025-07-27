@@ -6,8 +6,8 @@ import {
   RawEmailSendResponse,
   TemplatedEmailSendResponse,
   TransactionalEmailSendResponse,
-  ListTransactionalTemplatesOptions,
-  ListTransactionalTemplatesResponse,
+  ListTransactionalOptions,
+  ListTransactionalResponse,
 } from '../interfaces/types';
 
 export class Emails {
@@ -155,21 +155,19 @@ export class Emails {
    *
    * @example
    * ```ts
-   * // List all active templates
-   * await smashsend.emails.listTemplates({ status: 'ACTIVE' });
+   * // List all active transactionals
+   * await smashsend.emails.listTransactional({ status: 'ACTIVE' });
    *
    * // List with pagination
-   * await smashsend.emails.listTemplates({
+   * await smashsend.emails.listTransactional({
    *   limit: 50,
    *   cursor: 'next_page_cursor'
    * });
    * ```
    */
-  async listTemplates(
-    params?: ListTransactionalTemplatesOptions
-  ): Promise<ListTransactionalTemplatesResponse> {
+  async listTransactional(params?: ListTransactionalOptions): Promise<ListTransactionalResponse> {
     const response = await this.httpClient.get<{
-      transactional: ListTransactionalTemplatesResponse;
+      transactional: ListTransactionalResponse;
     }>('/transactional', { params });
     return response.transactional;
   }
