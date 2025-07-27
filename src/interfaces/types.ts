@@ -631,3 +631,70 @@ export interface ApiKeyDeleteResponse {
   apiKey: ApiKeyInfo;
   isDeleted: boolean;
 }
+
+// Transactional Email Templates ────────────────────────────────────────────
+
+/**
+ * Status of a transactional email
+ */
+export type TransactionalStatus = 'DRAFT' | 'ACTIVE' | 'ARCHIVED' | 'PAUSED';
+
+/**
+ * Transactional email information
+ */
+export interface Transactional {
+  /** Transactional ID */
+  id: string;
+  /** Transactional name (used as identifier in API calls) */
+  name: string;
+  /** Display name/title of the transactional */
+  title?: string;
+  /** Email subject line */
+  subject: string;
+  /** Transactional status */
+  status: TransactionalStatus;
+  /** Creation timestamp */
+  createdAt: string;
+  /** Last update timestamp */
+  updatedAt?: string;
+  /** Template variables */
+  variables?: Record<string, { id: string; defaultValue: string }>;
+  /** HTML body content */
+  bodyHtml?: string;
+  /** Text body content */
+  bodyText?: string;
+  /** From email address */
+  fromEmail?: string;
+  /** From name */
+  fromName?: string;
+  /** Reply-to information */
+  replyTo?: Array<{ email: string; name?: string }>;
+  /** Preview text */
+  previewText?: string;
+}
+
+/**
+ * Parameters for listing transactional emails
+ */
+export interface ListTransactionalOptions {
+  /** Maximum number of transactionals to return (1-100, default: 15) */
+  limit?: number;
+  /** Cursor for pagination */
+  cursor?: string;
+  /** Sort order */
+  sort?: 'createdAt.desc' | 'createdAt.asc';
+  /** Filter by transactional status */
+  status?: TransactionalStatus;
+}
+
+/**
+ * Response from listing transactional emails
+ */
+export interface ListTransactionalResponse {
+  /** Pagination cursor for next page */
+  cursor: string | null;
+  /** Whether there are more transactionals available */
+  hasMore: boolean;
+  /** Array of transactional objects */
+  items: Transactional[];
+}

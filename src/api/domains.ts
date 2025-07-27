@@ -1,8 +1,20 @@
 import { HttpClient } from '../utils/http-client';
 
+export type EmailIdentityStatus = "VERIFIED" | "PENDING" | "FAILED";
+
+export interface EmailIdentity {
+  email: string;
+  status: EmailIdentityStatus;
+}
+
+export interface DomainIdentity {
+  domain: string;
+  status: EmailIdentityStatus;
+}
+
 export interface VerifiedEmailIdentities {
-  emails: string[];
-  domains: string[];
+  emails: EmailIdentity[];
+  domains: DomainIdentity[];
 }
 
 export class Domains {
@@ -19,13 +31,17 @@ export class Domains {
    * - Verified custom domains (as domain wildcards)
    * - Specific email aliases from verified domains
    *
-   * @returns Object containing arrays of verified emails and domains
+   * Each email and domain includes status information (VERIFIED, PENDING, FAILED).
+   * Currently only VERIFIED identities are returned, but this structure supports
+   * future expansion to include pending or failed identities.
+   *
+   * @returns Object containing arrays of email and domain identities with status
    *
    * @example
    * ```ts
    * const identities = await smashsend.domains.getVerifiedIdentities();
-   * console.log(identities.emails); // ['workspace@mail.smashemail.com', 'support@mydomain.com']
-   * console.log(identities.domains); // ['mail.smashemail.com', 'mydomain.com']
+   * console.log(identities.emails); // [{ email: 'workspace@mail.smashemail.com', status: 'VERIFIED' }]
+   * console.log(identities.domains); // [{ domain: 'mail.smashemail.com', status: 'VERIFIED' }]
    * ```
    */
   async getVerifiedIdentities(): Promise<VerifiedEmailIdentities> {
