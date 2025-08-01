@@ -147,31 +147,7 @@ describe('Emails', () => {
     });
   });
 
-  describe('get', () => {
-    it('should call get with correct parameters', async () => {
-      // Setup mock response
-      const mockResponse = {
-        id: 'email-id',
-        from: 'test@example.com',
-        to: ['recipient@example.com'],
-        created: '2023-01-01T00:00:00Z',
-        statusCode: 200,
-        message: 'Email sent successfully',
-      };
-
-      // Setup the mock (wrap in { email: ... } structure)
-      mockHttpClient.get.mockResolvedValueOnce({ email: mockResponse });
-
-      // Call the method
-      const result = await emails.get('email-id');
-
-      // Assertions
-      expect(mockHttpClient.get).toHaveBeenCalledWith('/emails/email-id');
-      expect(result).toEqual(mockResponse);
-    });
-  });
-
-  describe('listTransactional', () => {
+  describe('transactional.list', () => {
     it('should call get with correct parameters', async () => {
       // Setup mock response
       const mockResponse = {
@@ -181,7 +157,7 @@ describe('Emails', () => {
           {
             id: 'trans-id-1',
             name: 'welcome-email',
-            title: 'Welcome Email',
+            displayName: 'Welcome Email',
             subject: 'Welcome to our platform!',
             status: 'ACTIVE',
             createdAt: '2023-01-01T00:00:00Z',
@@ -190,7 +166,7 @@ describe('Emails', () => {
           {
             id: 'trans-id-2',
             name: 'thank-you-email',
-            title: 'Thank You Email',
+            displayName: 'Thank You Email',
             subject: 'Thank you for your purchase!',
             status: 'ACTIVE',
             createdAt: '2023-01-02T00:00:00Z',
@@ -203,7 +179,7 @@ describe('Emails', () => {
       mockHttpClient.get.mockResolvedValueOnce({ transactional: mockResponse });
 
       // Call the method
-      const result = await emails.listTransactional({
+      const result = await emails.transactional.list({
         limit: 10,
         status: 'ACTIVE',
       });
@@ -215,6 +191,35 @@ describe('Emails', () => {
           status: 'ACTIVE',
         },
       });
+      expect(result).toEqual(mockResponse);
+    });
+  });
+
+  describe('transactional.get', () => {
+    it('should call get with correct parameters', async () => {
+      // Setup mock response
+      const mockResponse = {
+        id: 'template-1',
+        name: 'welcome-email',
+        displayName: 'Welcome Email',
+        subject: 'Welcome!',
+        status: 'ACTIVE',
+        createdAt: '2023-01-01T00:00:00Z',
+        updatedAt: '2023-01-01T00:00:00Z',
+        variables: { firstName: { id: 'var-1', defaultValue: '' } },
+        fromEmail: 'noreply@example.com',
+        fromName: 'Example Team',
+        previewText: 'Welcome to our platform!',
+      };
+
+      // Setup the mock (wrap in { transactional: ... } structure)
+      mockHttpClient.get.mockResolvedValueOnce({ transactional: mockResponse });
+
+      // Call the method
+      const result = await emails.transactional.get('template-1');
+
+      // Assertions
+      expect(mockHttpClient.get).toHaveBeenCalledWith('/transactional/template-1');
       expect(result).toEqual(mockResponse);
     });
   });

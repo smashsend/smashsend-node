@@ -43,7 +43,7 @@ describe('SmashSend', () => {
       expect(client).toBeInstanceOf(SmashSend);
 
       // Perform a test request
-      await client.emails.get('email-123');
+      await client.emails.transactional.list();
 
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining('https://custom-api.smashsend.com'),
@@ -74,7 +74,7 @@ describe('SmashSend', () => {
         'X-Tracking-ID': 'tracking-123',
       });
 
-      await client.emails.get('email-123');
+      await client.emails.transactional.list();
 
       expect(fetch).toHaveBeenCalledWith(
         expect.any(String),
@@ -94,7 +94,7 @@ describe('SmashSend', () => {
 
       client.setHeader('X-Single-Header', 'single-value');
 
-      await client.emails.get('email-123');
+      await client.emails.transactional.list();
 
       expect(fetch).toHaveBeenCalledWith(
         expect.any(String),
@@ -113,7 +113,7 @@ describe('SmashSend', () => {
 
       client.setApiVersion('v3');
 
-      await client.emails.get('email-123');
+      await client.emails.transactional.list();
 
       expect(fetch).toHaveBeenCalledWith(expect.stringContaining('/v3/'), expect.any(Object));
     });

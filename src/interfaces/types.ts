@@ -648,7 +648,7 @@ export interface Transactional {
   /** Transactional name (used as identifier in API calls) */
   name: string;
   /** Display name/title of the transactional */
-  title?: string;
+  displayName: string;
   /** Email subject line */
   subject: string;
   /** Transactional status */

@@ -5,19 +5,23 @@ import {
   TemplatedEmailSendOptions,
   RawEmailSendResponse,
   TemplatedEmailSendResponse,
-  TransactionalEmailSendResponse,
-  ListTransactionalOptions,
-  ListTransactionalResponse,
 } from '../interfaces/types';
+import { TransactionalEmails } from './transactional';
 
 export class Emails {
   private httpClient: HttpClient;
+
+  /**
+   * The Emails API resource
+   */
+  public readonly transactional: TransactionalEmails;
 
   // Cache for the async renderer so we only import @react-email/render once
   private renderAsync?: (component: ReactElement) => Promise<string>;
 
   constructor(httpClient: HttpClient) {
     this.httpClient = httpClient;
+    this.transactional = new TransactionalEmails(this.httpClient);
   }
 
   /**
@@ -107,68 +111,5 @@ export class Emails {
       sendAt: options.sendAt instanceof Date ? options.sendAt.toISOString() : options.sendAt,
     });
     return response.email;
-  }
-
-  /**
-   * Get an email by ID
-   * @param id The email ID
-   * @returns The email details
-   */
-  async get(id: string): Promise<TransactionalEmailSendResponse> {
-    const response = await this.httpClient.get<{ email: TransactionalEmailSendResponse }>(
-      `/emails/${id}`
-    );
-    return response.email;
-  }
-
-  // /**
-  //  * List sent emails
-  //  * @param params Optional parameters for filtering and pagination
-  //  * @returns A response object containing emails list with pagination metadata
-  //  */
-  // async list(params?: {
-  //   limit?: number;
-  //   offset?: number;
-  //   from?: string;
-  //   to?: string;
-  //   status?: string;
-  //   tags?: string[];
-  // }): Promise<{
-  //   data: TransactionalEmailSendResponse[];
-  //   total: number;
-  //   limit: number;
-  //   offset: number;
-  // }> {
-  //   const response = await this.httpClient.get<{
-  //     emails: {
-  //       data: TransactionalEmailSendResponse[];
-  //       total: number;
-  //       limit: number;
-  //       offset: number;
-  //     };
-  //   }>('/emails', { params });
-  //   return response.emails;
-  // }
-
-  /**
-   * List transactional email templates
-   *
-   * @example
-   * ```ts
-   * // List all active transactionals
-   * await smashsend.emails.listTransactional({ status: 'ACTIVE' });
-   *
-   * // List with pagination
-   * await smashsend.emails.listTransactional({
-   *   limit: 50,
-   *   cursor: 'next_page_cursor'
-   * });
-   * ```
-   */
-  async listTransactional(params?: ListTransactionalOptions): Promise<ListTransactionalResponse> {
-    const response = await this.httpClient.get<{
-      transactional: ListTransactionalResponse;
-    }>('/transactional', { params });
-    return response.transactional;
   }
 }
