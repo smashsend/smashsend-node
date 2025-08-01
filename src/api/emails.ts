@@ -8,6 +8,7 @@ import {
   TransactionalEmailSendResponse,
   ListTransactionalOptions,
   ListTransactionalResponse,
+  Transactional,
 } from '../interfaces/types';
 
 export class Emails {
@@ -169,6 +170,13 @@ export class Emails {
     const response = await this.httpClient.get<{
       transactional: ListTransactionalResponse;
     }>('/transactional', { params });
+    return response.transactional;
+  }
+
+  async getTransactional(id: string): Promise<Transactional> {
+    const response = await this.httpClient.get<{
+      transactional: Transactional;
+    }>(`/transactional/${id}`);
     return response.transactional;
   }
 }
