@@ -664,9 +664,9 @@ export interface Transactional {
   /** Text body content */
   bodyText?: string;
   /** From email address */
-  fromEmail: string;
+  fromEmail?: string;
   /** From name */
-  fromName: string;
+  fromName?: string;
   /** Reply-to information */
   replyTo?: Array<{ email: string; name?: string }>;
   /** Preview text */
