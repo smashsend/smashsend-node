@@ -12,12 +12,6 @@ export class TransactionalEmails {
     this.httpClient = httpClient;
   }
 
-  async get(id: string): Promise<Transactional> {
-    const response = await this.httpClient.get<{
-      transactional: Transactional;
-    }>(`/transactional/${id}`);
-    return response.transactional;
-  }
   /**
    * List transactional email templates
    *
@@ -37,6 +31,13 @@ export class TransactionalEmails {
     const response = await this.httpClient.get<{
       transactional: ListTransactionalResponse;
     }>('/transactional', { params });
+    return response.transactional;
+  }
+
+  async get(id: string): Promise<Transactional> {
+    const response = await this.httpClient.get<{
+      transactional: Transactional;
+    }>(`/transactional/${id}`);
     return response.transactional;
   }
 }
