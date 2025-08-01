@@ -18,10 +18,10 @@ export class TransactionalEmails {
    * @example
    * ```ts
    * // List all active transactionals
-   * await smashsend.emails.listTransactional({ status: 'ACTIVE' });
+   * await smashsend.emails.transactional.list({ status: 'ACTIVE' });
    *
    * // List with pagination
-   * await smashsend.emails.listTransactional({
+   * await smashsend.emails.transactional.list({
    *   limit: 50,
    *   cursor: 'next_page_cursor'
    * });
