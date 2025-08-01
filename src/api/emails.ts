@@ -5,17 +5,23 @@ import {
   TemplatedEmailSendOptions,
   RawEmailSendResponse,
   TemplatedEmailSendResponse,
-  TransactionalEmailSendResponse,
 } from '../interfaces/types';
+import { TransactionalEmails } from './transactional';
 
 export class Emails {
   private httpClient: HttpClient;
+
+  /**
+   * The Emails API resource
+   */
+  public readonly transactional: TransactionalEmails;
 
   // Cache for the async renderer so we only import @react-email/render once
   private renderAsync?: (component: ReactElement) => Promise<string>;
 
   constructor(httpClient: HttpClient) {
     this.httpClient = httpClient;
+    this.transactional = new TransactionalEmails(this.httpClient);
   }
 
   /**
@@ -104,18 +110,6 @@ export class Emails {
       ...options,
       sendAt: options.sendAt instanceof Date ? options.sendAt.toISOString() : options.sendAt,
     });
-    return response.email;
-  }
-
-  /**
-   * Get an email by ID
-   * @param id The email ID
-   * @returns The email details
-   */
-  async get(id: string): Promise<TransactionalEmailSendResponse> {
-    const response = await this.httpClient.get<{ email: TransactionalEmailSendResponse }>(
-      `/emails/${id}`
-    );
     return response.email;
   }
 }

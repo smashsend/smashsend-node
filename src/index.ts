@@ -13,7 +13,6 @@ import {
   RateLimitError,
   TimeoutError,
 } from './errors';
-import { TransactionalEmails } from './api/transactional';
 
 export class SmashSend {
   /**
@@ -30,11 +29,6 @@ export class SmashSend {
    * The Emails API resource
    */
   public readonly emails: Emails;
-
-  /**
-   * The Emails API resource
-   */
-  public readonly transactional: TransactionalEmails;
 
   /**
    * The Webhooks API resource
@@ -75,7 +69,6 @@ export class SmashSend {
     this.contacts = new Contacts(this.httpClient);
     this.domains = new Domains(this.httpClient);
     this.emails = new Emails(this.httpClient);
-    this.transactional = new TransactionalEmails(this.httpClient);
     this.webhooks = new Webhooks(this.httpClient);
   }
 
