@@ -6,9 +6,6 @@ import {
   RawEmailSendResponse,
   TemplatedEmailSendResponse,
   TransactionalEmailSendResponse,
-  ListTransactionalOptions,
-  ListTransactionalResponse,
-  Transactional,
 } from '../interfaces/types';
 
 export class Emails {
@@ -120,63 +117,5 @@ export class Emails {
       `/emails/${id}`
     );
     return response.email;
-  }
-
-  // /**
-  //  * List sent emails
-  //  * @param params Optional parameters for filtering and pagination
-  //  * @returns A response object containing emails list with pagination metadata
-  //  */
-  // async list(params?: {
-  //   limit?: number;
-  //   offset?: number;
-  //   from?: string;
-  //   to?: string;
-  //   status?: string;
-  //   tags?: string[];
-  // }): Promise<{
-  //   data: TransactionalEmailSendResponse[];
-  //   total: number;
-  //   limit: number;
-  //   offset: number;
-  // }> {
-  //   const response = await this.httpClient.get<{
-  //     emails: {
-  //       data: TransactionalEmailSendResponse[];
-  //       total: number;
-  //       limit: number;
-  //       offset: number;
-  //     };
-  //   }>('/emails', { params });
-  //   return response.emails;
-  // }
-
-  /**
-   * List transactional email templates
-   *
-   * @example
-   * ```ts
-   * // List all active transactionals
-   * await smashsend.emails.listTransactional({ status: 'ACTIVE' });
-   *
-   * // List with pagination
-   * await smashsend.emails.listTransactional({
-   *   limit: 50,
-   *   cursor: 'next_page_cursor'
-   * });
-   * ```
-   */
-  async listTransactional(params?: ListTransactionalOptions): Promise<ListTransactionalResponse> {
-    const response = await this.httpClient.get<{
-      transactional: ListTransactionalResponse;
-    }>('/transactional', { params });
-    return response.transactional;
-  }
-
-  async getTransactional(id: string): Promise<Transactional> {
-    const response = await this.httpClient.get<{
-      transactional: Transactional;
-    }>(`/transactional/${id}`);
-    return response.transactional;
   }
 }

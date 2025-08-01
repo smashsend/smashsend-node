@@ -13,12 +13,13 @@ import {
   RateLimitError,
   TimeoutError,
 } from './errors';
+import { TransactionalEmails } from './api/transactional';
 
 export class SmashSend {
   /**
-   * The Emails API resource
+   * The API Keys resource
    */
-  public readonly emails: Emails;
+  public readonly apiKeys: ApiKeys;
 
   /**
    * The Contacts API resource
@@ -26,14 +27,19 @@ export class SmashSend {
   public readonly contacts: Contacts;
 
   /**
+   * The Emails API resource
+   */
+  public readonly emails: Emails;
+
+  /**
+   * The Emails API resource
+   */
+  public readonly transactional: TransactionalEmails;
+
+  /**
    * The Webhooks API resource
    */
   public readonly webhooks: Webhooks;
-
-  /**
-   * The API Keys resource
-   */
-  public readonly apiKeys: ApiKeys;
 
   /**
    * The Domains API resource
@@ -65,11 +71,12 @@ export class SmashSend {
     );
 
     // Initialize API resources
-    this.emails = new Emails(this.httpClient);
-    this.contacts = new Contacts(this.httpClient);
-    this.webhooks = new Webhooks(this.httpClient);
     this.apiKeys = new ApiKeys(this.httpClient);
+    this.contacts = new Contacts(this.httpClient);
     this.domains = new Domains(this.httpClient);
+    this.emails = new Emails(this.httpClient);
+    this.transactional = new TransactionalEmails(this.httpClient);
+    this.webhooks = new Webhooks(this.httpClient);
   }
 
   /**
@@ -145,7 +152,12 @@ export type {
 } from './interfaces/types';
 
 // Export domain types
-export type { VerifiedEmailIdentities, EmailIdentity, DomainIdentity, EmailIdentityStatus } from './api/domains';
+export type {
+  VerifiedEmailIdentities,
+  EmailIdentity,
+  DomainIdentity,
+  EmailIdentityStatus,
+} from './api/domains';
 
 // Export enums
 export {
