@@ -29,11 +29,30 @@ export class Emails {
    *
    * @example
    * ```ts
+   * // Basic usage
    * await smashsend.emails.send({
    *   from: 'John <john@acme.com>',
    *   to: 'jane@example.com',
    *   subject: 'Hi there!',
    *   html: '<strong>Welcome</strong>',
+   * });
+   * 
+   * // With dynamic replyTo
+   * await smashsend.emails.send({
+   *   from: 'John <john@acme.com>',
+   *   to: 'jane@example.com',
+   *   subject: 'Hi there!',
+   *   html: '<strong>Welcome</strong>',
+   *   replyTo: 'support@acme.com', // Single email
+   * });
+   * 
+   * // With multiple replyTo addresses
+   * await smashsend.emails.send({
+   *   from: 'John <john@acme.com>',
+   *   to: 'jane@example.com',
+   *   subject: 'Hi there!',
+   *   html: '<strong>Welcome</strong>',
+   *   replyTo: ['support@acme.com', 'sales@acme.com'], // Array of emails
    * });
    * ```
    */
@@ -95,15 +114,41 @@ export class Emails {
 
   /**
    * Send an email **using a stored template**.
+   * 
+   * The `replyTo` parameter allows you to dynamically override the reply-to address(es) 
+   * configured in your template. If not provided, the template's configured replyTo 
+   * setting will be used as a fallback.
    *
    * @example
    * ```ts
+   * // Basic usage - uses template's default replyTo
    * await smashsend.emails.sendWithTemplate({
    *   template: 'payment-received',
    *   to: 'jane@example.com',
    *   variables: { amount: 42 },
    * });
+   * 
+   * // Override replyTo with a single email
+   * await smashsend.emails.sendWithTemplate({
+   *   template: 'payment-received',
+   *   to: 'jane@example.com',
+   *   variables: { amount: 42 },
+   *   replyTo: 'billing@acme.com', // Overrides template's replyTo
+   * });
+   * 
+   * // Override replyTo with multiple emails
+   * await smashsend.emails.sendWithTemplate({
+   *   template: 'support-ticket',
+   *   to: 'jane@example.com',
+   *   variables: { ticketId: 'TICKET-123' },
+   *   replyTo: ['support@acme.com', 'urgent@acme.com'], // Multiple reply addresses
+   * });
    * ```
+   * 
+   * @param options.replyTo - Optional reply-to address(es). Can be:
+   *   - A single email string: `'support@acme.com'`
+   *   - An array of email strings: `['support@acme.com', 'sales@acme.com']`
+   *   - If not provided, falls back to the template's configured replyTo setting
    */
   async sendWithTemplate(options: TemplatedEmailSendOptions): Promise<TemplatedEmailSendResponse> {
     const response = await this.httpClient.post<{ email: TemplatedEmailSendResponse }>('/emails', {

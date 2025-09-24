@@ -52,8 +52,8 @@ interface RawEmailSendOptionsBase {
   subject: string;
   /** Optional preview / pre-header text shown by email clients. */
   previewText?: string;
-  /** Optional reply-to address. */
-  replyTo?: string;
+  /** Optional reply-to address(es). Can be a single email string or array of email strings. If not provided, falls back to the template's replyTo setting. */
+  replyTo?: string | string[];
   /** Optional plain-text body. If omitted Smashsend will auto-generate from HTML. */
   text?: string;
   /** Optional map of contact properties to upsert before sending. */
@@ -82,6 +82,8 @@ export interface TemplatedEmailSendOptions {
   to: string;
   /** Key-value pairs used to render the template. */
   variables?: Record<string, any>;
+  /** Optional reply-to address(es). Can be a single email string or array of email strings. If not provided, falls back to the template's replyTo setting. */
+  replyTo?: string | string[];
   /** Tracking configuration. */
   settings?: {
     trackClicks?: boolean;

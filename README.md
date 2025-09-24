@@ -92,6 +92,7 @@ const response = await smashsend.emails.send({
     <a href="https://track.example.com/12345">Track your package</a>
   `,
   text: 'Your order #12345 has shipped. Track at: https://track.example.com/12345',
+  replyTo: 'support@yourdomain.com', // Optional: set reply-to address
   groupBy: 'order-shipped', // Group analytics by email type
   settings: {
     trackClicks: true,
@@ -144,6 +145,64 @@ const response = await smashsend.emails.sendWithTemplate({
 console.log(response.messageId); // Unique ID for tracking
 console.log(response.status); // SCHEDULED, SENT, etc.
 ```
+
+## Dynamic Reply-To Addresses
+
+Both raw emails and templated emails support dynamic `replyTo` configuration:
+
+### Raw Emails
+
+```typescript
+// Single reply-to address
+await smashsend.emails.send({
+  from: 'notifications@yourdomain.com',
+  to: 'user@example.com',
+  subject: 'Welcome!',
+  html: '<h1>Welcome to our service!</h1>',
+  replyTo: 'support@yourdomain.com'
+});
+
+// Multiple reply-to addresses
+await smashsend.emails.send({
+  from: 'notifications@yourdomain.com',
+  to: 'user@example.com',
+  subject: 'Urgent Support Request',
+  html: '<h1>We received your support request</h1>',
+  replyTo: ['support@yourdomain.com', 'urgent@yourdomain.com']
+});
+```
+
+### Templated Emails with Dynamic Reply-To
+
+For templated emails, the `replyTo` parameter **overrides** the reply-to address configured in your template:
+
+```typescript
+// Uses template's default reply-to (no override)
+await smashsend.emails.sendWithTemplate({
+  template: 'welcome-email',
+  to: 'user@example.com',
+  variables: { name: 'John' }
+  // No replyTo - uses template's configured reply-to
+});
+
+// Override with single reply-to
+await smashsend.emails.sendWithTemplate({
+  template: 'billing-reminder',
+  to: 'user@example.com',
+  variables: { amount: '$29.99', dueDate: '2024-01-15' },
+  replyTo: 'billing@yourdomain.com' // Overrides template's reply-to
+});
+
+// Override with multiple reply-to addresses
+await smashsend.emails.sendWithTemplate({
+  template: 'support-ticket',
+  to: 'user@example.com',
+  variables: { ticketId: 'TICKET-12345' },
+  replyTo: ['support@yourdomain.com', 'escalation@yourdomain.com']
+});
+```
+
+> **💡 Fallback behavior:** If you don't specify `replyTo` in templated emails, SMASHSEND automatically uses the reply-to address configured in your template settings. This gives you the flexibility to override it when needed while maintaining sensible defaults.
 
 ## Send email with React
 
