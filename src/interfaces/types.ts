@@ -532,6 +532,64 @@ export interface CustomPropertyListResponse {
   hasMore: boolean;
 }
 
+// Batch Contacts interfaces ────────────────────────────────────────────
+
+export interface BatchError {
+  code: string;
+  message: string;
+  retryable?: boolean;
+  retryAfter?: number;
+}
+
+export interface BatchContactError {
+  index: number;
+  email: string;
+  errors: BatchError[];
+}
+
+export interface BatchFailedContact {
+  index: number;
+  contact: ContactCreateOptions;
+  errors: BatchError[];
+}
+
+export interface BatchContactsSummary {
+  created: number;
+  updated: number;
+  failed: number;
+  total: number;
+  processingTime: number;
+  eventsProcessed?: boolean;
+  eventsError?: string;
+}
+
+export interface BatchContactsOptions {
+  allowPartialSuccess?: boolean;
+  includeFailedContacts?: boolean;
+}
+
+export interface BatchContactsResponse {
+  /**
+   * Request ID that SMASHSEND assigns to the request.
+   */
+  requestId: string;
+  /**
+   *  successful created/updated contacts. 
+   * 
+   * If allowPartialSuccess query param is true, SMASHSEND will create
+   * valid contacts and report errors for invalid ones.
+   */
+  contacts: Contact[];
+  summary: BatchContactsSummary;
+  errors?: BatchContactError[];
+  /**
+   * Failed contacts.
+   * 
+   * If includeFailedContacts query param is true, this will be included in the response.
+   */
+  failedContacts?: BatchFailedContact[];
+}
+
 // Webhook interfaces
 export interface WebhookCreateOptions {
   url: string;

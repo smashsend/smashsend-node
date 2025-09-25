@@ -6,6 +6,8 @@ import {
   CustomProperty,
   CustomPropertyCreateOptions,
   CustomPropertyUpdateOptions,
+  BatchContactsResponse,
+  BatchContactsOptions,
 } from '../interfaces/types';
 
 export class Contacts {
@@ -30,6 +32,72 @@ export class Contacts {
       },
     });
     return response.contact;
+  }
+
+  /**
+   * Create multiple contacts in a single batch operation
+   * @param contacts Array of contact creation options
+   * @param options Batch operation options
+   * @returns Batch operation result with success/failure details
+   *
+   * @example
+   * ```typescript
+   * // Basic batch creation
+   * const result = await smashsend.contacts.createBatch([
+   *   { email: 'john@example.com', firstName: 'John' },
+   *   { email: 'jane@example.com', firstName: 'Jane' }
+   * ]);
+   *
+   * console.log(`Created: ${result.summary.created}, Failed: ${result.summary.failed}`);
+   *
+   * // With retry-friendly options
+   * const result = await smashsend.contacts.createBatch(contacts, {
+   *   allowPartialSuccess: true,
+   *   includeFailedContacts: true
+   * });
+   *
+   * // Easy retry of failed contacts
+   * if (result.failedContacts?.length > 0) {
+   *   const retryableContacts = result.failedContacts
+   *     .filter(fc => fc.errors.some(e => e.retryable))
+   *     .map(fc => fc.contact);
+   *
+   *   if (retryableContacts.length > 0) {
+   *     await smashsend.contacts.createBatch(retryableContacts);
+   *   }
+   * }
+   * ```
+   */
+  async createBatch(
+    contacts: ContactCreateOptions[],
+    options: BatchContactsOptions = {}
+  ): Promise<BatchContactsResponse> {
+    const queryParams = new URLSearchParams();
+
+    if (options.allowPartialSuccess !== undefined) {
+      queryParams.set('allowPartialSuccess', options.allowPartialSuccess.toString());
+    }
+
+    if (options.includeFailedContacts !== undefined) {
+      queryParams.set('includeFailedContacts', options.includeFailedContacts.toString());
+    }
+
+    const url = `/contacts/batch${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+
+    // Transform contacts to backend format
+    const payload = {
+      contacts: contacts.map((contact) => {
+        const { customProperties, ...rest } = contact;
+        return {
+          properties: {
+            ...rest,
+            ...(customProperties || {}),
+          },
+        };
+      }),
+    };
+
+    return await this.httpClient.post<BatchContactsResponse>(url, payload);
   }
 
   /**
