@@ -532,6 +532,50 @@ export interface CustomPropertyListResponse {
   hasMore: boolean;
 }
 
+// Batch Contacts interfaces ────────────────────────────────────────────
+
+export interface BatchError {
+  code: string;
+  message: string;
+  retryable?: boolean;
+  retryAfter?: number;
+}
+
+export interface BatchContactError {
+  index: number;
+  email: string;
+  errors: BatchError[];
+}
+
+export interface BatchFailedContact {
+  index: number;
+  contact: ContactCreateOptions;
+  errors: BatchError[];
+}
+
+export interface BatchContactsSummary {
+  created: number;
+  updated: number;
+  failed: number;
+  total: number;
+  processingTime: number;
+  eventsProcessed?: boolean;
+  eventsError?: string;
+}
+
+export interface BatchContactsOptions {
+  allowPartialSuccess?: boolean;
+  includeFailedContacts?: boolean;
+}
+
+export interface BatchContactsResponse {
+  requestId: string;
+  contacts: Contact[];
+  summary: BatchContactsSummary;
+  errors?: BatchContactError[];
+  failedContacts?: BatchFailedContact[];
+}
+
 // Webhook interfaces
 export interface WebhookCreateOptions {
   url: string;

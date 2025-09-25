@@ -142,6 +142,12 @@ export type {
   CustomPropertyUpdateOptions,
   CustomPropertyListResponse,
   WebhookUpdateOptions,
+  BatchContactsResponse,
+  BatchContactsOptions,
+  BatchContactsSummary,
+  BatchContactError,
+  BatchFailedContact,
+  BatchError,
 } from './interfaces/types';
 
 // Export domain types
