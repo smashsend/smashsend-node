@@ -1,8 +1,6 @@
 import { SmashSend, ContactCreateOptions, BatchContactsResponse } from '../src';
 
-const smashsend = new SmashSend({
-  apiKey: process.env.SMASHSEND_API_KEY || 'your-api-key-here'
-});
+const smashsend = new SmashSend(process.env.SMASHSEND_API_KEY || 'your-api-key-here');
 
 async function batchContactsExample(): Promise<void> {
   console.log('🚀 SMASHSEND Batch Contacts TypeScript Example\n');
