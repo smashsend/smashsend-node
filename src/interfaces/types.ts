@@ -569,10 +569,24 @@ export interface BatchContactsOptions {
 }
 
 export interface BatchContactsResponse {
+  /**
+   * Request ID that SMASHSEND assigns to the request.
+   */
   requestId: string;
+  /**
+   *  successful created/updated contacts. 
+   * 
+   * If allowPartialSuccess query param is true, SMASHSEND will create
+   * valid contacts and report errors for invalid ones.
+   */
   contacts: Contact[];
   summary: BatchContactsSummary;
   errors?: BatchContactError[];
+  /**
+   * Failed contacts.
+   * 
+   * If includeFailedContacts query param is true, this will be included in the response.
+   */
   failedContacts?: BatchFailedContact[];
 }
 
