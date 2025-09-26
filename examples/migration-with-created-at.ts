@@ -2,7 +2,7 @@
  * ⚠️ MIGRATION EXAMPLE - Use with extreme caution! ⚠️
  * 
  * This example demonstrates how to use the `overrideCreatedAt` parameter
- * when migrating contacts from legacy systems (like Jungle) while preserving
+ * when migrating contacts from legacy systems (like MailChimp, CustomerIO or Hubspot) while preserving
  * their original creation timestamps.
  * 
  * ⚠️ WARNING: Only use this for one-time data migrations. Regular use will
