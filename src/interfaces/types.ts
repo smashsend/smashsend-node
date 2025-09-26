@@ -583,30 +583,62 @@ export interface BatchContactsSummary {
 }
 
 export interface BatchContactsOptions {
-  allowPartialSuccess?: boolean;
-  includeFailedContacts?: boolean;
   /**
-   * ⚠️ MIGRATION USE ONLY ⚠️
+   * Allow the batch operation to succeed even if some contacts fail validation or processing.
    * 
-   * Allow overriding the created_at timestamp during contact import/migration.
-   * 
-   * When set to `true`, SMASHSEND will use the `createdAt` field from each contact 
-   * instead of the current timestamp. This is designed ONLY for data migration 
-   * scenarios where you need to preserve historical creation dates.
-   * 
-   * ⚠️ WARNING: Avoid using this parameter unless you're migrating data from 
-   * another system. Incorrect usage can corrupt your analytics and reporting.
-   * 
-   * Invalid timestamps are silently ignored and fallback to current timestamp.
-   * No validation errors are thrown - contacts will always be created successfully.
+   * When `true`, the operation will process all valid contacts and return partial results,
+   * including details about any failed contacts. When `false`, the entire batch fails
+   * if any contact has validation errors.
    * 
    * @default false
    * @example
    * ```typescript
-   * // ❌ DON'T do this for regular contact creation
-   * await smashsend.contacts.createBatch(contacts, { overrideCreatedAt: true });
+   * await smashsend.contacts.createBatch(contacts, { 
+   *   allowPartialSuccess: true 
+   * });
+   * ```
+   */
+  allowPartialSuccess?: boolean;
+  
+  /**
+   * Include detailed information about failed contacts in the response.
    * 
-   * // ✅ ONLY use for data migration scenarios
+   * When `true`, the response will contain a `failedContacts` array with details
+   * about which contacts failed and why. When `false`, only success metrics are returned.
+   * 
+   * @default false
+   * @example
+   * ```typescript
+   * const result = await smashsend.contacts.createBatch(contacts, { 
+   *   includeFailedContacts: true 
+   * });
+   * 
+   * if (result.failedContacts?.length > 0) {
+   *   console.log('Some contacts failed:', result.failedContacts);
+   * }
+   * ```
+   */
+  includeFailedContacts?: boolean;
+  
+  /**
+   * Allow overriding the created_at timestamp during contact import/migration.
+   * 
+   * ⚠️ only use this for data migration scenarios, not for regular contact creation.
+   * 
+   * It must be a valid ISO 8601 string or Date instance, if not provided, SMASHSEND will use the current timestamp.
+   * Adding a wrong timestamp will be ignored by SMASHSEND.
+   * 
+   * When set to `true`, SMASHSEND will use the `createdAt` field from each contact 
+   * instead of the current timestamp. This is designed for data migration 
+   * scenarios where you need to preserve historical creation dates.
+   * 
+   * Note: This should typically only be used when migrating data from another system.
+   * Invalid timestamps are silently ignored and fallback to current timestamp.
+   * 
+   * @default false
+   * @example
+   * ```typescript
+   * // For data migration scenarios
    * const migrationContacts = [
    *   { 
    *     email: 'user@legacy-system.com', 
@@ -615,7 +647,7 @@ export interface BatchContactsOptions {
    *   }
    * ];
    * await smashsend.contacts.createBatch(migrationContacts, { 
-   *   overrideCreatedAt: true // Only for migration!
+   *   overrideCreatedAt: true
    * });
    * ```
    */
