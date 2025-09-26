@@ -1,4 +1,5 @@
 import { HttpClient } from '../utils/http-client';
+import { safeToISOString } from '../utils/date-utils';
 import {
   Contact,
   ContactCreateOptions,
@@ -105,11 +106,14 @@ export class Contacts {
     const payload = {
       contacts: contacts.map((contact) => {
         const { customProperties, createdAt, ...rest } = contact;
+        
+        // Safely convert createdAt to ISO string
+        const createdAtIso = safeToISOString(createdAt);
+        
         return {
           properties: {
             ...rest,
-            // Convert Date to ISO string for createdAt if provided
-            ...(createdAt ? { createdAt: createdAt.toISOString() } : {}),
+            ...(createdAtIso ? { createdAt: createdAtIso } : {}),
             ...(customProperties || {}),
           },
         };
