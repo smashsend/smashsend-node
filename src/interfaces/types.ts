@@ -445,6 +445,25 @@ export interface ContactCreateOptions {
   language?: string;
   phone?: string;
   status?: SmashsendContactStatus;
+  /**
+   * 
+   * Override the contact creation timestamp. SMASHSEND will only use this when `overrideCreatedAt: true` 
+   * is passed to batch operations. Ignored for regular contact creation.
+   * 
+   * If an invalid Date is provided, SMASHSEND will silently fall back to the current timestamp.
+   * No validation errors are thrown for invalid dates - the contact will still be created successfully.
+   * 
+   * @example
+   * ```typescript
+   * // For data migration from legacy systems
+   * {
+   *   email: 'user@legacy-system.com',
+   *   firstName: 'John',
+   *   createdAt: new Date('2023-01-15T10:30:00Z') // Historical creation date
+   * }
+   * ```
+   */
+  createdAt?: Date;
   // Extra custom properties keyed by apiSlug
   customProperties?: Record<string, any>;
 }
@@ -566,6 +585,41 @@ export interface BatchContactsSummary {
 export interface BatchContactsOptions {
   allowPartialSuccess?: boolean;
   includeFailedContacts?: boolean;
+  /**
+   * ⚠️ MIGRATION USE ONLY ⚠️
+   * 
+   * Allow overriding the created_at timestamp during contact import/migration.
+   * 
+   * When set to `true`, SMASHSEND will use the `createdAt` field from each contact 
+   * instead of the current timestamp. This is designed ONLY for data migration 
+   * scenarios where you need to preserve historical creation dates.
+   * 
+   * ⚠️ WARNING: Avoid using this parameter unless you're migrating data from 
+   * another system. Incorrect usage can corrupt your analytics and reporting.
+   * 
+   * Invalid timestamps are silently ignored and fallback to current timestamp.
+   * No validation errors are thrown - contacts will always be created successfully.
+   * 
+   * @default false
+   * @example
+   * ```typescript
+   * // ❌ DON'T do this for regular contact creation
+   * await smashsend.contacts.createBatch(contacts, { overrideCreatedAt: true });
+   * 
+   * // ✅ ONLY use for data migration scenarios
+   * const migrationContacts = [
+   *   { 
+   *     email: 'user@legacy-system.com', 
+   *     firstName: 'John',
+   *     createdAt: new Date('2023-01-15T10:30:00Z') // Historical date
+   *   }
+   * ];
+   * await smashsend.contacts.createBatch(migrationContacts, { 
+   *   overrideCreatedAt: true // Only for migration!
+   * });
+   * ```
+   */
+  overrideCreatedAt?: boolean;
 }
 
 export interface BatchContactsResponse {

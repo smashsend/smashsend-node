@@ -36,6 +36,7 @@ export class Contacts {
 
   /**
    * Create multiple contacts in a single batch operation
+   * 
    * @param contacts Array of contact creation options
    * @param options Batch operation options
    * @returns Batch operation result with success/failure details
@@ -66,6 +67,18 @@ export class Contacts {
    *     await smashsend.contacts.createBatch(retryableContacts);
    *   }
    * }
+   *
+   * // ⚠️ MIGRATION USE ONLY - Preserve historical creation dates
+   * const legacyContacts = [
+   *   { 
+   *     email: 'user@legacy-system.com', 
+   *     firstName: 'John',
+   *     createdAt: new Date('2023-01-15T10:30:00Z') // Historical date
+   *   }
+   * ];
+   * await smashsend.contacts.createBatch(legacyContacts, { 
+   *   overrideCreatedAt: true // Only for data migration!
+   * });
    * ```
    */
   async createBatch(
@@ -82,15 +95,21 @@ export class Contacts {
       queryParams.set('includeFailedContacts', options.includeFailedContacts.toString());
     }
 
+    if (options.overrideCreatedAt !== undefined) {
+      queryParams.set('overrideCreatedAt', options.overrideCreatedAt.toString());
+    }
+
     const url = `/contacts/batch${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
 
     // Transform contacts to backend format
     const payload = {
       contacts: contacts.map((contact) => {
-        const { customProperties, ...rest } = contact;
+        const { customProperties, createdAt, ...rest } = contact;
         return {
           properties: {
             ...rest,
+            // Convert Date to ISO string for createdAt if provided
+            ...(createdAt ? { createdAt: createdAt.toISOString() } : {}),
             ...(customProperties || {}),
           },
         };
