@@ -77,6 +77,65 @@ console.log(contact.id); // contact UUID
 console.log(contact.properties.email); // newcontact@example.com
 ```
 
+## Batch Contact Creation
+
+Create multiple contacts efficiently in a single API call:
+
+```typescript
+const result = await smashsend.contacts.createBatch([
+  { email: 'john@example.com', firstName: 'John', lastName: 'Doe' },
+  { email: 'jane@example.com', firstName: 'Jane', lastName: 'Smith' },
+  { email: 'bob@example.com', firstName: 'Bob', lastName: 'Johnson' }
+], {
+  allowPartialSuccess: true,    // Create valid contacts even if some fail
+  includeFailedContacts: true   // Include failed contacts in response
+});
+
+console.log(`Created: ${result.summary.created}, Failed: ${result.summary.failed}`);
+
+// Handle failures and retry if needed
+if (result.failedContacts?.length > 0) {
+  const retryableContacts = result.failedContacts
+    .filter(fc => fc.errors.some(e => e.retryable))
+    .map(fc => fc.contact);
+  
+  if (retryableContacts.length > 0) {
+    await smashsend.contacts.createBatch(retryableContacts);
+  }
+}
+```
+
+### ⚠️ Data Migration with Custom Creation Dates
+
+**WARNING: Use this feature ONLY for one-time data migrations from legacy systems. Regular use will corrupt your analytics and reporting.**
+
+When migrating contacts from another system (like Jungle), you can preserve their original creation timestamps:
+
+```typescript
+// ⚠️ MIGRATION USE ONLY - Preserve historical creation dates
+const legacyContacts = [
+  { 
+    email: 'user@legacy-system.com', 
+    firstName: 'John',
+    createdAt: new Date('2023-01-15T10:30:00Z') // Historical date from legacy system
+  }
+];
+
+await smashsend.contacts.createBatch(legacyContacts, { 
+  overrideCreatedAt: true // 🚨 ONLY for data migration!
+});
+```
+
+**When to use `overrideCreatedAt: true`:**
+- ✅ One-time migration from legacy systems
+- ✅ Preserving historical data during platform switches
+- ✅ Maintaining accurate customer lifecycle analytics
+
+**When NOT to use `overrideCreatedAt: true`:**
+- ❌ Regular contact creation
+- ❌ Ongoing API integrations
+- ❌ Any production workflows
+
 ## Send email (basic example)
 
 The simplest way to send a transactional email is with raw HTML:
