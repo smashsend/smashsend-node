@@ -604,20 +604,6 @@ export interface BatchContactsSummary {
   processingTime: number;
   eventsProcessed?: boolean;
   eventsError?: string;
-  // Debug timing properties (only available for admins with debug=true query param)
-  validationTimeMs?: number;
-  upsertTimeMs?: number;
-  propertyUpdateTimeMs?: number;
-  refetchTimeMs?: number;
-  eventProcessingTimeMs?: number;
-  // Bulk operation optimization metrics
-  bulkContactCount?: number;
-  bulkPropertyUpdatesCount?: number;
-  bulkSqlStatementsExecuted?: number;
-  bulkPreloadCurrentStateMs?: number;
-  bulkOptionResolutionMs?: number;
-  bulkOperationsMs?: number;
-  bulkChangeGenerationMs?: number;
 }
 
 export interface BatchContactsOptions {
