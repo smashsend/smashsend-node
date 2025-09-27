@@ -1,4 +1,4 @@
-// Events API types for SmashSend
+// Events API types for SMASHSEND
 
 /**
  * Event tracking payload for single event
@@ -10,16 +10,15 @@ export interface EventPayload {
   properties?: Record<string, any>;
   /** User identification information */
   identify: {
-    /** Anonymous user ID (optional) */
-    anonymousId?: string;
-    /** Registered user ID (optional) */
-    userId?: string;
     /** User email address (required) */
     email: string;
   };
   /** Event timestamp (ISO string or Unix timestamp) */
   timestamp?: string | number;
-  /** Unique message ID for deduplication (optional) */
+  /**
+   * Optional message ID for deduplication.
+   * If not provided, SMASHSEND will generate one automatically.
+   * */
   messageId?: string;
 }
 
@@ -37,7 +36,7 @@ export interface BatchEventPayload {
 export interface SingleEventResponse {
   /** Always true for successful events */
   success: true;
-  /** Unique message ID assigned by SmashSend */
+  /** Unique message ID assigned by SMASHSEND */
   messageId: string;
   /** Optional informational message */
   info?: string;
@@ -57,7 +56,7 @@ export interface BatchEventResponse {
   events?: Array<{
     /** Index of event in the original batch */
     index: number;
-    /** Message ID assigned by SmashSend */
+    /** Message ID assigned by SMASHSEND */
     messageId: string;
     /** Processing status */
     status: 'accepted' | 'duplicate';
@@ -96,32 +95,4 @@ export interface EventsErrorResponse {
     /** Error message */
     message: string;
   };
-}
-
-/**
- * Event usage statistics
- */
-export interface EventUsage {
-  /** Total events tracked in the time period */
-  totalEvents: number;
-  /** Events tracked today */
-  eventsToday: number;
-  /** Events tracked this month */
-  eventsThisMonth: number;
-  /** Remaining events in current billing period */
-  remainingEvents?: number;
-  /** Next reset date for usage limits */
-  resetDate?: string;
-}
-
-/**
- * Event usage query options
- */
-export interface EventUsageOptions {
-  /** Start date for usage statistics (ISO string) */
-  startDate?: string;
-  /** End date for usage statistics (ISO string) */
-  endDate?: string;
-  /** Include detailed breakdown by event name */
-  includeBreakdown?: boolean;
 }

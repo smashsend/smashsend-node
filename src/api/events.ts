@@ -4,9 +4,7 @@ import {
   BatchEventPayload,
   SingleEventResponse,
   BatchEventResponse,
-  EventTrackingOptions,
-  EventUsage,
-  EventUsageOptions,
+  EventTrackingOptions
 } from '../interfaces/events';
 
 export class Events {
@@ -24,6 +22,7 @@ export class Events {
    * 
    * @example
    * ```typescript
+   * // Basic event tracking (SMASHSEND generates messageId automatically)
    * const response = await smashsend.events.track({
    *   event: 'user.signup',
    *   identify: {
@@ -37,6 +36,14 @@ export class Events {
    * });
    * 
    * console.log(`Event tracked with ID: ${response.messageId}`);
+   * 
+   * // With custom messageId for deduplication
+   * const customResponse = await smashsend.events.track({
+   *   event: 'purchase.completed',
+   *   identify: { email: 'user@example.com' },
+   *   properties: { orderId: 'order_123' },
+   *   messageId: 'custom_msg_id_123' // Optional: for custom deduplication
+   * });
    * ```
    */
   async track(
@@ -46,11 +53,8 @@ export class Events {
     const headers = options.headers || {};
     const timeout = options.timeout;
 
-    // Generate messageId if not provided
-    const payload = {
-      ...event,
-      messageId: event.messageId || this.generateMessageId(),
-    };
+    // Use provided messageId or let SMASHSEND generate one
+    const payload = { ...event };
 
     const requestOptions: any = { headers };
     if (timeout) {
@@ -103,14 +107,9 @@ export class Events {
     const headers = options.headers || {};
     const timeout = options.timeout;
 
-    // Generate messageIds for events that don't have them
-    const eventsWithIds = events.map(event => ({
-      ...event,
-      messageId: event.messageId || this.generateMessageId(),
-    }));
-
+    // Use provided messageIds or let SMASHSEND generate them
     const payload: BatchEventPayload = {
-      events: eventsWithIds,
+      events: events,
     };
 
     const requestOptions: any = { headers };
@@ -123,87 +122,5 @@ export class Events {
       payload,
       requestOptions
     );
-  }
-
-  /**
-   * Get event usage statistics
-   * @param options Optional query options
-   * @returns Event usage statistics
-   * 
-   * @example
-   * ```typescript
-   * // Get overall usage
-   * const usage = await smashsend.events.getUsage();
-   * console.log(`Events this month: ${usage.eventsThisMonth}`);
-   * 
-   * // Get usage for specific date range
-   * const rangeUsage = await smashsend.events.getUsage({
-   *   startDate: '2024-01-01',
-   *   endDate: '2024-01-31',
-   *   includeBreakdown: true
-   * });
-   * ```
-   */
-  async getUsage(options: EventUsageOptions = {}): Promise<EventUsage> {
-    const params: Record<string, string> = {};
-    
-    if (options.startDate) {
-      params.startDate = options.startDate;
-    }
-    
-    if (options.endDate) {
-      params.endDate = options.endDate;
-    }
-    
-    if (options.includeBreakdown !== undefined) {
-      params.includeBreakdown = options.includeBreakdown.toString();
-    }
-
-    const response = await this.httpClient.get<{ usage: EventUsage }>(
-      '/events/usage',
-      { params }
-    );
-    
-    return response.usage;
-  }
-
-  /**
-   * Send a test event (for development/testing purposes)
-   * @param event The test event payload
-   * @returns The tracking response
-   * 
-   * @example
-   * ```typescript
-   * const response = await smashsend.events.sendTest({
-   *   event: 'test.event',
-   *   identify: {
-   *     email: 'test@example.com'
-   *   },
-   *   properties: {
-   *     environment: 'development'
-   *   }
-   * });
-   * ```
-   */
-  async sendTest(event: EventPayload): Promise<SingleEventResponse> {
-    const payload = {
-      ...event,
-      messageId: event.messageId || this.generateMessageId(),
-    };
-
-    return await this.httpClient.post<SingleEventResponse>(
-      '/events/test',
-      payload
-    );
-  }
-
-  /**
-   * Generate a unique message ID for event deduplication
-   * @returns A unique message ID
-   */
-  private generateMessageId(): string {
-    const timestamp = Date.now().toString(36);
-    const randomPart = Math.random().toString(36).substring(2, 15);
-    return `msg_${timestamp}_${randomPart}`;
   }
 }

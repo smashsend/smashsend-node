@@ -736,6 +736,20 @@ export interface BatchContactsSummary {
   processingTime: number;
   eventsProcessed?: boolean;
   eventsError?: string;
+  // Debug timing properties (only available for admins with debug=true query param)
+  validationTimeMs?: number;
+  upsertTimeMs?: number;
+  propertyUpdateTimeMs?: number;
+  refetchTimeMs?: number;
+  eventProcessingTimeMs?: number;
+  // Bulk operation optimization metrics
+  bulkContactCount?: number;
+  bulkPropertyUpdatesCount?: number;
+  bulkSqlStatementsExecuted?: number;
+  bulkPreloadCurrentStateMs?: number;
+  bulkOptionResolutionMs?: number;
+  bulkOperationsMs?: number;
+  bulkChangeGenerationMs?: number;
 }
 
 export interface BatchContactsOptions {
@@ -823,8 +837,8 @@ export interface BatchContactsOptions {
    *   debug: true // Only works for admin users
    * });
    * 
-   * if (result.summary.tmp_validationTime) {
-   *   console.log(`Validation took: ${result.summary.tmp_validationTime}ms`);
+   * if (result.summary.validationTimeMs) {
+   *   console.log(`Validation took: ${result.summary.validationTimeMs}ms`);
    * }
    * ```
    */
