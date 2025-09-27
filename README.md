@@ -105,37 +105,6 @@ if (result.failedContacts?.length > 0) {
 }
 ```
 
-### ⚠️ Data Migration with Custom Creation Dates
-
-**WARNING: Use this feature ONLY for one-time data migrations from legacy systems. Regular use will corrupt your analytics and reporting.**
-
-When migrating contacts from another system (like Jungle), you can preserve their original creation timestamps:
-
-```typescript
-// ⚠️ MIGRATION USE ONLY - Preserve historical creation dates
-const legacyContacts = [
-  { 
-    email: 'user@legacy-system.com', 
-    firstName: 'John',
-    createdAt: new Date('2023-01-15T10:30:00Z') // Historical date from legacy system
-  }
-];
-
-await smashsend.contacts.createBatch(legacyContacts, { 
-  overrideCreatedAt: true // 🚨 ONLY for data migration!
-});
-```
-
-**When to use `overrideCreatedAt: true`:**
-- ✅ One-time migration from legacy systems
-- ✅ Preserving historical data during platform switches
-- ✅ Maintaining accurate customer lifecycle analytics
-
-**When NOT to use `overrideCreatedAt: true`:**
-- ❌ Regular contact creation
-- ❌ Ongoing API integrations
-- ❌ Any production workflows
-
 ## Send email (basic example)
 
 The simplest way to send a transactional email is with raw HTML:
