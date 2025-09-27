@@ -3,6 +3,7 @@ import { Emails } from './api/emails';
 import { Webhooks } from './api/webhooks';
 import { ApiKeys } from './api/api-keys';
 import { Domains } from './api/domains';
+import { Events } from './api/events';
 import { HttpClient } from './utils/http-client';
 import { SmashSendClientOptions } from './interfaces/types';
 import {
@@ -40,6 +41,11 @@ export class SmashSend {
    */
   public readonly domains: Domains;
 
+  /**
+   * The Events API resource
+   */
+  public readonly events: Events;
+
   private httpClient: HttpClient;
 
   /**
@@ -69,6 +75,7 @@ export class SmashSend {
     this.contacts = new Contacts(this.httpClient);
     this.domains = new Domains(this.httpClient);
     this.emails = new Emails(this.httpClient);
+    this.events = new Events(this.httpClient);
     this.webhooks = new Webhooks(this.httpClient);
   }
 
@@ -148,6 +155,13 @@ export type {
   BatchContactError,
   BatchFailedContact,
   BatchError,
+  EventPayload,
+  BatchEventPayload,
+  SingleEventResponse,
+  BatchEventResponse,
+  EventTrackingOptions,
+  EventUsage,
+  EventUsageOptions,
 } from './interfaces/types';
 
 // Export domain types
