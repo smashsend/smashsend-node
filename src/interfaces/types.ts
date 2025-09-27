@@ -577,6 +577,164 @@ export interface CustomPropertyListResponse {
   hasMore: boolean;
 }
 
+export interface BatchError {
+  code: string;
+  message: string;
+  retryable?: boolean;
+  retryAfter?: number;
+}
+
+export interface BatchContactError {
+  index: number;
+  email: string;
+  errors: BatchError[];
+}
+
+export interface BatchFailedContact {
+  index: number;
+  contact: ContactCreateOptions;
+  errors: BatchError[];
+}
+
+export interface BatchContactsSummary {
+  created: number;
+  updated: number;
+  failed: number;
+  total: number;
+  processingTime: number;
+  eventsProcessed?: boolean;
+  eventsError?: string;
+  // Debug timing properties (only available for admins with debug=true query param)
+  validationTimeMs?: number;
+  upsertTimeMs?: number;
+  propertyUpdateTimeMs?: number;
+  refetchTimeMs?: number;
+  eventProcessingTimeMs?: number;
+  // Bulk operation optimization metrics
+  bulkContactCount?: number;
+  bulkPropertyUpdatesCount?: number;
+  bulkSqlStatementsExecuted?: number;
+  bulkPreloadCurrentStateMs?: number;
+  bulkOptionResolutionMs?: number;
+  bulkOperationsMs?: number;
+  bulkChangeGenerationMs?: number;
+}
+
+export interface BatchContactsOptions {
+  /**
+   * Allow the batch operation to succeed even if some contacts fail validation or processing.
+   *
+   * When `true`, the operation will process all valid contacts and return partial results,
+   * including details about any failed contacts. When `false`, the entire batch fails
+   * if any contact has validation errors.
+   *
+   * @default false
+   * @example
+   * ```typescript
+   * await smashsend.contacts.createBatch(contacts, {
+   *   allowPartialSuccess: true
+   * });
+   * ```
+   */
+  allowPartialSuccess?: boolean;
+
+  /**
+   * Include detailed information about failed contacts in the response.
+   *
+   * When `true`, the response will contain a `failedContacts` array with details
+   * about which contacts failed and why. When `false`, only success metrics are returned.
+   *
+   * @default false
+   * @example
+   * ```typescript
+   * const result = await smashsend.contacts.createBatch(contacts, {
+   *   includeFailedContacts: true
+   * });
+   *
+   * if (result.failedContacts?.length > 0) {
+   *   console.log('Some contacts failed:', result.failedContacts);
+   * }
+   * ```
+   */
+  includeFailedContacts?: boolean;
+
+  /**
+   * Allow overriding the created_at timestamp during contact import/migration.
+   *
+   * ⚠️ only use this for data migration scenarios, not for regular contact creation.
+   *
+   * It must be a valid ISO 8601 string or Date instance, if not provided, SMASHSEND will use the current timestamp.
+   * Adding a wrong timestamp will be ignored by SMASHSEND.
+   *
+   * When set to `true`, SMASHSEND will use the `createdAt` field from each contact
+   * instead of the current timestamp. This is designed for data migration
+   * scenarios where you need to preserve historical creation dates.
+   *
+   * Note: This should typically only be used when migrating data from another system.
+   * Invalid timestamps are silently ignored and fallback to current timestamp.
+   *
+   * @default false
+   * @example
+   * ```typescript
+   * // For data migration scenarios
+   * const migrationContacts = [
+   *   {
+   *     email: 'user@legacy-system.com',
+   *     firstName: 'John',
+   *     createdAt: new Date('2023-01-15T10:30:00Z') // Historical date
+   *   }
+   * ];
+   * await smashsend.contacts.createBatch(migrationContacts, {
+   *   overrideCreatedAt: true
+   * });
+   * ```
+   */
+  overrideCreatedAt?: boolean;
+
+  /**
+   * Include debug timing information in the response.
+   *
+   * When `true`, the response will include additional timing metrics and debug information.
+   * This option is only available for admin users and requires debug=true query parameter.
+   * Regular users will not see debug information even if this option is enabled.
+   *
+   * @default false
+   * @example
+   * ```typescript
+   * const result = await smashsend.contacts.createBatch(contacts, {
+   *   debug: true // Only works for admin users
+   * });
+   *
+   * if (result.summary.validationTimeMs) {
+   *   console.log(`Validation took: ${result.summary.validationTimeMs}ms`);
+   * }
+   * ```
+   */
+  debug?: boolean;
+}
+
+export interface BatchContactsResponse {
+  /**
+   * Request ID that SMASHSEND assigns to the request.
+   */
+  requestId: string;
+  /**
+   *  successful created/updated contacts.
+   *
+   * If allowPartialSuccess query param is true, SMASHSEND will create
+   * valid contacts and report errors for invalid ones.
+   */
+  contacts: Contact[];
+  summary: BatchContactsSummary;
+  errors?: BatchContactError[];
+  /**
+   * Failed contacts.
+   *
+   * If includeFailedContacts query param is true, this will be included in the response.
+   */
+  failedContacts?: BatchFailedContact[];
+}
+
 // Webhook interfaces
 export interface WebhookCreateOptions {
   url: string;
@@ -742,161 +900,4 @@ export interface ListTransactionalResponse {
   hasMore: boolean;
   /** Array of transactional objects */
   items: Transactional[];
-}
-export interface BatchError {
-  code: string;
-  message: string;
-  retryable?: boolean;
-  retryAfter?: number;
-}
-
-export interface BatchContactError {
-  index: number;
-  email: string;
-  errors: BatchError[];
-}
-
-export interface BatchFailedContact {
-  index: number;
-  contact: ContactCreateOptions;
-  errors: BatchError[];
-}
-
-export interface BatchContactsSummary {
-  created: number;
-  updated: number;
-  failed: number;
-  total: number;
-  processingTime: number;
-  eventsProcessed?: boolean;
-  eventsError?: string;
-  // Debug timing properties (only available for admins with debug=true query param)
-  validationTimeMs?: number;
-  upsertTimeMs?: number;
-  propertyUpdateTimeMs?: number;
-  refetchTimeMs?: number;
-  eventProcessingTimeMs?: number;
-  // Bulk operation optimization metrics
-  bulkContactCount?: number;
-  bulkPropertyUpdatesCount?: number;
-  bulkSqlStatementsExecuted?: number;
-  bulkPreloadCurrentStateMs?: number;
-  bulkOptionResolutionMs?: number;
-  bulkOperationsMs?: number;
-  bulkChangeGenerationMs?: number;
-}
-
-export interface BatchContactsOptions {
-  /**
-   * Allow the batch operation to succeed even if some contacts fail validation or processing.
-   *
-   * When `true`, the operation will process all valid contacts and return partial results,
-   * including details about any failed contacts. When `false`, the entire batch fails
-   * if any contact has validation errors.
-   *
-   * @default false
-   * @example
-   * ```typescript
-   * await smashsend.contacts.createBatch(contacts, {
-   *   allowPartialSuccess: true
-   * });
-   * ```
-   */
-  allowPartialSuccess?: boolean;
-
-  /**
-   * Include detailed information about failed contacts in the response.
-   *
-   * When `true`, the response will contain a `failedContacts` array with details
-   * about which contacts failed and why. When `false`, only success metrics are returned.
-   *
-   * @default false
-   * @example
-   * ```typescript
-   * const result = await smashsend.contacts.createBatch(contacts, {
-   *   includeFailedContacts: true
-   * });
-   *
-   * if (result.failedContacts?.length > 0) {
-   *   console.log('Some contacts failed:', result.failedContacts);
-   * }
-   * ```
-   */
-  includeFailedContacts?: boolean;
-
-  /**
-   * Allow overriding the created_at timestamp during contact import/migration.
-   *
-   * ⚠️ only use this for data migration scenarios, not for regular contact creation.
-   *
-   * It must be a valid ISO 8601 string or Date instance, if not provided, SMASHSEND will use the current timestamp.
-   * Adding a wrong timestamp will be ignored by SMASHSEND.
-   *
-   * When set to `true`, SMASHSEND will use the `createdAt` field from each contact
-   * instead of the current timestamp. This is designed for data migration
-   * scenarios where you need to preserve historical creation dates.
-   *
-   * Note: This should typically only be used when migrating data from another system.
-   * Invalid timestamps are silently ignored and fallback to current timestamp.
-   *
-   * @default false
-   * @example
-   * ```typescript
-   * // For data migration scenarios
-   * const migrationContacts = [
-   *   {
-   *     email: 'user@legacy-system.com',
-   *     firstName: 'John',
-   *     createdAt: new Date('2023-01-15T10:30:00Z') // Historical date
-   *   }
-   * ];
-   * await smashsend.contacts.createBatch(migrationContacts, {
-   *   overrideCreatedAt: true
-   * });
-   * ```
-   */
-  overrideCreatedAt?: boolean;
-
-  /**
-   * Include debug timing information in the response.
-   *
-   * When `true`, the response will include additional timing metrics and debug information.
-   * This option is only available for admin users and requires debug=true query parameter.
-   * Regular users will not see debug information even if this option is enabled.
-   *
-   * @default false
-   * @example
-   * ```typescript
-   * const result = await smashsend.contacts.createBatch(contacts, {
-   *   debug: true // Only works for admin users
-   * });
-   *
-   * if (result.summary.validationTimeMs) {
-   *   console.log(`Validation took: ${result.summary.validationTimeMs}ms`);
-   * }
-   * ```
-   */
-  debug?: boolean;
-}
-
-export interface BatchContactsResponse {
-  /**
-   * Request ID that SMASHSEND assigns to the request.
-   */
-  requestId: string;
-  /**
-   *  successful created/updated contacts.
-   *
-   * If allowPartialSuccess query param is true, SMASHSEND will create
-   * valid contacts and report errors for invalid ones.
-   */
-  contacts: Contact[];
-  summary: BatchContactsSummary;
-  errors?: BatchContactError[];
-  /**
-   * Failed contacts.
-   *
-   * If includeFailedContacts query param is true, this will be included in the response.
-   */
-  failedContacts?: BatchFailedContact[];
 }
