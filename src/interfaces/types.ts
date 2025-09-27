@@ -1,5 +1,4 @@
 import type { ReactElement } from 'react';
-// Removed unused imports - ContactCustomPropertyValue and ContactPropertyOption are only used in comments
 // Common interfaces
 
 // Events interfaces ────────────────────────────────────────────
