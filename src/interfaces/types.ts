@@ -676,27 +676,6 @@ export interface BatchContactsOptions {
    * ```
    */
   overrideCreatedAt?: boolean;
-
-  /**
-   * Include debug timing information in the response.
-   *
-   * When `true`, the response will include additional timing metrics and debug information.
-   * This option is only available for admin users and requires debug=true query parameter.
-   * Regular users will not see debug information even if this option is enabled.
-   *
-   * @default false
-   * @example
-   * ```typescript
-   * const result = await smashsend.contacts.createBatch(contacts, {
-   *   debug: true // Only works for admin users
-   * });
-   *
-   * if (result.summary.validationTimeMs) {
-   *   console.log(`Validation took: ${result.summary.validationTimeMs}ms`);
-   * }
-   * ```
-   */
-  debug?: boolean;
 }
 
 export interface BatchContactsResponse {
