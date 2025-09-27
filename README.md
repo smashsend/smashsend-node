@@ -54,7 +54,7 @@ import { SmashSend } from '@smashsend/node';
 const smashsend = new SmashSend(process.env.SMASHSEND_API_KEY!);
 ```
 
-> **Security tip:** Never commit API keys to version control. Use environment variables or a secrets manager.
+> ⚠️ **Security tip:** Never commit API keys to version control. Use environment variables or a secrets manager.
 
 ## Create or update a contact
 
