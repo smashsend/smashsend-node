@@ -145,6 +145,111 @@ describe('Emails', () => {
       });
       expect(result).toEqual(mockResponse);
     });
+
+    it('should handle single replyTo address', async () => {
+      // Setup mock response
+      const mockResponse = {
+        id: 'email-id',
+        from: 'test@example.com',
+        to: ['recipient@example.com'],
+        created: '2023-01-01T00:00:00Z',
+        statusCode: 200,
+        message: 'Email sent successfully',
+      };
+
+      // Setup the mock
+      mockHttpClient.post.mockResolvedValueOnce({ email: mockResponse });
+
+      // Call the method with single replyTo
+      const result = await emails.send({
+        from: 'test@example.com',
+        to: 'recipient@example.com',
+        subject: 'Test Email',
+        html: '<p>Hello World</p>',
+        replyTo: 'support@example.com',
+      });
+
+      // Assertions
+      expect(mockHttpClient.post).toHaveBeenCalledWith('/emails', {
+        from: 'test@example.com',
+        to: 'recipient@example.com',
+        subject: 'Test Email',
+        html: '<p>Hello World</p>',
+        replyTo: 'support@example.com',
+        sendAt: undefined,
+      });
+      expect(result).toEqual(mockResponse);
+    });
+
+    it('should handle array of replyTo addresses', async () => {
+      // Setup mock response
+      const mockResponse = {
+        id: 'email-id',
+        from: 'test@example.com',
+        to: ['recipient@example.com'],
+        created: '2023-01-01T00:00:00Z',
+        statusCode: 200,
+        message: 'Email sent successfully',
+      };
+
+      // Setup the mock
+      mockHttpClient.post.mockResolvedValueOnce({ email: mockResponse });
+
+      // Call the method with array of replyTo addresses
+      const result = await emails.send({
+        from: 'test@example.com',
+        to: 'recipient@example.com',
+        subject: 'Test Email',
+        html: '<p>Hello World</p>',
+        replyTo: ['support@example.com', 'sales@example.com'],
+      });
+
+      // Assertions
+      expect(mockHttpClient.post).toHaveBeenCalledWith('/emails', {
+        from: 'test@example.com',
+        to: 'recipient@example.com',
+        subject: 'Test Email',
+        html: '<p>Hello World</p>',
+        replyTo: ['support@example.com', 'sales@example.com'],
+        sendAt: undefined,
+      });
+      expect(result).toEqual(mockResponse);
+    });
+  });
+
+  describe('sendWithTemplate', () => {
+    it('should handle replyTo in templated emails', async () => {
+      // Setup mock response
+      const mockResponse = {
+        id: 'email-id',
+        template: 'welcome-email',
+        to: 'recipient@example.com',
+        created: '2023-01-01T00:00:00Z',
+        statusCode: 200,
+        message: 'Email sent successfully',
+      };
+
+      // Setup the mock
+      mockHttpClient.post.mockResolvedValueOnce({ email: mockResponse });
+
+      // Call the method with replyTo
+      const result = await emails.sendWithTemplate({
+        template: 'welcome-email',
+        to: 'recipient@example.com',
+        variables: { firstName: 'John' },
+        replyTo: ['support@example.com', 'welcome@example.com'],
+      });
+
+      // Assertions
+      expect(mockHttpClient.post).toHaveBeenCalledWith('/emails', {
+        template: 'welcome-email',
+        to: 'recipient@example.com',
+        variables: { firstName: 'John' },
+        replyTo: ['support@example.com', 'welcome@example.com'],
+        sendAt: undefined,
+      });
+      expect(result).toEqual(mockResponse);
+    });
   });
 
   describe('transactional.list', () => {

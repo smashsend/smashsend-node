@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Dynamic Reply-To Addresses**: Added support for custom reply-to addresses in both raw and templated emails
+  - 📧 **Multiple addresses**: Support for up to 5 reply-to addresses per email
+  - 🔄 **Flexible input**: Accept single email string or array of email strings
+  - 🧹 **Automatic deduplication**: Duplicate addresses are automatically removed (case-insensitive)
+  - 📝 **Template override**: Dynamic reply-to addresses override template defaults for templated emails
+  - ✅ **Full validation**: Proper error messages when limits are exceeded
+  - 🎯 **Both email types**: Works with both `emails.send()` (raw) and `emails.sendWithTemplate()` (templated)
+
 - **Data Migration Support**: Added `overrideCreatedAt` parameter for batch contact operations
   - ⚠️ **MIGRATION USE ONLY**: Allows preserving historical creation dates when migrating from legacy systems
   - Added `createdAt` field to `ContactCreateOptions` interface (Date type, automatically converted to ISO string)

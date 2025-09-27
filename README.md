@@ -204,6 +204,51 @@ console.log(response.messageId); // Unique ID for tracking
 console.log(response.status); // SCHEDULED, SENT, etc.
 ```
 
+## Reply-To Addresses
+
+You can specify custom reply-to addresses for both raw and templated emails. This allows recipients to reply to different addresses than the sender.
+
+**Single reply-to address:**
+
+```typescript
+await smashsend.emails.send({
+  from: 'noreply@yourdomain.com',
+  to: 'customer@example.com',
+  subject: 'Support Request Received',
+  html: '<p>We received your support request and will respond soon.</p>',
+  replyTo: 'support@yourdomain.com', // Single address
+});
+```
+
+**Multiple reply-to addresses (max 5):**
+
+```typescript
+await smashsend.emails.send({
+  from: 'noreply@yourdomain.com', 
+  to: 'customer@example.com',
+  subject: 'Welcome to our platform',
+  html: '<p>Welcome! Contact us if you need help.</p>',
+  replyTo: [
+    'support@yourdomain.com',
+    'sales@yourdomain.com',
+    'billing@yourdomain.com'
+  ], // Multiple addresses
+});
+```
+
+**With templates:**
+
+```typescript
+await smashsend.emails.sendWithTemplate({
+  template: 'welcome-email',
+  to: 'user@example.com',
+  variables: { firstName: 'John' },
+  replyTo: ['support@yourdomain.com', 'welcome@yourdomain.com'], // Overrides template default
+});
+```
+
+> **💡 Note:** Dynamic reply-to addresses override any reply-to settings configured in the template. If no dynamic reply-to is provided, the template's reply-to setting is used. Duplicate addresses are automatically removed.
+
 ## Send email with React
 
 For developers using React, you can write emails as React components:
