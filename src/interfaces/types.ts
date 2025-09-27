@@ -576,6 +576,7 @@ export interface CustomPropertyListResponse {
   hasMore: boolean;
 }
 
+// Batch Contacts interfaces ────────────────────────────────────────────
 export interface BatchError {
   code: string;
   message: string;
