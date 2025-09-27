@@ -475,15 +475,15 @@ export interface ContactCreateOptions {
   /**
    * Allow custom properties with better typing
    * Custom properties can be:
-   * 
+   *
    * - null (not set)
    * - string/number/boolean/Date (simple values)
    * - ContactPropertyOption (single select)
    * - ContactPropertyOption[] (multi-select)
-   * 
+   *
    * Create new properties on your SMASHSEND
    * dashboard. Settings -> Custom Fields
-   * 
+   *
    */
   [key: string]: any;
   customProperties?: Record<string, any>;
