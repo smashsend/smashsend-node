@@ -120,7 +120,7 @@ const response = await smashsend.emails.send({
     <a href="https://track.example.com/12345">Track your package</a>
   `,
   text: 'Your order #12345 has shipped. Track at: https://track.example.com/12345',
-  groupBy: 'order-shipped', // Group analytics by email type
+  groupBy: 'order-shipped', // (Optional) Group analytics by email type
   settings: {
     trackClicks: true,
     trackOpens: true,
@@ -288,7 +288,7 @@ const response = await smashsend.emails.send({
       { name: 'Shipping', price: 5.0 },
     ],
   }),
-  groupBy: 'order-confirmation',
+  groupBy: 'order-confirmation', // (Optional) Group analytics by email type
 });
 ```
 
