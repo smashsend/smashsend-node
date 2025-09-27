@@ -42,7 +42,7 @@ npm install @smashsend/node       # or yarn add @smashsend/node / pnpm add @smas
 
 ## Getting an API Key
 
-1. Log in to your [SMASHSEND Dashboard](https://smashsend.com/dashboard)
+1. Log in to your [SMASHSEND Dashboard](https://smashsend.com/signup)
 2. Navigate to **Settings** → **API Keys**
 3. Click **Create API Key**
 4. Give your key a descriptive name (e.g., "Production Server", "Development")
