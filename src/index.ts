@@ -3,6 +3,7 @@ import { Emails } from './api/emails';
 import { Webhooks } from './api/webhooks';
 import { ApiKeys } from './api/api-keys';
 import { Domains } from './api/domains';
+import { Events } from './api/events';
 import { HttpClient } from './utils/http-client';
 import { SmashSendClientOptions } from './interfaces/types';
 import {
@@ -40,12 +41,17 @@ export class SmashSend {
    */
   public readonly domains: Domains;
 
+  /**
+   * The Events API resource
+   */
+  public readonly events: Events;
+
   private httpClient: HttpClient;
 
   /**
-   * Create a new SmashSend client instance
+   * Create a new SMASHSEND client instance
    *
-   * @param apiKey Your SmashSend API key
+   * @param apiKey Your SMASHSEND API key
    * @param options Configuration options for the client
    */
   constructor(apiKey: string, options: SmashSendClientOptions = {}) {
@@ -69,13 +75,14 @@ export class SmashSend {
     this.contacts = new Contacts(this.httpClient);
     this.domains = new Domains(this.httpClient);
     this.emails = new Emails(this.httpClient);
+    this.events = new Events(this.httpClient);
     this.webhooks = new Webhooks(this.httpClient);
   }
 
   /**
    * Set custom headers to be included with every request
    * @param headers Record of header names and values
-   * @returns The SmashSend instance for chaining
+   * @returns The SMASHSEND instance for chaining
    */
   setHeaders(headers: Record<string, string>): SmashSend {
     this.httpClient.setHeaders(headers);
@@ -86,7 +93,7 @@ export class SmashSend {
    * Set a specific custom header
    * @param name Header name
    * @param value Header value
-   * @returns The SmashSend instance for chaining
+   * @returns The SMASHSEND instance for chaining
    */
   setHeader(name: string, value: string): SmashSend {
     this.httpClient.setHeader(name, value);
@@ -97,7 +104,7 @@ export class SmashSend {
    * Enable or disable debug mode
    * When enabled, requests and responses will be logged to console
    * @param enabled Whether debug mode should be enabled
-   * @returns The SmashSend instance for chaining
+   * @returns The SMASHSEND instance for chaining
    */
   setDebugMode(enabled: boolean): SmashSend {
     this.httpClient.setDebugMode(enabled);
@@ -107,7 +114,7 @@ export class SmashSend {
   /**
    * Set the API version to use for requests
    * @param version API version string (e.g., 'v1', 'v2', etc.)
-   * @returns The SmashSend instance for chaining
+   * @returns The SMASHSEND instance for chaining
    */
   setApiVersion(version: string): SmashSend {
     this.httpClient.setApiVersion(version);
@@ -148,6 +155,11 @@ export type {
   BatchContactError,
   BatchFailedContact,
   BatchError,
+  EventPayload,
+  BatchEventPayload,
+  SingleEventResponse,
+  BatchEventResponse,
+  EventTrackingOptions,
 } from './interfaces/types';
 
 // Export domain types
