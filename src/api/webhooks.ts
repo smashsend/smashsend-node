@@ -1,5 +1,5 @@
 import { HttpClient } from '../utils/http-client';
-import { Webhook, WebhookCreateOptions, WebhookUpdateOptions } from '../interfaces/types';
+import { SmashsendWebhookEvent, SmashsendWebhookStatus, Webhook, WebhookCreateOptions, WebhookUpdateOptions } from '../interfaces/types';
 import * as crypto from 'crypto';
 
 export class Webhooks {
@@ -37,8 +37,8 @@ export class Webhooks {
     webhooks: Array<{
       id: string;
       url: string;
-      events: string[];
-      enabled: boolean;
+      events: SmashsendWebhookEvent[];
+      status: SmashsendWebhookStatus;
       description?: string;
       createdAt: string;
     }>;
@@ -47,8 +47,8 @@ export class Webhooks {
       webhooks: Array<{
         id: string;
         url: string;
-        events: string[];
-        enabled: boolean;
+        events: SmashsendWebhookEvent[];
+        status: SmashsendWebhookStatus;
         description?: string;
         createdAt: string;
       }>;
