@@ -18,12 +18,11 @@ describe('Emails', () => {
     it('should call post with correct parameters', async () => {
       // Setup mock response
       const mockResponse = {
-        id: 'email-id',
-        from: 'test@example.com',
-        to: ['recipient@example.com'],
-        created: '2023-01-01T00:00:00Z',
-        statusCode: 200,
-        message: 'Email sent successfully',
+        messageId: 'email-id',
+        status: 'SENT',
+        to: 'recipient@example.com',
+        warning: undefined,
+        groupBy: undefined,
       };
 
       // Setup the mock
@@ -53,12 +52,11 @@ describe('Emails', () => {
     it('should handle complex email addresses', async () => {
       // Setup mock response
       const mockResponse = {
-        id: 'email-id',
-        from: 'sender@example.com',
-        to: ['recipient@example.com'],
-        created: '2023-01-01T00:00:00Z',
-        statusCode: 200,
-        message: 'Email sent successfully',
+        messageId: 'email-id',
+        status: 'SENT',
+        to: 'recipient@example.com',
+        warning: undefined,
+        groupBy: undefined,
       };
 
       // Setup the mock (wrap in { email: ... } structure)
@@ -84,7 +82,11 @@ describe('Emails', () => {
 
     it('should accept empty string HTML content', async () => {
       // Mock the HTTP client response
-      const mockResponse = { id: 'email123', statusCode: 200 };
+      const mockResponse = {
+        messageId: 'email123',
+        status: 'SENT',
+        to: 'recipient@example.com',
+      };
       mockHttpClient.post.mockResolvedValueOnce({ email: mockResponse });
 
       // Call the method with empty HTML
@@ -119,7 +121,11 @@ describe('Emails', () => {
 
     it('should accept React element that renders to empty string', async () => {
       // Mock the HTTP client response
-      const mockResponse = { id: 'email123', statusCode: 200 };
+      const mockResponse = {
+        messageId: 'email123',
+        status: 'SENT',
+        to: 'recipient@example.com',
+      };
       mockHttpClient.post.mockResolvedValueOnce({ email: mockResponse });
 
       // Mock @react-email/render to return empty string
@@ -149,12 +155,11 @@ describe('Emails', () => {
     it('should handle single replyTo address', async () => {
       // Setup mock response
       const mockResponse = {
-        id: 'email-id',
-        from: 'test@example.com',
-        to: ['recipient@example.com'],
-        created: '2023-01-01T00:00:00Z',
-        statusCode: 200,
-        message: 'Email sent successfully',
+        messageId: 'email-id',
+        status: 'SENT',
+        to: 'recipient@example.com',
+        warning: undefined,
+        groupBy: undefined,
       };
 
       // Setup the mock
@@ -184,12 +189,11 @@ describe('Emails', () => {
     it('should handle array of replyTo addresses', async () => {
       // Setup mock response
       const mockResponse = {
-        id: 'email-id',
-        from: 'test@example.com',
-        to: ['recipient@example.com'],
-        created: '2023-01-01T00:00:00Z',
-        statusCode: 200,
-        message: 'Email sent successfully',
+        messageId: 'email-id',
+        status: 'SENT',
+        to: 'recipient@example.com',
+        warning: undefined,
+        groupBy: undefined,
       };
 
       // Setup the mock
@@ -221,12 +225,10 @@ describe('Emails', () => {
     it('should handle replyTo in templated emails', async () => {
       // Setup mock response
       const mockResponse = {
-        id: 'email-id',
-        template: 'welcome-email',
+        messageId: 'email-id',
+        status: 'SENT',
         to: 'recipient@example.com',
-        created: '2023-01-01T00:00:00Z',
-        statusCode: 200,
-        message: 'Email sent successfully',
+        warning: undefined,
       };
 
       // Setup the mock
