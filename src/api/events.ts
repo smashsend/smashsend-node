@@ -123,34 +123,4 @@ export class Events {
       requestOptions
     );
   }
-
-  /**
-   * @deprecated Use `send()` instead. This method will be removed in a future version.
-   * Track a single event
-   * @param event The event payload to track
-   * @param options Optional tracking options
-   * @returns The tracking response
-   */
-  async track(
-    event: EventPayload,
-    options: EventTrackingOptions = {}
-  ): Promise<SingleEventResponse> {
-    console.warn('⚠️  events.track() is deprecated. Use events.send() instead.');
-    return this.send(event, options);
-  }
-
-  /**
-   * @deprecated Use `sendBatch()` instead. This method will be removed in a future version.
-   * Track multiple events in a single batch operation
-   * @param events Array of event payloads to track
-   * @param options Optional tracking options
-   * @returns The batch tracking response
-   */
-  async trackBatch(
-    events: EventPayload[],
-    options: EventTrackingOptions = {}
-  ): Promise<BatchEventResponse> {
-    console.warn('⚠️  events.trackBatch() is deprecated. Use events.sendBatch() instead.');
-    return this.sendBatch(events, options);
-  }
 }
