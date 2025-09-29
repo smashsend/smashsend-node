@@ -487,6 +487,68 @@ const property = await smashsend.contacts.createProperty({
 - `STRING` for email addresses, URLs, phone numbers, and any text
 - `NUMBER` for both integers and decimals
 
+## Events API
+
+Send events to trigger automations, track user behavior, or sync data with your SMASHSEND workspace.
+
+**Send a single event:**
+
+```typescript
+const response = await smashsend.events.send({
+  event: 'user.signup',
+  identify: {
+    email: 'user@example.com',
+    traits: {
+      firstName: 'John',
+      lastName: 'Doe',
+      plan: 'premium'
+    }
+  },
+  properties: {
+    source: 'website',
+    campaign: 'summer-sale'
+  }
+});
+
+console.log(`Event sent with ID: ${response.messageId}`);
+```
+
+**Send multiple events in a batch:**
+
+```typescript
+const events = [
+  {
+    event: 'page.view',
+    identify: { email: 'user1@example.com' },
+    properties: { page: '/home' }
+  },
+  {
+    event: 'button.click',
+    identify: { email: 'user2@example.com' },
+    properties: { button: 'signup' }
+  }
+];
+
+const result = await smashsend.events.sendBatch(events);
+console.log(`Accepted: ${result.accepted}, Failed: ${result.failed}`);
+
+// Handle failed events
+if (result.errors?.length > 0) {
+  result.errors.forEach(error => {
+    console.log(`Event ${error.index} failed:`, error.errors);
+  });
+}
+```
+
+**Event structure:**
+
+- `event`: Event name (e.g., 'user.signup', 'purchase.completed')
+- `identify.email`: User email (required)
+- `identify.traits`: User attributes to sync with contact record (optional)
+- `properties`: Event-specific data (optional)
+- `timestamp`: Event timestamp (optional, defaults to current time)
+- `messageId`: Custom ID for deduplication (optional, auto-generated if not provided)
+
 ## TypeScript Support
 
 - Built **in TypeScript**

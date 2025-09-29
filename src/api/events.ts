@@ -15,15 +15,15 @@ export class Events {
   }
 
   /**
-   * Track a single event
-   * @param event The event payload to track
+   * Send a single event
+   * @param event The event payload to send
    * @param options Optional tracking options
-   * @returns The tracking response
+   * @returns The event response
    * 
    * @example
    * ```typescript
-   * // Basic event tracking (SMASHSEND generates messageId automatically)
-   * const response = await smashsend.events.track({
+   * // Basic event sending (SMASHSEND generates messageId automatically)
+   * const response = await smashsend.events.send({
    *   event: 'user.signup',
    *   identify: {
    *     email: 'user@example.com',
@@ -35,10 +35,10 @@ export class Events {
    *   }
    * });
    * 
-   * console.log(`Event tracked with ID: ${response.messageId}`);
+   * console.log(`Event sent with ID: ${response.messageId}`);
    * 
    * // With custom messageId for deduplication
-   * const customResponse = await smashsend.events.track({
+   * const customResponse = await smashsend.events.send({
    *   event: 'purchase.completed',
    *   identify: { email: 'user@example.com' },
    *   properties: { orderId: 'order_123' },
@@ -46,7 +46,7 @@ export class Events {
    * });
    * ```
    */
-  async track(
+  async send(
     event: EventPayload,
     options: EventTrackingOptions = {}
   ): Promise<SingleEventResponse> {
@@ -69,10 +69,10 @@ export class Events {
   }
 
   /**
-   * Track multiple events in a single batch operation
-   * @param events Array of event payloads to track
+   * Send multiple events in a single batch operation
+   * @param events Array of event payloads to send
    * @param options Optional tracking options
-   * @returns The batch tracking response
+   * @returns The batch event response
    * 
    * @example
    * ```typescript
@@ -89,7 +89,7 @@ export class Events {
    *   }
    * ];
    * 
-   * const result = await smashsend.events.trackBatch(events);
+   * const result = await smashsend.events.sendBatch(events);
    * console.log(`Accepted: ${result.accepted}, Failed: ${result.failed}`);
    * 
    * // Handle failed events
@@ -100,7 +100,7 @@ export class Events {
    * }
    * ```
    */
-  async trackBatch(
+  async sendBatch(
     events: EventPayload[],
     options: EventTrackingOptions = {}
   ): Promise<BatchEventResponse> {
@@ -122,5 +122,35 @@ export class Events {
       payload,
       requestOptions
     );
+  }
+
+  /**
+   * @deprecated Use `send()` instead. This method will be removed in a future version.
+   * Track a single event
+   * @param event The event payload to track
+   * @param options Optional tracking options
+   * @returns The tracking response
+   */
+  async track(
+    event: EventPayload,
+    options: EventTrackingOptions = {}
+  ): Promise<SingleEventResponse> {
+    console.warn('⚠️  events.track() is deprecated. Use events.send() instead.');
+    return this.send(event, options);
+  }
+
+  /**
+   * @deprecated Use `sendBatch()` instead. This method will be removed in a future version.
+   * Track multiple events in a single batch operation
+   * @param events Array of event payloads to track
+   * @param options Optional tracking options
+   * @returns The batch tracking response
+   */
+  async trackBatch(
+    events: EventPayload[],
+    options: EventTrackingOptions = {}
+  ): Promise<BatchEventResponse> {
+    console.warn('⚠️  events.trackBatch() is deprecated. Use events.sendBatch() instead.');
+    return this.sendBatch(events, options);
   }
 }
