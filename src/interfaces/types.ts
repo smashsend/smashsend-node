@@ -126,12 +126,6 @@ export interface RawEmailSendResponse {
   status: TransactionalEmailStatus;
   /** Recipient address. */
   to: string;
-  /** Sender address. */
-  from: string;
-  /** Subject line. */
-  subject: string;
-  /** Discriminator – always `raw`. */
-  type: 'raw';
   /** Warning returned by backend when the email is accepted with caveats. */
   warning?: string;
   /** Custom analytics group identifier if provided. */
@@ -145,10 +139,6 @@ export interface TemplatedEmailSendResponse {
   status: TransactionalEmailStatus;
   /** Recipient address. */
   to: string;
-  /** Template identifier sent in the request. */
-  template: string;
-  /** Discriminator – always `templated`. */
-  type: 'templated';
   /** Warning returned by backend when the email is accepted with caveats. */
   warning?: string;
 }
