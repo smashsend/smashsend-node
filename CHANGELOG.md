@@ -9,6 +9,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **New Feature**: `contacts.deleteByEmail()` method for deleting contacts by email address
+  - Added `deleteByEmail(email: string)` method to Contacts API
+  - Properly handles URL encoding of email addresses with special characters
+  - Returns same response format as existing `delete()` method: `{ isDeleted: boolean, contact: Contact }`
+  - Added comprehensive tests and example usage
+  - Integrates with new SMASHSEND backend endpoint `/v1/contacts/by-email/{email}`
+
+## [1.16.0] - 2025-01-21
+
+### Changed
+
+- **BREAKING**: Simplified transactional email response format to match backend API changes
+  - `RawEmailSendResponse` now returns: `{ messageId, status, to, warning?, groupBy? }`
+  - `TemplatedEmailSendResponse` now returns: `{ messageId, status, to, warning? }`
+  - Removed deprecated fields: `from`, `subject`, `type`, `template`, `created`, `statusCode`, `message`
+  - Updated all tests to use the new response format
+  - This change aligns the Node.js SDK with the simplified backend response schema
+
+### Added
+
 - **Dynamic Reply-To Addresses**: Added support for custom reply-to addresses in both raw and templated emails
   - 📧 **Multiple addresses**: Support for up to 5 reply-to addresses per email
   - 🔄 **Flexible input**: Accept single email string or array of email strings
