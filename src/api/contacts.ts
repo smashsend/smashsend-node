@@ -37,7 +37,7 @@ export class Contacts {
 
   /**
    * Create multiple contacts in a single batch operation
-   * 
+   *
    * @param contacts Array of contact creation options
    * @param options Batch operation options
    * @returns Batch operation result with success/failure details
@@ -71,13 +71,13 @@ export class Contacts {
    *
    * // ⚠️ MIGRATION USE ONLY - Preserve historical creation dates
    * const legacyContacts = [
-   *   { 
-   *     email: 'user@legacy-system.com', 
+   *   {
+   *     email: 'user@legacy-system.com',
    *     firstName: 'John',
    *     createdAt: new Date('2023-01-15T10:30:00Z') // Historical date
    *   }
    * ];
-   * await smashsend.contacts.createBatch(legacyContacts, { 
+   * await smashsend.contacts.createBatch(legacyContacts, {
    *   overrideCreatedAt: true // Only for data migration!
    * });
    * ```
@@ -106,10 +106,10 @@ export class Contacts {
     const payload = {
       contacts: contacts.map((contact) => {
         const { customProperties, createdAt, ...rest } = contact;
-        
+
         // Safely convert createdAt to ISO string
         const createdAtIso = safeToISOString(createdAt);
-        
+
         return {
           properties: {
             ...rest,
@@ -170,6 +170,17 @@ export class Contacts {
    */
   async delete(id: string): Promise<{ isDeleted: boolean; contact: Contact }> {
     return this.httpClient.delete<{ isDeleted: boolean; contact: Contact }>(`/contacts/${id}`);
+  }
+
+  /**
+   * Delete a contact by email address
+   * @param email The contact email address
+   * @returns The deletion status and deleted contact
+   */
+  async deleteByEmail(email: string): Promise<{ isDeleted: boolean; contact: Contact }> {
+    return this.httpClient.delete<{ isDeleted: boolean; contact: Contact }>(
+      `/contacts/by-email/${encodeURIComponent(email)}`
+    );
   }
 
   /**
