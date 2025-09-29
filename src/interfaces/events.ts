@@ -1,20 +1,49 @@
 // Events API types for SMASHSEND
 
 /**
+ * User traits/attributes to sync with contact record
+ */
+export interface EventTraits {
+  [key: string]: any;
+}
+
+/**
+ * User identification information
+ */
+export interface EventIdentify {
+  /** User email address (required) */
+  email: string;
+  /**
+   * User traits/attributes to sync with contact record
+   * This is optional, and will be ignored if not provided.
+   **/
+  traits?: EventTraits;
+}
+
+/**
  * Event tracking payload for single event
  */
 export interface EventPayload {
-  /** Event name (alphanumeric, underscores, hyphens, dots, colons only) */
+  /**
+   * Event name (alphanumeric, underscores, hyphens, dots, colons only)
+   **/
   event: string;
-  /** Event properties - key-value pairs with any data */
+
+  /**
+   * Event properties - key-value pairs with any data
+   **/
   properties?: Record<string, any>;
-  /** User identification information */
-  identify: {
-    /** User email address (required) */
-    email: string;
-  };
-  /** Event timestamp (ISO string or Unix timestamp) */
+
+  /**
+   * User identification information
+   **/
+  identify: EventIdentify;
+
+  /**
+   * Event timestamp (ISO string or Unix timestamp)
+   **/
   timestamp?: string | number;
+
   /**
    * Optional message ID for deduplication.
    * If not provided, SMASHSEND will generate one automatically.
