@@ -145,7 +145,7 @@ describe('Events API', () => {
         identify: { email: 'user@example.com' },
       };
 
-      await smashsend.events.track(eventPayload);
+      await smashsend.events.send(eventPayload);
 
       expect(consoleSpy).toHaveBeenCalledWith(
         '⚠️  events.track() is deprecated. Use events.send() instead.'
@@ -173,7 +173,7 @@ describe('Events API', () => {
         },
       ];
 
-      await smashsend.events.trackBatch(events);
+      await smashsend.events.sendBatch(events);
 
       expect(consoleSpy).toHaveBeenCalledWith(
         '⚠️  events.trackBatch() is deprecated. Use events.sendBatch() instead.'
