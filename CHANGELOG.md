@@ -22,14 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 📝 **Added Events API section**: Comprehensive guide in README with practical examples
   - 🔧 **New example file**: `examples/events-usage.ts` showing real-world usage patterns
 
-### Deprecated
-
-- **Events API**: Deprecated confusing method names in favor of clearer alternatives
-  - ⚠️ `events.track()` is deprecated - use `events.send()` instead
-  - ⚠️ `events.trackBatch()` is deprecated - use `events.sendBatch()` instead
-  - 🔄 **Backward compatible**: Old methods still work but show deprecation warnings
-  - 🗑️ **Future removal**: Deprecated methods will be removed in v2.0
-
 ## [1.16.0] - 2025-01-21
 
 ### Changed
