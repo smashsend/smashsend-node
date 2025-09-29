@@ -173,6 +173,15 @@ export class Contacts {
   }
 
   /**
+   * Delete a contact by email address
+   * @param email The contact email address
+   * @returns The deletion status and deleted contact
+   */
+  async deleteByEmail(email: string): Promise<{ isDeleted: boolean; contact: Contact }> {
+    return this.httpClient.delete<{ isDeleted: boolean; contact: Contact }>(`/contacts/by-email/${encodeURIComponent(email)}`);
+  }
+
+  /**
    * List contacts
    * @param params Optional parameters for filtering and pagination
    * @returns A list of contacts with pagination info
