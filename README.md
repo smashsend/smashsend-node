@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://smashsend.com/brand/smashsend_logo.svg" alt="SMASHSEND" width="300" />
+  <img src="/docs/smashsend_logo.svg" alt="SMASHSEND" width="300" />
 </p>
 
 <p align="center">
