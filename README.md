@@ -200,7 +200,7 @@ await smashsend.emails.send({
   to: 'customer@example.com',
   subject: 'Welcome to our platform',
   html: '<p>Welcome! Contact us if you need help.</p>',
-  replyTo: ['support@yourdomain.com', 'sales@yourdomain.com', 'billing@yourdomain.com'], // Multiple addresses
+  replyTo: ['support@yourdomain.com', 'sales@yourdomain.com'], // Multiple addresses
 });
 ```
 
