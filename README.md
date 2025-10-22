@@ -28,7 +28,7 @@
 - ⚡️ Drag-and-drop email builder
 - 🪄 AI-powered personalization
 - 🤖 Automations & event triggers
-- 🚀 Scalable, high-deliverability transactional email
+- 🚀 Scalable, high-deliverability transactional email API
 - 🗂️ Lightweight CRM & contact management
 - 📈 Deep analytics & link tracking
 
