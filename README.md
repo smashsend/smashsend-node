@@ -23,12 +23,12 @@
 
 ## What is SMASHSEND?
 
-**SMASHSEND** is a bold, modern email platform built for **business owners, creators, and startups** — not just marketers.
+**SMASHSEND** is a bold, modern email platform built for **business owners, creators, and startups**.
 
 - ⚡️ Drag-and-drop email builder
-- 🪄 AI-powered personalization ("Magic Boxes")
+- 🪄 AI-powered personalization
 - 🤖 Automations & event triggers
-- 🚀 High-deliverability transactional email API
+- 🚀 Scalable, high-deliverability transactional email
 - 🗂️ Lightweight CRM & contact management
 - 📈 Deep analytics & link tracking
 
@@ -79,26 +79,29 @@ console.log(contact.properties.email); // newcontact@example.com
 
 ## Batch Contact Creation
 
-Create multiple contacts efficiently in a single API call:
+Create multiple contacts efficiently in a single API call (takes less than 300ms to add 500 contacts. crazy fast!):
 
 ```typescript
-const result = await smashsend.contacts.createBatch([
-  { email: 'john@example.com', firstName: 'John', lastName: 'Doe' },
-  { email: 'jane@example.com', firstName: 'Jane', lastName: 'Smith' },
-  { email: 'bob@example.com', firstName: 'Bob', lastName: 'Johnson' }
-], {
-  allowPartialSuccess: true,    // Create valid contacts even if some fail
-  includeFailedContacts: true   // Include failed contacts in response
-});
+const result = await smashsend.contacts.createBatch(
+  [
+    { email: 'john@example.com', firstName: 'John', lastName: 'Doe' },
+    { email: 'jane@example.com', firstName: 'Jane', lastName: 'Smith' },
+    { email: 'bob@example.com', firstName: 'Bob', lastName: 'Johnson' },
+  ],
+  {
+    allowPartialSuccess: true, // Create valid contacts even if some fail
+    includeFailedContacts: true, // Include failed contacts in response
+  }
+);
 
 console.log(`Created: ${result.summary.created}, Failed: ${result.summary.failed}`);
 
 // Handle failures and retry if needed
 if (result.failedContacts?.length > 0) {
   const retryableContacts = result.failedContacts
-    .filter(fc => fc.errors.some(e => e.retryable))
-    .map(fc => fc.contact);
-  
+    .filter((fc) => fc.errors.some((e) => e.retryable))
+    .map((fc) => fc.contact);
+
   if (retryableContacts.length > 0) {
     await smashsend.contacts.createBatch(retryableContacts);
   }
@@ -193,15 +196,11 @@ await smashsend.emails.send({
 
 ```typescript
 await smashsend.emails.send({
-  from: 'noreply@yourdomain.com', 
+  from: 'noreply@yourdomain.com',
   to: 'customer@example.com',
   subject: 'Welcome to our platform',
   html: '<p>Welcome! Contact us if you need help.</p>',
-  replyTo: [
-    'support@yourdomain.com',
-    'sales@yourdomain.com',
-    'billing@yourdomain.com'
-  ], // Multiple addresses
+  replyTo: ['support@yourdomain.com', 'sales@yourdomain.com', 'billing@yourdomain.com'], // Multiple addresses
 });
 ```
 
@@ -291,6 +290,68 @@ const response = await smashsend.emails.send({
   groupBy: 'order-confirmation', // (Optional) Group analytics by email type
 });
 ```
+
+## Events API
+
+Send events to trigger automations, track user behavior, or sync data with your SMASHSEND workspace.
+
+**Send a single event:**
+
+```typescript
+const response = await smashsend.events.send({
+  event: 'user.signup',
+  identify: {
+    email: 'user@example.com',
+    traits: {
+      firstName: 'John',
+      lastName: 'Doe',
+      plan: 'premium',
+    },
+  },
+  properties: {
+    source: 'website',
+    campaign: 'summer-sale',
+  },
+});
+
+console.log(`Event sent with ID: ${response.messageId}`);
+```
+
+**Send multiple events in a batch:**
+
+```typescript
+const events = [
+  {
+    event: 'page.view',
+    identify: { email: 'user1@example.com' },
+    properties: { page: '/home' },
+  },
+  {
+    event: 'button.click',
+    identify: { email: 'user2@example.com' },
+    properties: { button: 'signup' },
+  },
+];
+
+const result = await smashsend.events.sendBatch(events);
+console.log(`Accepted: ${result.accepted}, Failed: ${result.failed}`);
+
+// Handle failed events
+if (result.errors?.length > 0) {
+  result.errors.forEach((error) => {
+    console.log(`Event ${error.index} failed:`, error.errors);
+  });
+}
+```
+
+**Event structure:**
+
+- `event`: Event name (e.g., 'user.signup', 'purchase.completed')
+- `identify.email`: User email (required)
+- `identify.traits`: User attributes to sync with contact record (optional)
+- `properties`: Event-specific data (optional)
+- `timestamp`: Event timestamp (optional, defaults to current time)
+- `messageId`: Custom ID for deduplication (optional, auto-generated if not provided)
 
 ## Advanced Configuration
 
@@ -487,67 +548,43 @@ const property = await smashsend.contacts.createProperty({
 - `STRING` for email addresses, URLs, phone numbers, and any text
 - `NUMBER` for both integers and decimals
 
-## Events API
+### Multi-Select Properties (Tags)
 
-Send events to trigger automations, track user behavior, or sync data with your SMASHSEND workspace.
-
-**Send a single event:**
+For multi-select properties, you can use a simple array to **replace all existing values**:
 
 ```typescript
-const response = await smashsend.events.send({
-  event: 'user.signup',
-  identify: {
-    email: 'user@example.com',
-    traits: {
-      firstName: 'John',
-      lastName: 'Doe',
-      plan: 'premium'
-    }
+// Simple array replaces all values
+await smashsend.contacts.update(contactId, {
+  customProperties: {
+    tags: ['customer', 'enterprise', 'priority'], // Replaces all existing tags
+    interests: ['email-marketing', 'automation'], // Replaces all interests
   },
-  properties: {
-    source: 'website',
-    campaign: 'summer-sale'
-  }
 });
 
-console.log(`Event sent with ID: ${response.messageId}`);
+// Empty array removes all values
+await smashsend.contacts.update(contactId, {
+  customProperties: {
+    tags: [], // Removes all tags
+  },
+});
 ```
 
-**Send multiple events in a batch:**
+**Advanced: Granular Control**
+
+For precise control without fetching current values, use the `add`/`remove` structure:
 
 ```typescript
-const events = [
-  {
-    event: 'page.view',
-    identify: { email: 'user1@example.com' },
-    properties: { page: '/home' }
+await smashsend.contacts.update(contactId, {
+  customProperties: {
+    tags: {
+      add: ['vip', 'enterprise'], // Add these tags
+      remove: ['trial', 'free'], // Remove these tags
+    },
   },
-  {
-    event: 'button.click',
-    identify: { email: 'user2@example.com' },
-    properties: { button: 'signup' }
-  }
-];
-
-const result = await smashsend.events.sendBatch(events);
-console.log(`Accepted: ${result.accepted}, Failed: ${result.failed}`);
-
-// Handle failed events
-if (result.errors?.length > 0) {
-  result.errors.forEach(error => {
-    console.log(`Event ${error.index} failed:`, error.errors);
-  });
-}
+});
 ```
 
-**Event structure:**
-
-- `event`: Event name (e.g., 'user.signup', 'purchase.completed')
-- `identify.email`: User email (required)
-- `identify.traits`: User attributes to sync with contact record (optional)
-- `properties`: Event-specific data (optional)
-- `timestamp`: Event timestamp (optional, defaults to current time)
-- `messageId`: Custom ID for deduplication (optional, auto-generated if not provided)
+This is useful for webhooks or event-driven updates where you only know what changed.
 
 ## TypeScript Support
 
