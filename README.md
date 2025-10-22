@@ -300,17 +300,16 @@ Send events to trigger automations, track user behavior, or sync data with your 
 ```typescript
 const response = await smashsend.events.send({
   event: 'user.signup',
+  properties: {
+    source: 'website',
+    campaign: 'summer-sale',
+  },
   identify: {
     email: 'user@example.com',
     traits: {
       firstName: 'John',
       lastName: 'Doe',
-      plan: 'premium',
     },
-  },
-  properties: {
-    source: 'website',
-    campaign: 'summer-sale',
   },
 });
 
