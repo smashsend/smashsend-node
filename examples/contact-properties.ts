@@ -98,13 +98,49 @@ async function createContactWithCustomProperties() {
 
         // For select fields (if configured)
         industry: 'Technology', // SELECT type
-        interests: ['Marketing', 'Sales'], // MULTI_SELECT type
+        
+        // MULTI_SELECT type - simple array replaces all values
+        interests: ['Marketing', 'Sales'], // Replaces existing interests
+        tags: ['customer', 'enterprise'], // Replaces existing tags
       },
     });
 
     console.log('Contact created with custom properties:', contact.id);
   } catch (error: any) {
     console.error('Error creating contact:', error.message);
+    throw error;
+  }
+}
+
+async function updateContactWithMultiSelect() {
+  try {
+    const contact = await smashsend.contacts.update('ctc_xxxxx', {
+      customProperties: {
+        interests: ['Marketing', 'Sales', 'Product'],
+      },
+    });
+
+    console.log('Multi-select properties replaced:', contact.id);
+  } catch (error: any) {
+    console.error('Error updating contact:', error.message);
+    throw error;
+  }
+}
+
+async function granularMultiSelectControl() {
+  try {
+    const contact = await smashsend.contacts.update('ctc_xxxxx', {
+      customProperties: {
+        interests: {
+          add: ['Product Updates'],
+          remove: ['Blog Posts'],
+        },
+      },
+    });
+
+    console.log('Granular multi-select update completed:', contact.id);
+  } catch (error: any) {
+    console.error('Error with granular update:', error.message);
     throw error;
   }
 }
@@ -127,6 +163,12 @@ Common misconceptions:
 - There is NO 'EMAIL' type - use STRING
 - There is NO 'URL' type - use STRING  
 - There is NO 'PHONE' type - use STRING
+
+Multi-Select Properties (NEW BEHAVIOR):
+- Simple arrays REPLACE all existing values: ["tag1", "tag2"]
+- For granular control, use: { add: ["tag1"], remove: ["tag2"] }
+- Empty array removes all values: []
+- Same values = no change (efficient!)
 
 The backend will validate and store these as appropriate.
 `);
