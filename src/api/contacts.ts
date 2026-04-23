@@ -36,6 +36,27 @@ export class Contacts {
   }
 
   /**
+   * Create or update a contact by email. If a contact with the given email
+   * already exists, its properties will be updated; otherwise a new contact
+   * is created. Ideal for signup flows where you don't know the contact ID yet.
+   *
+   * @param options The contact upsert options (email required)
+   * @returns The created or updated contact
+   *
+   * @example
+   * ```typescript
+   * const contact = await smashsend.contacts.upsert({
+   *   email: 'user@example.com',
+   *   firstName: 'Jane',
+   *   customProperties: { plan: 'pro' },
+   * });
+   * ```
+   */
+  async upsert(options: ContactCreateOptions): Promise<Contact> {
+    return this.create(options);
+  }
+
+  /**
    * Create multiple contacts in a single batch operation
    *
    * @param contacts Array of contact creation options
