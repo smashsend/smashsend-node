@@ -4,6 +4,7 @@ import { Webhooks } from './api/webhooks';
 import { ApiKeys } from './api/api-keys';
 import { Domains } from './api/domains';
 import { Events } from './api/events';
+import { Groups } from './api/groups';
 import { HttpClient } from './utils/http-client';
 import { SmashSendClientOptions } from './interfaces/types';
 import {
@@ -46,6 +47,11 @@ export class SmashSend {
    */
   public readonly events: Events;
 
+  /**
+   * The Groups API resource
+   */
+  public readonly groups: Groups;
+
   private httpClient: HttpClient;
 
   /**
@@ -76,6 +82,7 @@ export class SmashSend {
     this.domains = new Domains(this.httpClient);
     this.emails = new Emails(this.httpClient);
     this.events = new Events(this.httpClient);
+    this.groups = new Groups(this.httpClient);
     this.webhooks = new Webhooks(this.httpClient);
   }
 
@@ -124,6 +131,21 @@ export class SmashSend {
 
 // Export types and errors
 export type { SmashSendClientOptions } from './interfaces/types';
+export type {
+  Group,
+  GroupCreateOptions,
+  GroupUpdateOptions,
+  GroupListOptions,
+  GroupListResponse,
+  GroupContactListOptions,
+  GroupContactListResponse,
+  GroupCreateResponse,
+  GroupGetResponse,
+  GroupDeleteResponse,
+  GroupAddContactResponse,
+  GroupRemoveContactResponse,
+  GroupTraits,
+} from './interfaces/groups';
 export type {
   RawEmailSendOptions,
   TemplatedEmailSendOptions,
