@@ -398,14 +398,14 @@ if (entry.status === 'PENDING') {
 **Read a form's questions:**
 
 ```typescript
-const { form } = await smashsend.forms.getByPublicKey('pk_abc123');
+const { form } = await smashsend.forms.getPublicForm('pk_abc123');
 
 form.config?.fields.forEach((field) => {
   console.log(`${field.key} (${field.type}): ${field.label}`);
 });
 
 // Password-protected forms only return `config` with the right password
-const protectedForm = await smashsend.forms.getByPublicKey('pk_abc123', {
+const protectedForm = await smashsend.forms.getPublicForm('pk_abc123', {
   password: 'hunter2',
 });
 ```
@@ -481,8 +481,9 @@ rewards.items.forEach((reward) => {
 - A form can restrict which domains may read and submit it ("Allowed domains" in
   its settings). That check is skipped for calls carrying your API key — it keys
   off the browser's `Origin` header, which server-side callers don't send.
-- Methods that take a `publicKey` say so in the name; `forms.get(formId)` is
-  reserved for the workspace-scoped lookup, which the API does not expose yet.
+- `getPublicForm()` returns the public view of a form (the questions a
+  respondent sees). `forms.get(formId)` is reserved for the workspace-scoped
+  lookup, which the API does not expose yet.
 - Submissions are deduplicated per (form, email): submitting the same email
   twice returns the existing entry instead of creating a duplicate.
 - `position`, `peopleAhead` and `participantTotal` include any display offsets

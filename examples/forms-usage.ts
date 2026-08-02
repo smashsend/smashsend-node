@@ -13,7 +13,7 @@ const PUBLIC_KEY = 'pk_abc123';
 const FORM_ID = 'frm_abc123';
 
 async function readTheForm() {
-  const { form } = await smashsend.forms.getByPublicKey(PUBLIC_KEY);
+  const { form } = await smashsend.forms.getPublicForm(PUBLIC_KEY);
 
   console.log(`${form.displayName} (${form.status})`);
   form.config?.fields.forEach((field) => {

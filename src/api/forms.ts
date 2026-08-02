@@ -23,10 +23,11 @@ export class Forms {
   }
 
   /**
-   * Get a published form by its **public key** (not its id).
+   * Get the public view of a published form — the questions a respondent sees,
+   * looked up by the form's public key.
    *
-   * Named for the identifier it takes: `forms.get(formId)` is reserved for the
-   * workspace-scoped lookup, which the API does not expose yet.
+   * Named for what it returns, leaving `forms.get(formId)` free for the
+   * workspace-scoped lookup once the API exposes one.
    *
    * Only PUBLISHED forms are returned. For a password-protected form the
    * questions (`config`) are only included when the correct password is
@@ -39,14 +40,14 @@ export class Forms {
    *
    * @example
    * ```typescript
-   * const { form } = await smashsend.forms.getByPublicKey('pk_abc123');
+   * const { form } = await smashsend.forms.getPublicForm('pk_abc123');
    *
    * form.config?.fields.forEach(field => {
    *   console.log(`${field.key}: ${field.label}`);
    * });
    * ```
    */
-  async getByPublicKey(publicKey: string, options?: FormGetOptions): Promise<FormGetResponse> {
+  async getPublicForm(publicKey: string, options?: FormGetOptions): Promise<FormGetResponse> {
     return await this.httpClient.get<FormGetResponse>(`/forms/${publicKey}`, {
       params: options?.password ? { password: options.password } : undefined,
     });
