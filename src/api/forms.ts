@@ -23,25 +23,30 @@ export class Forms {
   }
 
   /**
-   * Get a published form by its public key.
+   * Get a published form by its **public key** (not its id).
    *
-   * Public endpoint — safe to call from a browser. Only PUBLISHED forms are
-   * returned. For a password-protected form the questions (`config`) are only
-   * included when the correct password is supplied.
+   * Named for the identifier it takes: `forms.get(formId)` is reserved for the
+   * workspace-scoped lookup, which the API does not expose yet.
+   *
+   * Only PUBLISHED forms are returned. For a password-protected form the
+   * questions (`config`) are only included when the correct password is
+   * supplied. If the form restricts allowed domains, browser calls from a
+   * domain that isn't on the list are rejected; a call carrying your API key
+   * is never blocked.
    *
    * @param publicKey The form's public key (the `/f/{publicKey}` segment)
    * @param options Optional password for protected forms
    *
    * @example
    * ```typescript
-   * const { form } = await smashsend.forms.get('pk_abc123');
+   * const { form } = await smashsend.forms.getByPublicKey('pk_abc123');
    *
    * form.config?.fields.forEach(field => {
    *   console.log(`${field.key}: ${field.label}`);
    * });
    * ```
    */
-  async get(publicKey: string, options?: FormGetOptions): Promise<FormGetResponse> {
+  async getByPublicKey(publicKey: string, options?: FormGetOptions): Promise<FormGetResponse> {
     return await this.httpClient.get<FormGetResponse>(`/forms/${publicKey}`, {
       params: options?.password ? { password: options.password } : undefined,
     });
@@ -57,6 +62,10 @@ export class Forms {
    * Pass `countryCode` when you submit from your own backend — SMASHSEND
    * otherwise derives the country from the caller's IP, which server-side is
    * your datacenter and not the respondent.
+   *
+   * A form can restrict which domains may submit it. That check is skipped for
+   * calls carrying your API key, since it keys off the browser's `Origin`
+   * header, which a server-side caller doesn't send.
    *
    * @param publicKey The form's public key
    * @param options The response to record

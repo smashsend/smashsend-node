@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **Forms API**: `smashsend.forms.*` — hosted forms and the referral/waitlist system
-  - `forms.get()` — read a published form's questions (supports password-protected forms)
+  - `forms.getByPublicKey()` — read a published form's questions (supports password-protected forms)
   - `forms.submit()` — submit a response, with `countryCode` so server-side submissions
     are not geo-located to your datacenter, and `referralCode` to credit the sharer
   - `forms.getReferralStatus()` — a participant's position, points, share link and task states

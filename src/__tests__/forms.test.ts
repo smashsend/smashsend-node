@@ -16,7 +16,7 @@ describe('Forms API', () => {
     mockHttpClient = MockedHttpClient.mock.instances[0] as jest.Mocked<HttpClient>;
   });
 
-  describe('get()', () => {
+  describe('getByPublicKey()', () => {
     it('fetches a published form by public key', async () => {
       const mockResponse = {
         form: {
@@ -29,7 +29,7 @@ describe('Forms API', () => {
       };
       mockHttpClient.get.mockResolvedValue(mockResponse);
 
-      const result = await smashsend.forms.get('pk_abc');
+      const result = await smashsend.forms.getByPublicKey('pk_abc');
 
       expect(mockHttpClient.get).toHaveBeenCalledWith('/forms/pk_abc', {
         params: undefined,
@@ -40,7 +40,7 @@ describe('Forms API', () => {
     it('passes the password for protected forms', async () => {
       mockHttpClient.get.mockResolvedValue({ form: {} });
 
-      await smashsend.forms.get('pk_abc', { password: 'hunter2' });
+      await smashsend.forms.getByPublicKey('pk_abc', { password: 'hunter2' });
 
       expect(mockHttpClient.get).toHaveBeenCalledWith('/forms/pk_abc', {
         params: { password: 'hunter2' },
