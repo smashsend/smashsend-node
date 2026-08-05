@@ -352,6 +352,146 @@ if (result.errors?.length > 0) {
 - `timestamp`: Event timestamp (optional, defaults to current time)
 - `messageId`: Custom ID for deduplication (optional, auto-generated if not provided)
 
+## Forms API
+
+Read your hosted forms, submit responses server-side, and drive the referral
+("viral waitlist") loop: positions, points, tasks and leaderboards.
+
+Endpoints come in two flavours. **Public** ones are keyed by the form's
+`publicKey` and need no API key — they are what a browser or your backend calls
+on behalf of the person filling the form. **Customer API** ones are keyed by the
+form `id` and require your workspace API key.
+
+**Submit a response (server-side):**
+
+```typescript
+import { SmashSend, SmashsendCountryCode } from '@smashsend/node';
+
+const smashsend = new SmashSend('smashsend_xxxxxxxxxxxx');
+
+const { entry } = await smashsend.forms.submit('pk_abc123', {
+  email: 'jane@example.com',
+  answers: {
+    firstName: 'Jane',
+    company: 'Acme',
+  },
+  // Pass the country explicitly when you submit from your own server —
+  // see the note below.
+  countryCode: SmashsendCountryCode.ES,
+  // Credits the sharer when the visitor arrived via ?ref=
+  referralCode: req.query.ref as string,
+});
+
+// PENDING = the form uses double opt-in and we emailed a confirmation link.
+if (entry.status === 'PENDING') {
+  console.log('Tell them to check their inbox');
+}
+```
+
+> **Country codes.** SMASHSEND derives a respondent's country from the IP that
+> submits the form. That is right for a browser, but wrong when you submit from
+> your backend — there the IP is your datacenter, so every respondent would be
+> filed under the same country. Pass `countryCode` (ISO 3166-1 alpha-2, from the
+> `SmashsendCountryCode` enum) whenever you submit server-side. Invalid codes are
+> rejected by the API rather than stored.
+
+**Read a form's questions:**
+
+```typescript
+const { form } = await smashsend.forms.getPublicForm('pk_abc123');
+
+form.config?.fields.forEach((field) => {
+  console.log(`${field.key} (${field.type}): ${field.label}`);
+});
+
+// Password-protected forms only return `config` with the right password
+const protectedForm = await smashsend.forms.getPublicForm('pk_abc123', {
+  password: 'hunter2',
+});
+```
+
+**Referral status for one participant** (public — use the `publicId` returned by
+`submit()`):
+
+```typescript
+const { referralStatus } = await smashsend.forms.getReferralStatus(
+  'pk_abc123',
+  entry.publicId!
+);
+
+console.log(`#${referralStatus.position} of ${referralStatus.participantTotal}`);
+console.log(`Share link: ${referralStatus.shareUrl}`);
+console.log(`${referralStatus.points} points from ${referralStatus.referralCount} referrals`);
+```
+
+**Complete a referral task:**
+
+```typescript
+// AUTO tasks award points immediately; MANUAL tasks land as PENDING with the
+// proof until someone approves them in the dashboard.
+const { task } = await smashsend.forms.completeTask(
+  'pk_abc123',
+  entry.publicId!,
+  'task_follow_x',
+  { proof: { handle: '@jane' } }
+);
+
+console.log(`${task.status} (+${task.pointsAwarded} points)`);
+```
+
+**Email a returning participant their link:**
+
+```typescript
+await smashsend.forms.sendStatusLink('pk_abc123', 'jane@example.com');
+```
+
+**Leaderboard** — dual-mode. With the form's `publicKey` you get the masked
+public list; with the form `id` and your API key you get real emails and true
+ranks:
+
+```typescript
+const { leaderboard } = await smashsend.forms.getLeaderboard('frm_abc123', {
+  limit: 25,
+});
+
+leaderboard.items.forEach((row) => {
+  console.log(`#${row.rank} ${row.email ?? row.maskedEmail}: ${row.points} points`);
+});
+```
+
+**Position and points ledger** (customer API — requires an API key):
+
+```typescript
+// Look up by entry id or by email
+const { position } = await smashsend.forms.getEntryPosition(
+  'frm_abc123',
+  'jane@example.com'
+);
+
+// Every referral credit, task completion and manual adjustment
+const { rewards } = await smashsend.forms.listEntryRewards('frm_abc123', 'fen_123');
+
+rewards.items.forEach((reward) => {
+  console.log(`${reward.type} +${reward.points} (${reward.status})`);
+});
+```
+
+**Notes**
+
+- A form can restrict which domains may read and submit it ("Allowed domains" in
+  its settings). That check is skipped for calls carrying your API key — it keys
+  off the browser's `Origin` header, which server-side callers don't send.
+- `getPublicForm()` returns the public view of a form (the questions a
+  respondent sees). `forms.get(formId)` is reserved for the workspace-scoped
+  lookup, which the API does not expose yet.
+- Submissions are deduplicated per (form, email): submitting the same email
+  twice returns the existing entry instead of creating a duplicate.
+- `position`, `peopleAhead` and `participantTotal` include any display offsets
+  configured on the form. `points` and `referralCount` are always the real
+  numbers.
+- Double opt-in confirmation is a redirect link in the confirmation email, so it
+  isn't exposed as an SDK method.
+
 ## Advanced Configuration
 
 **Custom Headers**

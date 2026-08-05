@@ -4,6 +4,7 @@ import { Webhooks } from './api/webhooks';
 import { ApiKeys } from './api/api-keys';
 import { Domains } from './api/domains';
 import { Events } from './api/events';
+import { Forms } from './api/forms';
 import { HttpClient } from './utils/http-client';
 import { SmashSendClientOptions } from './interfaces/types';
 import {
@@ -46,6 +47,11 @@ export class SmashSend {
    */
   public readonly events: Events;
 
+  /**
+   * The Forms API resource (hosted forms + referral waitlists)
+   */
+  public readonly forms: Forms;
+
   private httpClient: HttpClient;
 
   /**
@@ -76,6 +82,7 @@ export class SmashSend {
     this.domains = new Domains(this.httpClient);
     this.emails = new Emails(this.httpClient);
     this.events = new Events(this.httpClient);
+    this.forms = new Forms(this.httpClient);
     this.webhooks = new Webhooks(this.httpClient);
   }
 
@@ -161,6 +168,42 @@ export type {
   BatchEventResponse,
   EventTrackingOptions,
 } from './interfaces/types';
+
+// Export forms types
+export type {
+  SmashsendForm,
+  FormStatus,
+  FormField,
+  FormFieldType,
+  FormFieldOption,
+  FormConfig,
+  FormGetOptions,
+  FormGetResponse,
+  FormEntryStatus,
+  FormSubmitOptions,
+  FormSubmitResponse,
+  FormPublicReferralSettings,
+  FormReferralTask,
+  FormReferralTaskType,
+  FormReferralTaskApproval,
+  FormReferralTaskProofType,
+  FormReferralStatus,
+  FormReferralStatusResponse,
+  FormReferralTaskStatus,
+  FormTaskStatus,
+  FormCompleteTaskOptions,
+  FormStatusLinkResponse,
+  FormEntryPosition,
+  FormEntryPositionResponse,
+  FormReward,
+  FormRewardType,
+  FormRewardStatus,
+  FormRewardListOptions,
+  FormRewardListResponse,
+  FormLeaderboardEntry,
+  FormLeaderboardOptions,
+  FormLeaderboardResponse,
+} from './interfaces/forms';
 
 // Export domain types
 export type {

@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Forms API**: `smashsend.forms.*` — hosted forms and the referral/waitlist system
+  - `forms.getPublicForm()` — read a published form's questions (supports password-protected forms)
+  - `forms.submit()` — submit a response, with `countryCode` so server-side submissions
+    are not geo-located to your datacenter, and `referralCode` to credit the sharer
+  - `forms.getReferralStatus()` — a participant's position, points, share link and task states
+  - `forms.completeTask()` — complete a referral task, with proof for manual tasks
+  - `forms.sendStatusLink()` — email a returning participant their personal link
+  - `forms.getLeaderboard()` — masked (public key) or unmasked (form id + API key)
+  - `forms.getEntryPosition()` — position by entry id or email (customer API)
+  - `forms.listEntryRewards()` — the points ledger for one entry (customer API)
+  - Full TypeScript types exported; `countryCode` reuses the existing `SmashsendCountryCode` enum
+
 - **New Feature**: `contacts.deleteByEmail()` method for deleting contacts by email address
   - Added `deleteByEmail(email: string)` method to Contacts API
   - Properly handles URL encoding of email addresses with special characters
