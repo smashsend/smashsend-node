@@ -725,6 +725,35 @@ await smashsend.contacts.update(contactId, {
 
 This is useful for webhooks or event-driven updates where you only know what changed.
 
+## Broadcasts API
+
+Create and schedule marketing broadcasts from your own pipeline. You send tested
+raw HTML; SMASHSEND handles audience resolution, tracking, unsubscribe
+compliance and delivery pacing. [Full docs](https://smashsend.com/docs/api/broadcasts)
+
+> Requires the Email API add-on, a verified workspace, and the early-access flag
+> on your workspace.
+
+```typescript
+const { broadcast } = await smashsend.broadcasts.create({
+  name: 'Weekly newsletter #42',
+  subject: 'This week: {{firstName}}, the new roadmap is live',
+  fromEmail: 'news@yourdomain.com',
+  html: '<html><body><h1>Hello {{firstName}}</h1></body></html>',
+  audience: { all: true },
+  settings: { trackOpens: true, trackClicks: true },
+});
+
+// Always send yourself a test first
+await smashsend.broadcasts.sendTest(broadcast.id, {
+  emails: ['you@yourcompany.com'],
+});
+
+await smashsend.broadcasts.schedule(broadcast.id, {
+  sendAt: '2026-08-10T09:00:00.000Z',
+});
+```
+
 ## TypeScript Support
 
 - Built **in TypeScript**

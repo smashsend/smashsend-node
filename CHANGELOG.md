@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Broadcasts API**: `smashsend.broadcasts` for programmatic marketing broadcasts
+  - `create()`, `list()`, `get()`, `schedule()`, `cancel()`, `sendTest()`
+  - Requires the Email API add-on, a verified workspace and the early-access flag
+  - Docs: https://smashsend.com/docs/api/broadcasts
+
+### Fixed
+
+- `VERSION` in `src/constants.ts` was pinned at `0.2.5` while the package published as `1.19.0`, so every request sent a wrong `User-Agent`. Now synced.
+
+### Added
+
 - **Forms API**: `smashsend.forms.*` — hosted forms and the referral/waitlist system
   - `forms.getPublicForm()` — read a published form's questions (supports password-protected forms)
   - `forms.submit()` — submit a response, with `countryCode` so server-side submissions
