@@ -5,6 +5,7 @@ import { ApiKeys } from './api/api-keys';
 import { Domains } from './api/domains';
 import { Events } from './api/events';
 import { Forms } from './api/forms';
+import { Broadcasts } from './api/broadcasts';
 import { HttpClient } from './utils/http-client';
 import { SmashSendClientOptions } from './interfaces/types';
 import {
@@ -52,6 +53,11 @@ export class SmashSend {
    */
   public readonly forms: Forms;
 
+  /**
+   * The Broadcasts API resource
+   */
+  public readonly broadcasts: Broadcasts;
+
   private httpClient: HttpClient;
 
   /**
@@ -83,6 +89,7 @@ export class SmashSend {
     this.emails = new Emails(this.httpClient);
     this.events = new Events(this.httpClient);
     this.forms = new Forms(this.httpClient);
+    this.broadcasts = new Broadcasts(this.httpClient);
     this.webhooks = new Webhooks(this.httpClient);
   }
 
@@ -204,6 +211,9 @@ export type {
   FormLeaderboardOptions,
   FormLeaderboardResponse,
 } from './interfaces/forms';
+
+// Export broadcasts types
+export * from './interfaces/broadcasts';
 
 // Export domain types
 export type {
