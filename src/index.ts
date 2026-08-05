@@ -174,6 +174,7 @@ export type {
   SingleEventResponse,
   BatchEventResponse,
   EventTrackingOptions,
+  ReactElementLike,
 } from './interfaces/types';
 
 // Export forms types

@@ -1,10 +1,10 @@
 import { HttpClient } from '../utils/http-client';
-import type { ReactElement } from 'react';
 import {
   RawEmailSendOptions,
   TemplatedEmailSendOptions,
   RawEmailSendResponse,
   TemplatedEmailSendResponse,
+  ReactElementLike,
 } from '../interfaces/types';
 import { TransactionalEmails } from './transactional';
 
@@ -17,7 +17,7 @@ export class Emails {
   public readonly transactional: TransactionalEmails;
 
   // Cache for the async renderer so we only import @react-email/render once
-  private renderAsync?: (component: ReactElement) => Promise<string>;
+  private renderAsync?: (component: ReactElementLike) => Promise<string>;
 
   constructor(httpClient: HttpClient) {
     this.httpClient = httpClient;
@@ -48,11 +48,11 @@ export class Emails {
           const mod = await import('@react-email/render');
           if (typeof (mod as any).renderAsync === 'function') {
             // Use the async renderer directly
-            this.renderAsync = (component: ReactElement) => (mod as any).renderAsync(component);
+            this.renderAsync = (component: ReactElementLike) => (mod as any).renderAsync(component);
           } else if (typeof (mod as any).render === 'function') {
             // Wrap synchronous render in a Promise to keep the type consistent
             const syncRender = (mod as any).render;
-            this.renderAsync = (component: ReactElement) => Promise.resolve(syncRender(component));
+            this.renderAsync = (component: ReactElementLike) => Promise.resolve(syncRender(component));
           } else {
             throw new Error(
               '`@react-email/render` does not export `renderAsync` or `render`. Please upgrade to the latest version.'
@@ -68,7 +68,7 @@ export class Emails {
       htmlBody =
         typeof options.react === 'string'
           ? options.react
-          : await this.renderAsync(options.react as ReactElement);
+          : await this.renderAsync(options.react as ReactElementLike);
     }
 
     // Check if neither html nor react was provided (not just falsy)

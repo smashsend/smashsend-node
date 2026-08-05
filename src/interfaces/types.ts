@@ -1,5 +1,22 @@
-import type { ReactElement } from 'react';
 // Common interfaces
+
+/**
+ * Structural stand-in for React's `ReactElement`.
+ *
+ * Importing the real type would put `import type { ReactElement } from 'react'`
+ * at the top of the published `.d.ts`, which forces every consumer to install
+ * `@types/react` or hit TS7016 ("Could not find a declaration file for module
+ * 'react'") — even the majority who never send a React email. React support is
+ * optional, so its types must be optional too.
+ *
+ * A real `ReactElement` is structurally assignable to this, so passing JSX
+ * still works and stays type-checked on the caller's side.
+ */
+export interface ReactElementLike {
+  type: any;
+  props: any;
+  key: any;
+}
 
 // Events interfaces ────────────────────────────────────────────
 export * from './events';
@@ -38,8 +55,8 @@ export interface EmailAddress {
 export type RawEmailSendOptions = RawEmailSendOptionsBase &
   (
     | { html: string; react?: undefined }
-    | { react: ReactElement | string; html?: undefined }
-    | { html: string; react: ReactElement | string }
+    | { react: ReactElementLike | string; html?: undefined }
+    | { html: string; react: ReactElementLike | string }
   );
 
 /**
